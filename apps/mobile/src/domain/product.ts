@@ -105,7 +105,18 @@ export const productDraftSchema = z
     }
   });
 
-export type ProductDraft = z.infer<typeof productDraftSchema>;
+/**
+ * The validated shape a service receives. Optional string fields have already been
+ * trimmed and normalised to `undefined` when blank.
+ */
+export type ProductDraft = z.output<typeof productDraftSchema>;
+
+/**
+ * The shape a *form* holds, before validation transforms run. React Hook Form binds
+ * to this; the resolver produces `ProductDraft` on submit. Keeping the two distinct is
+ * what lets a text input hold `''` while the domain type says the field is absent.
+ */
+export type ProductDraftInput = z.input<typeof productDraftSchema>;
 
 /**
  * A purchase date in the future is almost always a typo or a misread receipt. We

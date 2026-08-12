@@ -27,7 +27,7 @@ export class AppError extends Error {
   readonly code: AppErrorCode;
   /** i18n key resolved by the UI layer. */
   readonly messageKey: string;
-  readonly cause?: unknown;
+  override readonly cause?: unknown;
   /** Extra context for logging — must never contain document contents or PII. */
   readonly meta?: Record<string, string | number | boolean>;
 

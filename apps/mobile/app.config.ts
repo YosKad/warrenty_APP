@@ -44,12 +44,6 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   icon: './assets/icon.png',
   // The design system owns colour; `automatic` lets the OS drive light/dark.
   userInterfaceStyle: 'automatic',
-  newArchEnabled: true,
-  splash: {
-    image: './assets/splash-icon.png',
-    resizeMode: 'contain',
-    backgroundColor: '#0B1220',
-  },
   assetBundlePatterns: ['**/*'],
   ios: {
     supportsTablet: true,
@@ -87,7 +81,8 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundImage: './assets/android-icon-background.png',
       monochromeImage: './assets/android-icon-monochrome.png',
     },
-    edgeToEdgeEnabled: true,
+    // Edge-to-edge is the default from SDK 54 onwards; the Screen component owns
+    // safe-area insets so content never sits under the system bars.
     predictiveBackGestureEnabled: true,
     permissions: [
       'android.permission.CAMERA',
@@ -138,7 +133,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     ],
     [
       'expo-notifications',
-      { icon: './assets/notification-icon.png', color: '#0B1220' },
+      { icon: './assets/android-icon-monochrome.png', color: '#0B1220' },
     ],
     [
       'expo-build-properties',
