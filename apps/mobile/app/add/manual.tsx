@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Alert, Pressable, View } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
@@ -71,7 +71,7 @@ export default function ManualAddScreen() {
 
   // Three generics: the form holds the *input* shape (blank strings and all), the
   // resolver validates it, and `onSubmit` receives the parsed `ProductDraft`.
-  const { control, handleSubmit, watch, setValue, formState } = useForm<
+  const { control, handleSubmit, setValue, formState } = useForm<
     ProductDraftInput,
     unknown,
     ProductDraft
@@ -89,9 +89,11 @@ export default function ManualAddScreen() {
     } as ProductDraftInput,
   });
 
-  const purchaseDate = watch('purchaseDate');
-  const durationMonths = watch('warrantyDurationMonths');
-  const categoryId = watch('categoryId');
+  // useWatch rather than watch(): it subscribes to the specific fields without the
+  // re-render and memoisation hazards of the form-wide watcher.
+  const purchaseDate = useWatch({ control, name: 'purchaseDate' });
+  const durationMonths = useWatch({ control, name: 'warrantyDurationMonths' });
+  const categoryId = useWatch({ control, name: 'categoryId' });
 
   const selectedCategory = useMemo(
     () => categories.data?.find((c) => c.id === categoryId),

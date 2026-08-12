@@ -201,7 +201,7 @@ export async function signOut(scope: 'local' | 'global' = 'local'): Promise<void
     // devices" control in Settings.
     const { error } = await supabase.auth.signOut({ scope });
     if (error) throw error;
-  } catch (error) {
+  } catch {
     // A failed sign-out must still clear local state, or the user is stuck.
     logger.warn('signOut failed; clearing local session anyway');
     await supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);

@@ -81,7 +81,7 @@ export async function lookupWarranty(
     try {
       const result = await provider.lookup(input);
       if (result && result.durationMonths !== null) return result;
-    } catch (error) {
+    } catch {
       // One provider failing must not block the others, or the add flow dies with it.
       logger.warn('warranty provider failed', { provider: provider.id });
     }

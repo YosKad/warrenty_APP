@@ -58,7 +58,7 @@ export async function fetchFlags(): Promise<FeatureFlagRule[]> {
       plans: row.plans,
       minAppVersion: row.min_app_version,
     }));
-  } catch (error) {
+  } catch {
     logger.warn('feature flag fetch failed; using defaults');
     return [];
   }

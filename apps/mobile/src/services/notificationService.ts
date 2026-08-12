@@ -78,7 +78,7 @@ export async function registerDevice(params: {
       { onConflict: 'push_token' },
     );
     if (error) throw error;
-  } catch (error) {
+  } catch {
     // Failing to register push must never block sign-in.
     logger.warn('push registration failed');
   }

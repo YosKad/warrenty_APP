@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import i18n, { changeLanguage, use as registerI18nPlugin } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import * as Localization from 'expo-localization';
 import { I18nManager } from 'react-native';
@@ -56,7 +56,7 @@ export async function initI18n(): Promise<SupportedLanguage> {
   const language =
     stored && isSupportedLanguage(stored) ? stored : detectDeviceLanguage();
 
-  await i18n.use(initReactI18next).init({
+  await registerI18nPlugin(initReactI18next).init({
     resources: {
       en: { translation: en },
       he: { translation: he },
@@ -73,7 +73,7 @@ export async function initI18n(): Promise<SupportedLanguage> {
 }
 
 export async function setLanguage(language: SupportedLanguage): Promise<void> {
-  await i18n.changeLanguage(language);
+  await changeLanguage(language);
   await setItem(LANGUAGE_KEY, language);
 }
 

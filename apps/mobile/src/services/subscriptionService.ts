@@ -157,7 +157,7 @@ export async function restorePurchases(
   for (const transaction of storeTransactions) {
     try {
       await verifyPurchase(transaction);
-    } catch (error) {
+    } catch {
       logger.warn('restore: transaction failed verification', {
         productId: transaction.productId,
       });
