@@ -8,6 +8,7 @@ import { queryKeys } from '@/lib/queryClient';
 import { formatCurrency, formatDate, isolateLtr } from '@/lib/format';
 import { useLocale } from '@/hooks/useLocale';
 import { useDeleteProduct, useProduct, useSubscriptionState } from '@/hooks/useProducts';
+import { useProductProtection } from '@/hooks/useProtection';
 import {
   canStartClaim,
   confidenceForSource,
@@ -16,6 +17,7 @@ import {
 } from '@/domain/warranty';
 import { hasEntitlement } from '@/domain/entitlements';
 import { listDocuments } from '@/services/documentService';
+import { ProtectionBreakdown } from '@/features/protection/ProtectionBreakdown';
 import {
   BackIcon,
   Button,
@@ -23,6 +25,7 @@ import {
   DocumentIcon,
   ListGroup,
   ListRow,
+  ProductImage,
   ProvenanceNote,
   Screen,
   StatusBadge,
@@ -57,6 +60,8 @@ export default function ProductDetailScreen() {
     queryFn: () => listDocuments(productId),
     enabled: productId.length > 0,
   });
+
+  const protection = useProductProtection(productId);
 
   if (product.isLoading || !product.data) {
     return (
@@ -147,53 +152,73 @@ export default function ProductDetailScreen() {
         </Pressable>
       </View>
 
-      <View style={{ gap: theme.spacing.xl, marginTop: theme.spacing.sm }}>
-        {/* The warranty card. The one place in the app that uses the brand surface,
-            so it reads as an object you own rather than a row in a database. */}
-        <Card variant="brand" padded>
-          <View style={{ gap: theme.spacing.md }}>
-            <View style={{ gap: theme.spacing.xs }}>
-              <Text variant="h2" tone="onBrand">
-                {item.name}
-              </Text>
-              {item.brandName ? (
-                <Text variant="bodySmall" tone="onBrand" style={{ opacity: 0.7 }}>
-                  {item.brandName}
-                  {item.model ? ` · ${isolateLtr(item.model)}` : ''}
-                </Text>
-              ) : null}
-            </View>
+      <View style={{ gap: theme.spacing.lg, marginTop: theme.spacing.sm }}>
+        {/* The product, not a record of it. V1 opened with a dark card carrying four
+            lines of text and no indication of what the thing actually was; the image
+            is what makes this read as an object you own. */}
+        <View style={{ gap: theme.spacing.lg, alignItems: 'center' }}>
+          <ProductImage
+            imagePath={item.imagePath}
+            category={item.categorySlug}
+            name={item.name}
+            size={120}
+            radius={theme.radii.xxl}
+          />
 
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: theme.spacing.md,
-                flexWrap: 'wrap',
-              }}
+          <View style={{ gap: theme.spacing.xs, alignItems: 'center' }}>
+            <Text
+              variant="h1"
+              align="center"
+              accessibilityRole="header"
+              style={{ writingDirection: 'auto' }}
             >
-              <StatusBadge status={snapshot.status} />
-              {snapshot.daysRemaining !== null ? (
-                <Text variant="bodySmall" tone="onBrand" style={{ opacity: 0.75 }}>
-                  {snapshot.daysRemaining >= 0
-                    ? t('product.daysRemaining', { count: snapshot.daysRemaining })
-                    : t('product.expiredAgo', { count: Math.abs(snapshot.daysRemaining) })}
-                </Text>
-              ) : null}
-            </View>
-
-            {snapshot.end ? (
-              <Text variant="bodySmall" tone="onBrand" style={{ opacity: 0.6 }}>
-                {t('product.endsOn', { date: formatDate(snapshot.end, locale, 'long') })}
+              {item.name}
+            </Text>
+            {item.brandName || item.model ? (
+              <Text
+                variant="bodySmall"
+                tone="tertiary"
+                align="center"
+                style={{ writingDirection: 'auto' }}
+              >
+                {[item.brandName, item.model ? isolateLtr(item.model) : null]
+                  .filter(Boolean)
+                  .join(' · ')}
               </Text>
             ) : null}
           </View>
-        </Card>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: theme.spacing.sm,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+          >
+            <StatusBadge status={snapshot.status} />
+            {snapshot.daysRemaining !== null ? (
+              <Text variant="bodySmall" tone="secondary">
+                {snapshot.daysRemaining >= 0
+                  ? t('product.daysRemaining', { count: snapshot.daysRemaining })
+                  : t('product.expiredAgo', { count: Math.abs(snapshot.daysRemaining) })}
+              </Text>
+            ) : null}
+          </View>
+        </View>
 
         {needsVerification ? <VerifyPrompt /> : null}
 
         {snapshot.start && snapshot.end ? (
-          <Card>
+          <View
+            style={{
+              padding: theme.spacing.lg,
+              borderRadius: theme.radii.xl,
+              backgroundColor: theme.colors.bg.surface,
+              gap: theme.spacing.md,
+            }}
+          >
             <WarrantyTimeline
               start={snapshot.start}
               end={snapshot.end}
@@ -201,22 +226,45 @@ export default function ProductDetailScreen() {
               status={snapshot.status}
               locale={locale}
             />
-          </Card>
-        ) : (
-          <Card>
-            <View style={{ gap: theme.spacing.md }}>
-              <Text variant="bodySmall" tone="secondary">
-                {t('product.warrantyUnknown')}
+            {snapshot.end ? (
+              <Text variant="caption" tone="tertiary">
+                {t('product.endsOn', { date: formatDate(snapshot.end, locale, 'long') })}
               </Text>
-              <Button
-                label={t('product.setWarranty')}
-                variant="secondary"
-                size="sm"
-                onPress={() => router.push(`/add/manual?productId=${productId}`)}
-              />
-            </View>
-          </Card>
+            ) : null}
+          </View>
+        ) : (
+          <View
+            style={{
+              padding: theme.spacing.lg,
+              borderRadius: theme.radii.xl,
+              backgroundColor: theme.colors.bg.surface,
+              gap: theme.spacing.md,
+            }}
+          >
+            <Text variant="bodySmall" tone="secondary">
+              {t('product.warrantyUnknown')}
+            </Text>
+            <Button
+              label={t('product.setWarranty')}
+              variant="secondary"
+              size="sm"
+              onPress={() => router.push(`/add/manual?productId=${productId}`)}
+            />
+          </View>
         )}
+
+        {protection ? (
+          <ProtectionBreakdown
+            completeness={protection.scored.completeness}
+            onFix={(key) =>
+              router.push(
+                key === 'proof_of_purchase'
+                  ? `/add/document?productId=${productId}`
+                  : `/add/manual?productId=${productId}`,
+              )
+            }
+          />
+        ) : null}
 
         <View style={{ gap: theme.spacing.sm }}>
           <ProvenanceNote

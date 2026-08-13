@@ -1,154 +1,172 @@
-import { View } from 'react-native';
-import { Image } from 'expo-image';
+import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/theme';
 import { formatDate } from '@/lib/format';
 import { useLocale } from '@/hooks/useLocale';
 import type { ProductListItem } from '@/services/productService';
-import { Card, StatusBadge, Text, WarrantyMarkIcon } from '@/ui';
+import { ProductImage, Text } from '@/ui';
 
 /**
- * Product card.
+ * Product card (V2).
  *
- * Reads like a card in a wallet: the object, its state, and when that state changes.
- * Four facts and no more — name, brand, status, time remaining. Model numbers,
- * serials, prices and categories all belong on the detail screen; putting them here
- * would turn a scannable list into a table.
+ * V1 wrapped four lines of text in a bordered box and showed the same grey mark
+ * for every product, so a list read as rows in a table. V2 leads with the object
+ * itself: you should recognise your television before you read its name.
+ *
+ * Four facts, in the order someone actually scans them — what it is, what state
+ * it's in, how long that state lasts, and when. Model numbers, serials, prices
+ * and categories belong on the detail screen; putting them here is what turned
+ * the list into a table in the first place.
+ *
+ * The card has no border. Separation comes from the surface being brighter than
+ * the warm canvas, which is why the canvas is warm.
  */
 
 export type ProductCardProps = {
   product: ProductListItem;
-  imageUrl?: string | null;
   onPress: () => void;
+  /** Compact variant for the Home rail. */
+  dense?: boolean;
 };
 
-export function ProductCard({ product, imageUrl, onPress }: ProductCardProps) {
+export function ProductCard({ product, onPress, dense = false }: ProductCardProps) {
   const theme = useTheme();
   const { t } = useTranslation();
   const { locale } = useLocale();
 
-  const remainingLabel = remainingText(product.daysRemaining, product.warrantyEnd, t, locale);
+  const tone = protectionTone(product.status, theme);
+  const remaining = remainingLabel(product, t, locale);
 
   return (
-    <Card
-      onPress={onPress}
-      padded={false}
+    <Pressable
+      accessibilityRole="button"
       accessibilityLabel={t('a11y.productCard', {
         name: product.name,
         status: t(statusLabelKey(product.status)),
-        remaining: remainingLabel,
+        remaining,
+      })}
+      onPress={onPress}
+      style={({ pressed }) => ({
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: theme.spacing.lg,
+        paddingVertical: dense ? theme.spacing.md : theme.spacing.lg,
+        paddingHorizontal: theme.spacing.lg,
+        borderRadius: theme.radii.xl,
+        backgroundColor: pressed ? theme.colors.bg.subtle : theme.colors.bg.surface,
+        transform: [{ scale: pressed ? 0.99 : 1 }],
       })}
     >
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: theme.spacing.md,
-          padding: theme.spacing.lg,
-          alignItems: 'center',
-        }}
-      >
-        <ProductThumbnail imageUrl={imageUrl} />
+      <ProductImage
+        imagePath={product.imagePath}
+        category={product.categorySlug}
+        name={product.name}
+        size={dense ? 52 : 60}
+      />
 
-        <View style={{ flex: 1, gap: theme.spacing.xs + 2 }}>
-          <View style={{ gap: 1 }}>
-            <Text variant="bodyStrong" numberOfLines={1}>
-              {product.name}
-            </Text>
-            {product.brandName ? (
-              <Text variant="caption" tone="tertiary" numberOfLines={1}>
-                {product.brandName}
-              </Text>
-            ) : null}
-          </View>
+      <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
+        <Text variant="bodyStrong" numberOfLines={1} style={{ writingDirection: 'auto' }}>
+          {product.name}
+        </Text>
 
+        {product.brandName ? (
+          <Text
+            variant="caption"
+            tone="tertiary"
+            numberOfLines={1}
+            style={{ writingDirection: 'auto' }}
+          >
+            {product.brandName}
+          </Text>
+        ) : null}
+
+        {/* Status as a coloured dot plus words, not a filled pill. A list of
+            eight pills is louder than the products themselves. */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: theme.spacing.sm,
+            marginTop: 3,
+          }}
+        >
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: theme.spacing.sm,
-              flexWrap: 'wrap',
+              width: 7,
+              height: 7,
+              borderRadius: 4,
+              backgroundColor: tone,
+              // Ring for ending-soon and hollow for expired, so state survives
+              // greyscale and colour-vision deficiency.
+              borderWidth: product.status === 'active' ? 0 : 1.5,
+              borderColor: tone,
+              ...(product.status !== 'active' ? { backgroundColor: 'transparent' } : {}),
             }}
-          >
-            <StatusBadge status={product.status} size="sm" />
-            {remainingLabel ? (
-              <Text variant="caption" tone="secondary">
-                {remainingLabel}
+          />
+          <Text variant="bodySmallStrong" style={{ color: tone }}>
+            {t(statusLabelKey(product.status))}
+          </Text>
+          {remaining ? (
+            <>
+              <Text variant="caption" tone="tertiary">
+                ·
               </Text>
-            ) : null}
-          </View>
+              <Text variant="caption" tone="secondary" numberOfLines={1}>
+                {remaining}
+              </Text>
+            </>
+          ) : null}
         </View>
       </View>
-    </Card>
+    </Pressable>
   );
 }
 
-function ProductThumbnail({ imageUrl }: { imageUrl?: string | null }) {
-  const theme = useTheme();
-
-  if (imageUrl) {
-    return (
-      <Image
-        source={{ uri: imageUrl }}
-        // `contentFit: cover` on a fixed square keeps the list rhythm regardless of
-        // the source aspect ratio.
-        contentFit="cover"
-        transition={160}
-        style={{
-          width: 56,
-          height: 56,
-          borderRadius: theme.radii.md,
-          backgroundColor: theme.colors.bg.subtle,
-        }}
-      />
-    );
+function protectionTone(
+  status: ProductListItem['status'],
+  theme: ReturnType<typeof useTheme>,
+): string {
+  switch (status) {
+    case 'active':
+      return theme.colors.protection.activeFg;
+    case 'ending_soon':
+      return theme.colors.protection.endingFg;
+    case 'expired':
+      return theme.colors.protection.expiredFg;
+    default:
+      return theme.colors.protection.unknownFg;
   }
-
-  return (
-    <View
-      style={{
-        width: 56,
-        height: 56,
-        borderRadius: theme.radii.md,
-        backgroundColor: theme.colors.bg.subtle,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <WarrantyMarkIcon size={24} color={theme.colors.text.tertiary} />
-    </View>
-  );
 }
 
 function statusLabelKey(status: ProductListItem['status']): string {
   switch (status) {
     case 'active':
-      return 'product.warrantyActive';
+      return 'product.protected';
     case 'ending_soon':
-      return 'product.warrantyEndingSoon';
+      return 'product.endingSoon';
     case 'expired':
-      return 'product.warrantyExpired';
+      return 'product.expired';
     default:
       return 'product.warrantyUnknown';
   }
 }
 
 /**
- * "312 days remaining" while there is time to act, an explicit end date once the
- * number gets large enough to be meaningless, and "expired 12 days ago" afterwards.
+ * "312 days remaining" while there's time to act; an explicit date once the
+ * number stops meaning anything; "expired 12 days ago" afterwards.
  */
-function remainingText(
-  daysRemaining: number | null,
-  warrantyEnd: string | null,
+function remainingLabel(
+  product: ProductListItem,
   t: (key: string, options?: Record<string, unknown>) => string,
   locale: string,
 ): string {
-  if (daysRemaining === null) return '';
-  if (daysRemaining < 0) {
-    return t('product.expiredAgo', { count: Math.abs(daysRemaining) });
+  if (product.daysRemaining === null) return '';
+  if (product.daysRemaining < 0) {
+    return t('product.expiredAgo', { count: Math.abs(product.daysRemaining) });
   }
-  if (daysRemaining > 365 && warrantyEnd) {
-    return t('product.endsOn', { date: formatDate(warrantyEnd, locale, 'medium') });
+  if (product.daysRemaining > 365 && product.warrantyEnd) {
+    return t('product.endsOn', { date: formatDate(product.warrantyEnd, locale, 'medium') });
   }
-  return t('product.daysRemaining', { count: daysRemaining });
+  return t('product.daysRemaining', { count: product.daysRemaining });
 }

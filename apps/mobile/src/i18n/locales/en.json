@@ -92,7 +92,10 @@
     "reviewWarranty": "Review warranty",
     "recentlyAdded": "Recently added",
     "quickAdd": "Add a product",
-    "slotsUsed": "{{used}} of {{limit}} products used"
+    "slotsUsed": "{{used}} of {{limit}} products used",
+    "yourProducts": "Your products",
+    "trackedCount_one": "{{count}} product tracked",
+    "trackedCount_other": "{{count}} products tracked"
   },
   "products": {
     "title": "My products",
@@ -155,7 +158,45 @@
     "addDocument": "Add document",
     "deleteTitle": "Delete this product?",
     "deleteBody": "Its documents and history will be removed from your account.",
-    "setWarranty": "Add warranty details"
+    "setWarranty": "Add warranty details",
+    "protected": "Protected",
+    "endingSoon": "Ending soon",
+    "expired": "Expired"
+  },
+  "protection": {
+    "title": "Protection score",
+    "caption": "claim ready",
+    "bandStrong": "Your records are in good shape",
+    "bandFair": "A few details are still missing",
+    "bandNeedsAttention": "Key details are missing",
+    "bandEmpty": "Add a product to start tracking",
+    "recommendedActions": "Recommended actions",
+    "recommendedSubtitle": "Each one makes a claim easier to file",
+    "worth": "+{{count}}%",
+    "complete": "Everything we need is on file",
+    "detailTitle": "Claim readiness",
+    "gapsRemaining_one": "{{count}} detail missing",
+    "gapsRemaining_other": "{{count}} details missing",
+    "factor": {
+      "purchase_date": "Purchase date",
+      "warranty_end": "Warranty end date",
+      "proof_of_purchase": "Proof of purchase",
+      "warranty_provider": "Warranty provider",
+      "warranty_terms": "Warranty terms",
+      "serial_number": "Serial number",
+      "service_provider": "Service contact",
+      "model": "Model number"
+    },
+    "action": {
+      "purchase_date": "Add the purchase date",
+      "warranty_end": "Add when the warranty ends",
+      "proof_of_purchase": "Attach the receipt",
+      "warranty_provider": "Add who provides the warranty",
+      "warranty_terms": "Add the warranty terms",
+      "serial_number": "Add the serial number",
+      "service_provider": "Add a service contact",
+      "model": "Add the model number"
+    }
   },
   "add": {
     "title": "Add a product",

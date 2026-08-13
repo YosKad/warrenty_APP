@@ -114,7 +114,9 @@ export default function ProductsScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{
             padding: theme.spacing.lg,
-            gap: theme.spacing.md,
+            // Tight, because V2 cards are borderless: a large gap plus no border
+            // makes a list read as floating fragments rather than a stack.
+            gap: theme.spacing.xs,
             flexGrow: 1,
           }}
           renderItem={({ item }) => (

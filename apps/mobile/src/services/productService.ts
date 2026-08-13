@@ -120,15 +120,18 @@ export async function listProducts(
 
 export async function getProduct(id: string): Promise<Product> {
   try {
+    // The category slug rides along because the detail screen picks its
+    // illustration from it, and a second round trip for one string is wasteful.
     const { data, error } = await supabase
       .from('products')
-      .select('*')
+      .select('*, category:category_id ( slug )')
       .eq('id', id)
       .is('deleted_at', null)
       .single();
     if (error) throw error;
     if (!data) throw new AppError('not_found');
-    return toProduct(data as ProductRow);
+    const row = data as ProductRow & { category?: { slug: string } | null };
+    return { ...toProduct(row), categorySlug: row.category?.slug ?? null };
   } catch (error) {
     throw toAppError(error);
   }

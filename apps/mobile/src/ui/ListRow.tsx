@@ -128,11 +128,11 @@ export function ListGroup({
         </Text>
       ) : null}
       <View
+        // No border in V2: the group separates from the warm canvas by being
+        // brighter than it, the same way every other surface in the app does.
         style={{
           backgroundColor: theme.colors.bg.surface,
-          borderRadius: theme.radii.lg,
-          borderWidth: theme.borderWidth.hairline,
-          borderColor: theme.colors.border.subtle,
+          borderRadius: theme.radii.xl,
           overflow: 'hidden',
         }}
       >

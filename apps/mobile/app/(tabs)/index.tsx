@@ -9,18 +9,15 @@ import { queryKeys } from '@/lib/queryClient';
 import { formatDate, greetingKey } from '@/lib/format';
 import { track } from '@/lib/analytics';
 import { useLocale } from '@/hooks/useLocale';
-import {
-  useProductList,
-  useProductQuota,
-  useWarrantySummary,
-} from '@/hooks/useProducts';
+import { useProductList, useProductQuota } from '@/hooks/useProducts';
+import { useProtection } from '@/hooks/useProtection';
 import { daysBetween } from '@/domain/date';
-import { remainingProductSlots } from '@/domain/entitlements';
 import { useSessionStore } from '@/state/session';
 import { ProductCard } from '@/features/products/ProductCard';
+import { ProtectionHero } from '@/features/protection/ProtectionHero';
+import { SuggestedActions } from '@/features/protection/SuggestedActions';
 import {
   Button,
-  Card,
   ChevronIcon,
   EmptyState,
   ListSkeleton,
@@ -29,14 +26,17 @@ import {
 } from '@/ui';
 
 /**
- * Home.
+ * Home (V2).
  *
- * The two-second question this screen answers: *is anything about to run out?* So the
- * order is greeting → how many things are protected → what needs attention → recent
- * items. Everything else lives a tap away.
+ * V1 answered "how many of each status do I have?" with three counter tiles. That
+ * is a report, not a product: it told you the state of your data and then left you
+ * to work out what to do about it.
  *
- * There is no chart, no activity feed and no tips carousel. A calm screen that
- * answers one question well is worth more than a dashboard.
+ * V2 answers "am I actually covered, and what should I do next?" — the Protection
+ * Score, the one thing that is genuinely urgent, and a short list of actions that
+ * each raise the score by a stated amount. Everything else is one tap away.
+ *
+ * Still no chart, no feed and no tips carousel.
  */
 export default function HomeScreen() {
   const theme = useTheme();
@@ -46,7 +46,7 @@ export default function HomeScreen() {
   const queryClient = useQueryClient();
   const profile = useSessionStore((s) => s.profile);
 
-  const summary = useWarrantySummary();
+  const protection = useProtection();
   const recent = useProductList({ sort: 'recent' });
   const quota = useProductQuota();
   const [refreshing, setRefreshing] = useState(false);
@@ -54,8 +54,8 @@ export default function HomeScreen() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.summary }),
       queryClient.invalidateQueries({ queryKey: queryKeys.products.all }),
+      queryClient.invalidateQueries({ queryKey: queryKeys.protection }),
     ]);
     setRefreshing(false);
   }, [queryClient]);
@@ -67,8 +67,9 @@ export default function HomeScreen() {
   );
 
   const firstName = profile?.displayName?.split(' ')[0] ?? '';
-  const counts = summary.data;
-  const isEmpty = counts !== undefined && counts.total === 0;
+  const items = recent.data?.items;
+  const isLoading = recent.isLoading || protection.isLoading;
+  const isEmpty = items !== undefined && items.length === 0;
 
   return (
     <Screen
@@ -78,20 +79,13 @@ export default function HomeScreen() {
       }
     >
       <View style={{ gap: theme.spacing.xl, paddingTop: theme.spacing.md }}>
-        <View style={{ gap: theme.spacing.xs }}>
-          <Text variant="bodySmall" tone="secondary">
-            {t(greetingKey(localHour))}
-            {firstName ? `, ${firstName}` : ''}
-          </Text>
-          <Text variant="h1" accessibilityRole="header">
-            {counts && counts.total > 0
-              ? t('home.protectedCount', { count: counts.active + counts.endingSoon })
-              : t('home.noProductsYet')}
-          </Text>
-        </View>
+        <Text variant="h2" accessibilityRole="header" style={{ writingDirection: 'auto' }}>
+          {t(greetingKey(localHour))}
+          {firstName ? `, ${firstName}` : ''}
+        </Text>
 
-        {summary.isLoading ? (
-          <ListSkeleton count={2} />
+        {isLoading ? (
+          <ListSkeleton count={3} />
         ) : isEmpty ? (
           <EmptyState
             title={t('products.empty.title')}
@@ -101,16 +95,17 @@ export default function HomeScreen() {
           />
         ) : (
           <>
-            <SummaryRow
-              active={counts?.active ?? 0}
-              endingSoon={counts?.endingSoon ?? 0}
-              expired={counts?.expired ?? 0}
-              onSelect={(status) => router.push(`/(tabs)/products?status=${status}`)}
-            />
+            <ProtectionHero portfolio={protection.portfolio} />
 
             <AttentionCard />
 
-            <View style={{ gap: theme.spacing.md }}>
+            <SuggestedActions
+              actions={protection.actions}
+              productFor={protection.productFor}
+              onSelect={(productId) => router.push(`/product/${productId}`)}
+            />
+
+            <View style={{ gap: theme.spacing.sm }}>
               <View
                 style={{
                   flexDirection: 'row',
@@ -119,7 +114,7 @@ export default function HomeScreen() {
                 }}
               >
                 <Text variant="h3" accessibilityRole="header">
-                  {t('home.recentlyAdded')}
+                  {t('home.yourProducts')}
                 </Text>
                 <Pressable
                   accessibilityRole="button"
@@ -132,19 +127,16 @@ export default function HomeScreen() {
                 </Pressable>
               </View>
 
-              {recent.isLoading ? (
-                <ListSkeleton count={3} />
-              ) : (
-                <View style={{ gap: theme.spacing.md }}>
-                  {recent.data?.items.slice(0, 4).map((product) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onPress={() => router.push(`/product/${product.id}`)}
-                    />
-                  ))}
-                </View>
-              )}
+              <View style={{ gap: theme.spacing.xs }}>
+                {items?.slice(0, 4).map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    dense
+                    onPress={() => router.push(`/product/${product.id}`)}
+                  />
+                ))}
+              </View>
             </View>
 
             <View style={{ gap: theme.spacing.sm }}>
@@ -161,7 +153,6 @@ export default function HomeScreen() {
                     used: quota.current,
                     limit: quota.entitlements.product_limit,
                   })}
-                  {remainingProductSlots(quota.entitlements, quota.current) === 0 ? ' · ' : ''}
                 </Text>
               ) : null}
             </View>
@@ -172,75 +163,12 @@ export default function HomeScreen() {
   );
 }
 
-function SummaryRow({
-  active,
-  endingSoon,
-  expired,
-  onSelect,
-}: {
-  active: number;
-  endingSoon: number;
-  expired: number;
-  onSelect: (status: 'active' | 'ending_soon' | 'expired') => void;
-}) {
-  const theme = useTheme();
-  const { t } = useTranslation();
-
-  const tiles = [
-    {
-      status: 'active' as const,
-      count: active,
-      label: t('home.statusActive'),
-      color: theme.colors.protection.activeFg,
-    },
-    {
-      status: 'ending_soon' as const,
-      count: endingSoon,
-      label: t('home.statusEndingSoon'),
-      color: theme.colors.protection.endingFg,
-    },
-    {
-      status: 'expired' as const,
-      count: expired,
-      label: t('home.statusExpired'),
-      color: theme.colors.protection.expiredFg,
-    },
-  ];
-
-  return (
-    <View style={{ flexDirection: 'row', gap: theme.spacing.md }}>
-      {tiles.map((tile) => (
-        <Card
-          key={tile.status}
-          onPress={() => onSelect(tile.status)}
-          accessibilityLabel={`${tile.label}, ${tile.count}`}
-          style={{ flex: 1, paddingVertical: theme.spacing.lg }}
-        >
-          <View style={{ gap: theme.spacing.xs }}>
-            {/* A coloured rule rather than a coloured number: the count stays high
-                contrast and legible, and colour is a secondary cue. */}
-            <View
-              style={{
-                width: 20,
-                height: 3,
-                borderRadius: 2,
-                backgroundColor: tile.color,
-              }}
-            />
-            <Text variant="numeric">{tile.count}</Text>
-            <Text variant="caption" tone="secondary" numberOfLines={2}>
-              {tile.label}
-            </Text>
-          </View>
-        </Card>
-      ))}
-    </View>
-  );
-}
-
 /**
  * The single most urgent item, if there is one. Deliberately capped at one: a list of
  * five "urgent" things is a list of zero urgent things.
+ *
+ * V2 keeps the dark brand panel here — it is the one place on the screen that should
+ * interrupt, and it earns the contrast by being conditional.
  */
 function AttentionCard() {
   const theme = useTheme();
@@ -256,36 +184,53 @@ function AttentionCard() {
   const days = Math.max(0, daysBetween(today, item.warrantyEnd));
 
   return (
-    <Card variant="brand" padded>
-      <View style={{ gap: theme.spacing.md }}>
-        <Text variant="metadata" tone="onBrand" style={{ opacity: 0.6 }}>
-          {t('home.attentionTitle')}
-        </Text>
-        <Text variant="h3" tone="onBrand">
-          {t('home.expiringIn', { name: item.name, count: days })}
-        </Text>
-        <Text variant="bodySmall" tone="onBrand" style={{ opacity: 0.7 }}>
-          {t('product.endsOn', { date: formatDate(item.warrantyEnd, locale) })}
-        </Text>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => {
-            track({ name: 'warranty_alert_opened', props: { daysRemaining: days } });
-            router.push(`/product/${item.id}`);
-          }}
+    <View
+      style={{
+        gap: theme.spacing.md,
+        padding: theme.spacing.xl,
+        borderRadius: theme.radii.xxl,
+        backgroundColor: theme.colors.bg.brand,
+      }}
+    >
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.sm }}>
+        <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: theme.spacing.xs,
-            marginTop: theme.spacing.xs,
+            width: 7,
+            height: 7,
+            borderRadius: 4,
+            backgroundColor: theme.colors.protection.endingFg,
           }}
-        >
-          <Text variant="bodySmallStrong" tone="onBrand">
-            {t('home.reviewWarranty')}
-          </Text>
-          <ChevronIcon size={16} color={theme.colors.text.onBrand} />
-        </Pressable>
+        />
+        <Text variant="metadata" tone="onBrand" style={{ opacity: 0.65 }}>
+          {t('home.attentionTitle').toUpperCase()}
+        </Text>
       </View>
-    </Card>
+
+      <Text variant="h3" tone="onBrand" style={{ writingDirection: 'auto' }}>
+        {t('home.expiringIn', { name: item.name, count: days })}
+      </Text>
+      <Text variant="bodySmall" tone="onBrand" style={{ opacity: 0.7 }}>
+        {t('product.endsOn', { date: formatDate(item.warrantyEnd, locale) })}
+      </Text>
+
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => {
+          track({ name: 'warranty_alert_opened', props: { daysRemaining: days } });
+          router.push(`/product/${item.id}`);
+        }}
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: theme.spacing.xs,
+          marginTop: theme.spacing.xs,
+        }}
+      >
+        <Text variant="bodySmallStrong" tone="onBrand">
+          {t('home.reviewWarranty')}
+        </Text>
+        <ChevronIcon size={16} color={theme.colors.text.onBrand} />
+      </Pressable>
+    </View>
   );
 }

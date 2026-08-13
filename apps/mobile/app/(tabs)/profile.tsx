@@ -1,4 +1,4 @@
-import { Alert, Linking, View } from 'react-native';
+import { Alert, Linking, Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
@@ -9,13 +9,7 @@ import { useLocale } from '@/hooks/useLocale';
 import { useSubscriptionState } from '@/hooks/useProducts';
 import { signOut } from '@/services/authService';
 import { useSessionStore } from '@/state/session';
-import {
-  Card,
-  ListGroup,
-  ListRow,
-  Screen,
-  Text,
-} from '@/ui';
+import { ListGroup, ListRow, Screen, Text } from '@/ui';
 
 /**
  * Profile.
@@ -54,48 +48,88 @@ export default function ProfileScreen() {
   return (
     <Screen scroll>
       <View style={{ gap: theme.spacing.xl, paddingTop: theme.spacing.md }}>
-        <View style={{ gap: theme.spacing.xs }}>
-          <Text variant="h1" accessibilityRole="header">
-            {profile?.displayName ?? t('profile.title')}
-          </Text>
-          <Text variant="bodySmall" tone="secondary">
-            {profile?.email}
-          </Text>
+        {/* Identity first, and a real avatar rather than a name in a heading slot.
+            The monogram is derived from the display name, so an account with no
+            photo still looks like an account rather than a blank. */}
+        <View
+          style={{ flexDirection: 'row', alignItems: 'center', gap: theme.spacing.lg }}
+        >
+          <View
+            accessibilityElementsHidden
+            style={{
+              width: 60,
+              height: 60,
+              borderRadius: 30,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: theme.colors.accent.soft,
+            }}
+          >
+            <Text variant="h2" style={{ color: theme.colors.accent.text }}>
+              {monogram(profile?.displayName ?? profile?.email ?? '')}
+            </Text>
+          </View>
+          <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
+            <Text
+              variant="h2"
+              accessibilityRole="header"
+              numberOfLines={1}
+              style={{ writingDirection: 'auto' }}
+            >
+              {profile?.displayName ?? t('profile.title')}
+            </Text>
+            <Text variant="bodySmall" tone="tertiary" numberOfLines={1}>
+              {profile?.email}
+            </Text>
+          </View>
         </View>
 
-        <Card
-          onPress={() => router.push('/settings/subscription')}
+        {/* The plan panel is the one branded surface on this screen. It is also the
+            only route to the paywall from here — pricing is never duplicated. */}
+        <Pressable
+          accessibilityRole="button"
           accessibilityLabel={`${t('subscription.title')}, ${planLabel}`}
+          onPress={() => router.push('/settings/subscription')}
+          style={({ pressed }) => ({
+            gap: theme.spacing.xs,
+            padding: theme.spacing.xl,
+            borderRadius: theme.radii.xxl,
+            backgroundColor: theme.colors.bg.brand,
+            opacity: pressed ? 0.92 : 1,
+          })}
         >
-          <View style={{ gap: theme.spacing.xs }}>
-            <Text variant="metadata" tone="tertiary">
-              {t('subscription.title')}
+          <Text variant="metadata" tone="onBrand" style={{ opacity: 0.6 }}>
+            {t('subscription.title').toUpperCase()}
+          </Text>
+          <Text variant="h2" tone="onBrand">
+            MY Warranty {planLabel}
+          </Text>
+          {subscription.data?.expiresAt ? (
+            <Text variant="bodySmall" tone="onBrand" style={{ opacity: 0.7 }}>
+              {t(
+                subscription.data.autoRenew
+                  ? 'subscription.renewsOn'
+                  : 'subscription.expiresOn',
+                {
+                  date: formatDate(
+                    subscription.data.expiresAt.slice(0, 10),
+                    locale,
+                    'long',
+                  ),
+                },
+              )}
             </Text>
-            <Text variant="h3">MY Warranty {planLabel}</Text>
-            {subscription.data?.expiresAt ? (
-              <Text variant="bodySmall" tone="secondary">
-                {t(
-                  subscription.data.autoRenew
-                    ? 'subscription.renewsOn'
-                    : 'subscription.expiresOn',
-                  {
-                    date: formatDate(
-                      subscription.data.expiresAt.slice(0, 10),
-                      locale,
-                      'long',
-                    ),
-                  },
-                )}
-              </Text>
-            ) : null}
-            {subscription.data?.status === 'in_grace_period' ||
-            subscription.data?.status === 'in_billing_retry' ? (
-              <Text variant="bodySmall" style={{ color: theme.colors.feedback.warningFg }}>
-                {t('subscription.gracePeriod')}
-              </Text>
-            ) : null}
-          </View>
-        </Card>
+          ) : null}
+          {subscription.data?.status === 'in_grace_period' ||
+          subscription.data?.status === 'in_billing_retry' ? (
+            <Text
+              variant="bodySmall"
+              style={{ color: theme.colors.protection.endingFg, marginTop: 2 }}
+            >
+              {t('subscription.gracePeriod')}
+            </Text>
+          ) : null}
+        </Pressable>
 
         <ListGroup title={t('profile.preferences')}>
           <ListRow
@@ -153,4 +187,19 @@ export default function ProfileScreen() {
       </View>
     </Screen>
   );
+}
+
+/**
+ * Up to two initials from a display name, falling back to the first letter of an
+ * email. Works for Hebrew names as well — it takes graphemes, not ASCII.
+ */
+function monogram(source: string): string {
+  const words = source.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return '?';
+  if (words.length === 1) return [...(words[0] ?? '')].slice(0, 1).join('').toUpperCase();
+  return words
+    .slice(0, 2)
+    .map((word) => [...word][0] ?? '')
+    .join('')
+    .toUpperCase();
 }

@@ -94,7 +94,11 @@
     "reviewWarranty": "בדיקת האחריות",
     "recentlyAdded": "נוספו לאחרונה",
     "quickAdd": "הוספת מוצר",
-    "slotsUsed": "{{used}} מתוך {{limit}} מוצרים בשימוש"
+    "slotsUsed": "{{used}} מתוך {{limit}} מוצרים בשימוש",
+    "yourProducts": "המוצרים שלכם",
+    "trackedCount_one": "מוצר אחד במעקב",
+    "trackedCount_two": "שני מוצרים במעקב",
+    "trackedCount_other": "{{count}} מוצרים במעקב"
   },
   "products": {
     "title": "המוצרים שלי",
@@ -159,7 +163,46 @@
     "addDocument": "הוספת מסמך",
     "deleteTitle": "למחוק את המוצר?",
     "deleteBody": "המסמכים וההיסטוריה שלו יוסרו מהחשבון שלך.",
-    "setWarranty": "הוספת פרטי אחריות"
+    "setWarranty": "הוספת פרטי אחריות",
+    "protected": "מוגן",
+    "endingSoon": "מסתיים בקרוב",
+    "expired": "פג"
+  },
+  "protection": {
+    "title": "ציון הגנה",
+    "caption": "מוכן לתביעה",
+    "bandStrong": "התיעוד שלכם במצב טוב",
+    "bandFair": "עדיין חסרים כמה פרטים",
+    "bandNeedsAttention": "חסרים פרטים חשובים",
+    "bandEmpty": "הוסיפו מוצר כדי להתחיל לעקוב",
+    "recommendedActions": "פעולות מומלצות",
+    "recommendedSubtitle": "כל אחת מהן מקלה על הגשת תביעה",
+    "worth": "+{{count}}%",
+    "complete": "כל מה שצריך נמצא אצלנו",
+    "detailTitle": "מוכנות לתביעה",
+    "gapsRemaining_one": "חסר פרט אחד",
+    "gapsRemaining_two": "חסרים שני פרטים",
+    "gapsRemaining_other": "חסרים {{count}} פרטים",
+    "factor": {
+      "purchase_date": "תאריך רכישה",
+      "warranty_end": "מועד סיום האחריות",
+      "proof_of_purchase": "הוכחת רכישה",
+      "warranty_provider": "נותן האחריות",
+      "warranty_terms": "תנאי האחריות",
+      "serial_number": "מספר סידורי",
+      "service_provider": "איש קשר לשירות",
+      "model": "מספר דגם"
+    },
+    "action": {
+      "purchase_date": "הוספת תאריך הרכישה",
+      "warranty_end": "הוספת מועד סיום האחריות",
+      "proof_of_purchase": "צירוף הקבלה",
+      "warranty_provider": "הוספת נותן האחריות",
+      "warranty_terms": "הוספת תנאי האחריות",
+      "serial_number": "הוספת המספר הסידורי",
+      "service_provider": "הוספת איש קשר לשירות",
+      "model": "הוספת מספר הדגם"
+    }
   },
   "add": {
     "title": "הוספת מוצר",

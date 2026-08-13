@@ -55,6 +55,8 @@ export const queryKeys = {
     detail: (id: string) => ['products', 'detail', id] as const,
     documents: (id: string) => ['products', 'documents', id] as const,
   },
+  /** Protection Score inputs — every product plus its proof documents. */
+  protection: ['protection'] as const,
   warranty: {
     detail: (productId: string) => ['warranty', productId] as const,
   },

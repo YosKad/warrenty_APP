@@ -48,7 +48,8 @@ export default function AddMethodScreen() {
     {
       method: 'receipt' as const,
       href: '/add/scan',
-      icon: <CameraIcon color={theme.colors.text.primary} />,
+      // Sits on the pine circle in the hero, not on a surface like the others.
+      icon: <CameraIcon color={theme.colors.control.primaryFg} />,
       title: t('add.methodScan'),
       body: t('add.methodScanBody'),
       requiresPlan: !quota.entitlements.smart_scan,
@@ -56,7 +57,7 @@ export default function AddMethodScreen() {
     {
       method: 'barcode' as const,
       href: '/add/barcode',
-      icon: <BarcodeIcon color={theme.colors.text.primary} />,
+      icon: <BarcodeIcon color={theme.colors.text.secondary} />,
       title: t('add.methodBarcode'),
       body: t('add.methodBarcodeBody'),
       requiresPlan: !quota.entitlements.smart_scan,
@@ -64,7 +65,7 @@ export default function AddMethodScreen() {
     {
       method: 'photo' as const,
       href: '/add/manual?withPhoto=1',
-      icon: <DocumentIcon color={theme.colors.text.primary} />,
+      icon: <DocumentIcon color={theme.colors.text.secondary} />,
       title: t('add.methodPhoto'),
       body: t('add.methodPhotoBody'),
       requiresPlan: false,
@@ -72,12 +73,14 @@ export default function AddMethodScreen() {
     {
       method: 'manual' as const,
       href: '/add/manual',
-      icon: <PencilIcon color={theme.colors.text.primary} />,
+      icon: <PencilIcon color={theme.colors.text.secondary} />,
       title: t('add.methodManual'),
       body: t('add.methodManualBody'),
       requiresPlan: false,
     },
   ];
+
+  const [primary, ...rest] = methods;
 
   return (
     <Screen scroll>
@@ -104,8 +107,62 @@ export default function AddMethodScreen() {
           </Text>
         </View>
 
-        <View style={{ gap: theme.spacing.md }}>
-          {methods.map((option) => (
+        {/* V1 gave all four methods the same bordered box, which made the slowest
+            one (typing it all in) look exactly as attractive as the fastest. The
+            receipt scan leads; the rest are a quiet group beneath it. */}
+        {primary ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${primary.title}. ${primary.body}`}
+            onPress={() => start(primary.method, primary.href)}
+            style={({ pressed }) => ({
+              gap: theme.spacing.md,
+              padding: theme.spacing.xl,
+              borderRadius: theme.radii.xxl,
+              backgroundColor: theme.colors.bg.brand,
+              opacity: pressed ? 0.92 : 1,
+            })}
+          >
+            <View
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: theme.radii.lg,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: theme.colors.accent.solid,
+              }}
+            >
+              {primary.icon}
+            </View>
+            <View style={{ gap: theme.spacing.xs }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: theme.spacing.sm,
+                }}
+              >
+                <Text variant="h3" tone="onBrand">
+                  {primary.title}
+                </Text>
+                {primary.requiresPlan ? <PlanTag /> : null}
+              </View>
+              <Text variant="bodySmall" tone="onBrand" style={{ opacity: 0.72 }}>
+                {primary.body}
+              </Text>
+            </View>
+          </Pressable>
+        ) : null}
+
+        <View
+          style={{
+            borderRadius: theme.radii.xl,
+            backgroundColor: theme.colors.bg.surface,
+            overflow: 'hidden',
+          }}
+        >
+          {rest.map((option, index) => (
             <Pressable
               key={option.method}
               accessibilityRole="button"
@@ -116,26 +173,12 @@ export default function AddMethodScreen() {
                 alignItems: 'center',
                 gap: theme.spacing.md,
                 padding: theme.spacing.lg,
-                borderRadius: theme.radii.lg,
-                borderWidth: theme.borderWidth.hairline,
-                borderColor: theme.colors.border.subtle,
-                backgroundColor: pressed
-                  ? theme.colors.bg.subtle
-                  : theme.colors.bg.surface,
+                backgroundColor: pressed ? theme.colors.bg.subtle : 'transparent',
+                borderTopWidth: index === 0 ? 0 : theme.borderWidth.hairline,
+                borderTopColor: theme.colors.border.subtle,
               })}
             >
-              <View
-                style={{
-                  width: 44,
-                  height: 44,
-                  borderRadius: theme.radii.md,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: theme.colors.bg.subtle,
-                }}
-              >
-                {option.icon}
-              </View>
+              {option.icon}
               <View style={{ flex: 1, gap: 2 }}>
                 <View
                   style={{
@@ -145,20 +188,7 @@ export default function AddMethodScreen() {
                   }}
                 >
                   <Text variant="bodyStrong">{option.title}</Text>
-                  {option.requiresPlan ? (
-                    <View
-                      style={{
-                        backgroundColor: theme.colors.accent.soft,
-                        paddingHorizontal: theme.spacing.sm,
-                        paddingVertical: 1,
-                        borderRadius: theme.radii.pill,
-                      }}
-                    >
-                      <Text variant="metadata" style={{ color: theme.colors.accent.text }}>
-                        {t('paywall.planPlus')}
-                      </Text>
-                    </View>
-                  ) : null}
+                  {option.requiresPlan ? <PlanTag /> : null}
                 </View>
                 <Text variant="bodySmall" tone="tertiary">
                   {option.body}
@@ -182,5 +212,29 @@ export default function AddMethodScreen() {
         onRestore={() => undefined}
       />
     </Screen>
+  );
+}
+
+/**
+ * The Plus badge. Shown on methods the current plan cannot use, so the limit is
+ * visible before the tap rather than discovered by hitting a paywall.
+ */
+function PlanTag() {
+  const theme = useTheme();
+  const { t } = useTranslation();
+
+  return (
+    <View
+      style={{
+        backgroundColor: theme.colors.accent.soft,
+        paddingHorizontal: theme.spacing.sm,
+        paddingVertical: 1,
+        borderRadius: theme.radii.pill,
+      }}
+    >
+      <Text variant="metadata" style={{ color: theme.colors.accent.text }}>
+        {t('paywall.planPlus')}
+      </Text>
+    </View>
   );
 }
