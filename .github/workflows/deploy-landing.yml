@@ -1,0 +1,54 @@
+name: Deploy landing page
+
+# Publishes apps/landing to GitHub Pages, giving the marketing site a real,
+# shareable URL: https://yoskad.github.io/warrenty_APP/
+#
+# The page is a single self-contained HTML file, so there is nothing to build —
+# the folder is uploaded as-is and becomes the site root.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/landing/**'
+      - '.github/workflows/deploy-landing.yml'
+  # Lets you publish on demand from the Actions tab without waiting for a push.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race. Queue rather than cancel, so a run that is already
+# uploading is allowed to finish rather than leaving Pages half-updated.
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          # Turns Pages on automatically the first time this runs, so there is
+          # no manual setup step in repository settings.
+          enablement: true
+
+      - name: Upload the landing page
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/landing
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
