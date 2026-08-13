@@ -2,6 +2,7 @@ import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/theme';
+import { isolateLtr } from '@/lib/format';
 import type { ProtectionCompleteness, ProtectionFactorKey } from '@/domain/protection';
 import { CheckIcon, ChevronIcon, ProtectionMeter, Text } from '@/ui';
 
@@ -87,7 +88,7 @@ export function ProtectionBreakdown({ completeness, onFix }: ProtectionBreakdown
                 {t(`protection.action.${gap.key}`)}
               </Text>
               <Text variant="caption" style={{ color: theme.colors.text.accent }}>
-                {t('protection.worth', { count: gap.weight })}
+                {isolateLtr(t('protection.worth', { count: gap.weight }))}
               </Text>
               <ChevronIcon size={16} color={theme.colors.text.tertiary} />
             </Pressable>

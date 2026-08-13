@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MY Warranty — interactive prototype</title>
 <meta name="description" content="A playable prototype of MY Warranty: real warranty maths, real plan limits, real paywall behaviour.">
-<meta name="theme-color" content="#0B1220">
+<meta name="theme-color" content="#231F1C">
 <style>
 /* ==========================================================================
    MY Warranty — prototype styling
@@ -18,20 +18,20 @@
 
 /* ---- page chrome around the device ---- */
 :root {
-  --stage:      #EEF1F5;
-  --stage-ink:  #0A1018;
-  --stage-dim:  #5A6472;
-  --stage-line: #D9E0E8;
-  --stage-accent: #0B6E84;
+  --stage:      #EFEAE3;
+  --stage-ink:  #1C1917;
+  --stage-dim:  #6B625B;
+  --stage-line: #DBD1C6;
+  --stage-accent: #1F6F5C;
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 }
 html[data-proto-theme="dark"] {
-  --stage:      #06090F;
-  --stage-ink:  #E9EEF3;
-  --stage-dim:  #93A0AF;
-  --stage-line: #1A222E;
-  --stage-accent: #57C8DE;
+  --stage:      #221D19;
+  --stage-ink:  #F5F1EC;
+  --stage-dim:  #BCAFA3;
+  --stage-line: #2B2620;
+  --stage-accent: #4FBF97;
 }
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -72,8 +72,8 @@ body {
 .device {
   width: 390px; height: 844px; flex: none;
   border-radius: 46px; padding: 10px;
-  background: linear-gradient(160deg, #2C3644, #0E131B);
-  box-shadow: 0 40px 80px -34px rgba(4, 10, 20, .7), 0 3px 8px rgba(4,10,20,.2);
+  background: linear-gradient(160deg, #3A342F, #16130F);
+  box-shadow: 0 40px 80px -34px rgba(28, 20, 12, .62), 0 3px 8px rgba(28,20,12,.2);
 }
 
 /* On a phone the prototype takes the whole screen — no frame, no page chrome. */
@@ -87,23 +87,26 @@ body {
    APP SURFACE — semantic tokens, verbatim
    ========================================================================== */
 #app {
-  --bg-canvas: #F7F8FA; --bg-surface: #FFFFFF; --bg-subtle: #F0F2F5; --bg-brand: #0B1220;
-  --scrim: rgba(5,8,15,.45);
-  --t-primary: #0B1220; --t-secondary: #5A6472; --t-tertiary: #78828F;
-  --t-onbrand: #FFFFFF; --t-accent: #0B57D0; --t-danger: #B3261E;
-  --bd-subtle: #E3E6EC; --bd-focus: #1F6FEB;
-  --accent-solid: #0B57D0; --accent-soft: #EBF2FF;
-  --st-active-fg: #12855F; --st-active-bg: #D7F2E6;
-  --st-end-fg: #9A5B00;    --st-end-bg: #FCEBCF;
-  --st-exp-fg: #B3261E;    --st-exp-bg: #FBDDDB;
-  --st-neu-fg: #5A6472;    --st-neu-bg: #F0F2F5;
-  --ok-fg: #12855F; --ok-bg: #D7F2E6;
-  --warn-fg: #9A5B00; --warn-bg: #FCEBCF;
-  --bad-fg: #B3261E; --bad-bg: #FBDDDB;
-  --info-fg: #0A7A92; --info-bg: #D3F1F7;
-  --ctl-bg: #0B1220; --ctl-bg-press: #1E2739; --ctl-fg: #FFFFFF;
-  --ctl2-bg: #F0F2F5; --ctl2-bg-press: #E3E6EC; --ctl2-fg: #0B1220;
-  --shadow: rgba(11,18,32,.10);
+  --bg-canvas: #FAF8F5; --bg-surface: #FFFFFF; --bg-subtle: #F5F1EC;
+  --bg-elevated: #FFFFFF; --bg-brand: #231F1C;
+  --scrim: rgba(28,25,23,.42);
+  --t-primary: #1C1917; --t-secondary: #6B625B; --t-tertiary: #9C918A;
+  --t-onbrand: #FAF8F5; --t-accent: #1F6F5C; --t-danger: #B0332B;
+  --bd-subtle: #EAE3DB; --bd-default: #DBD1C6; --bd-focus: #1F6F5C;
+  --accent-solid: #1F6F5C; --accent-soft: #E8F5EF;
+  --st-active-fg: #0F7355; --st-active-bg: #DCF2E8;
+  --st-end-fg: #A8620A;    --st-end-bg: #FDF0DA;
+  --st-exp-fg: #B0332B;    --st-exp-bg: #FBE3E0;
+  --st-neu-fg: #6B625B;    --st-neu-bg: #F5F1EC;
+  --ring-track: #EAE3DB;   --ring-fill: #1F6F5C;
+  --ai-fg: #5B4BB8; --ai-bg: #EDE9FB; --ai-bd: #A99BF0;
+  --ok-fg: #0F7355; --ok-bg: #DCF2E8;
+  --warn-fg: #A8620A; --warn-bg: #FDF0DA;
+  --bad-fg: #B0332B; --bad-bg: #FBE3E0;
+  --info-fg: #5B4BB8; --info-bg: #EDE9FB;
+  --ctl-bg: #231F1C; --ctl-bg-press: #453D34; --ctl-fg: #FAF8F5;
+  --ctl2-bg: #F5F1EC; --ctl2-bg-press: #EAE3DB; --ctl2-fg: #1C1917;
+  --shadow: rgba(60,46,34,.13);
 
   height: 100%; border-radius: 36px; overflow: hidden;
   background: var(--bg-canvas); color: var(--t-primary);
@@ -113,23 +116,26 @@ body {
 @media (max-width: 900px) { #app { border-radius: 0; } }
 
 #app[data-theme="dark"] {
-  --bg-canvas: #05080F; --bg-surface: #0B1220; --bg-subtle: #141C2E; --bg-brand: #141C2E;
-  --scrim: rgba(0,0,0,.6);
-  --t-primary: #F7F8FA; --t-secondary: #A3ABB9; --t-tertiary: #78828F;
-  --t-onbrand: #FFFFFF; --t-accent: #7FAAFF; --t-danger: #F5928A;
-  --bd-subtle: #1E2739; --bd-focus: #4D8DFF;
-  --accent-solid: #1F6FEB; --accent-soft: rgba(31,111,235,.18);
-  --st-active-fg: #5FCFA4; --st-active-bg: rgba(47,183,131,.16);
-  --st-end-fg: #F2C066;    --st-end-bg: rgba(224,160,56,.16);
-  --st-exp-fg: #F5928A;    --st-exp-bg: rgba(235,106,96,.16);
-  --st-neu-fg: #A3ABB9;    --st-neu-bg: rgba(163,171,185,.12);
-  --ok-fg: #5FCFA4; --ok-bg: rgba(47,183,131,.16);
-  --warn-fg: #F2C066; --warn-bg: rgba(224,160,56,.16);
-  --bad-fg: #F5928A; --bad-bg: rgba(235,106,96,.16);
-  --info-fg: #6FD3E5; --info-bg: rgba(51,189,214,.16);
-  --ctl-bg: #F7F8FA; --ctl-bg-press: #CDD3DC; --ctl-fg: #05080F;
-  --ctl2-bg: #141C2E; --ctl2-bg-press: #1E2739; --ctl2-fg: #F7F8FA;
-  --shadow: rgba(0,0,0,.5);
+  --bg-canvas: #16130F; --bg-surface: #211D19; --bg-subtle: #2B2620;
+  --bg-elevated: #2F2923; --bg-brand: #2B2620;
+  --scrim: rgba(0,0,0,.62);
+  --t-primary: #F5F1EC; --t-secondary: #BCAFA3; --t-tertiary: #9C918A;
+  --t-onbrand: #F5F1EC; --t-accent: #4FBF97; --t-danger: #F0918A;
+  --bd-subtle: #2F2923; --bd-default: #3D362E; --bd-focus: #4FBF97;
+  --accent-solid: #4FBF97; --accent-soft: rgba(79,191,151,.16);
+  --st-active-fg: #6FCFAC; --st-active-bg: rgba(79,191,151,.16);
+  --st-end-fg: #E8B45E;    --st-end-bg: rgba(232,180,94,.16);
+  --st-exp-fg: #F0918A;    --st-exp-bg: rgba(240,145,138,.16);
+  --st-neu-fg: #BCAFA3;    --st-neu-bg: rgba(188,175,163,.12);
+  --ring-track: #2F2923;   --ring-fill: #4FBF97;
+  --ai-fg: #A99BF0; --ai-bg: rgba(169,155,240,.16); --ai-bd: rgba(169,155,240,.34);
+  --ok-fg: #6FCFAC; --ok-bg: rgba(79,191,151,.16);
+  --warn-fg: #E8B45E; --warn-bg: rgba(232,180,94,.16);
+  --bad-fg: #F0918A; --bad-bg: rgba(240,145,138,.16);
+  --info-fg: #A99BF0; --info-bg: rgba(169,155,240,.16);
+  --ctl-bg: #F5F1EC; --ctl-bg-press: #DBD1C6; --ctl-fg: #100D0B;
+  --ctl2-bg: #2B2620; --ctl2-bg-press: #2F2923; --ctl2-fg: #F5F1EC;
+  --shadow: rgba(0,0,0,.55);
 }
 
 /* ---- status bar ---- */
@@ -199,7 +205,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 
 .btn {
   display: flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 48px; padding: 0 20px; border-radius: 10px;
+  min-height: 48px; padding: 0 20px; border-radius: 14px;
   font-size: 16px; font-weight: 600; letter-spacing: -.1px; width: 100%;
   transition: background-color .14s ease, transform .1s ease;
 }
@@ -222,9 +228,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .sticky-save { margin-top: 4px; }
 
 /* ---- cards ---- */
+/* V2 surfaces carry no border. They separate from the warm canvas by being
+   brighter than it, which is the reason the canvas is warm. */
 .card {
-  background: var(--bg-surface); border: 1px solid var(--bd-subtle);
-  border-radius: 14px; padding: 16px; width: 100%; text-align: start;
+  background: var(--bg-surface); border: 0;
+  border-radius: 20px; padding: 16px; width: 100%; text-align: start;
 }
 .card.tight { padding: 14px; }
 .card.brand { background: var(--bg-brand); border-color: transparent; }
@@ -232,10 +240,16 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .pressable { transition: transform .1s ease, background-color .14s ease; }
 .pressable:active { transform: scale(.985); }
 
-.thumb {
-  width: 52px; height: 52px; border-radius: 10px; flex: none;
-  background: var(--bg-subtle); display: grid; place-items: center; color: var(--t-tertiary);
+/* ---- product art ---- */
+.art {
+  width: var(--art, 60px); height: var(--art, 60px); flex: none;
+  border-radius: calc(var(--art, 60px) * .26);
+  background: var(--bg-subtle); display: grid; place-items: center;
 }
+.art svg { width: 62%; height: 62%; }
+.art .st { stroke: var(--t-secondary); stroke-width: 1.6; stroke-linejoin: round; fill: none; }
+.art .acc { fill: var(--accent-solid); opacity: .15; stroke: none; }
+.art .fillst { fill: var(--t-secondary); stroke: none; }
 
 /* ---- status badge: colour + shape, never colour alone ---- */
 .badge {
@@ -252,16 +266,64 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .dot.sq { border-radius: 0; background: none; border: 1.5px solid currentColor; }
 .dot.dash { height: 2px; border-radius: 1px; }
 
-/* ---- summary tiles ---- */
-.tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.tile { background: var(--bg-surface); border: 1px solid var(--bd-subtle); border-radius: 14px; padding: 14px 12px; }
-.rule { width: 20px; height: 3px; border-radius: 2px; margin-bottom: 8px; }
-.rule.active { background: var(--st-active-fg); }
-.rule.ending { background: var(--st-end-fg); }
-.rule.expired { background: var(--st-exp-fg); }
+/* ---- panels: the V2 container, replacing V1's bordered card ---- */
+.panel { background: var(--bg-surface); border-radius: 20px; padding: 16px; width: 100%; text-align: start; }
+.panel.brand { background: var(--bg-brand); }
+.hero { background: var(--bg-surface); border-radius: 28px; padding: 20px; }
+.phero { align-items: center; padding: 4px 0 0; }
+.phero .art { --art: 120px; border-radius: 28px; }
+.center-row { justify-content: center; }
+
+/* ---- protection ring ----
+   The one genuinely expressive element on Home. It replaced three numeric
+   tiles that stated facts without ever implying an action. */
+.ring { position: relative; width: var(--d); height: var(--d); flex: none; display: grid; place-items: center; }
+.ring svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; }
+.ring-track { stroke: var(--ring-track); }
+.ring-fill { stroke: var(--ring-fill); }
+.ring-fill.warn-ring { stroke: var(--st-end-fg); }
+.ring-label { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.ring-label .num { font-size: 26px; line-height: 30px; }
+
+/* ---- recommended actions ---- */
+.act { width: 100%; padding: 10px 12px; border-radius: 14px; background: var(--bg-surface); text-align: start; }
+.worth { color: var(--t-accent); font-variant-numeric: tabular-nums; }
+.allgood {
+  background: var(--st-active-bg); color: var(--st-active-fg);
+  border-radius: 20px; padding: 14px 16px;
+}
+.gap { padding: 10px 4px; }
+.hollow { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--bd-default); flex: none; }
+.tick {
+  background: var(--st-active-bg); color: var(--st-active-fg);
+  border-radius: 999px; padding: 4px 9px; font-size: 13px;
+}
+.tick .ico { width: 12px; height: 12px; }
+.active-text { color: var(--st-active-fg); }
+.ending-text { color: var(--st-end-fg); }
+.expired-text { color: var(--st-exp-fg); }
+
+/* ---- product card ---- */
+.pcard {
+  width: 100%; padding: 12px 14px; border-radius: 20px;
+  background: var(--bg-surface); text-align: start;
+}
+.statusline.active { color: var(--st-active-fg); }
+.statusline.ending { color: var(--st-end-fg); }
+.statusline.expired { color: var(--st-exp-fg); }
+.statusline.unknown { color: var(--st-neu-fg); }
+.statusline i { width: 7px; height: 7px; }
+
+/* ---- profile ---- */
+.mono-av {
+  width: 60px; height: 60px; border-radius: 50%; flex: none;
+  background: var(--accent-soft); color: var(--t-accent);
+  display: grid; place-items: center; font-size: 22px; font-weight: 650;
+}
 
 /* ---- timeline ---- */
-.track { height: 6px; border-radius: 3px; background: var(--bg-subtle); overflow: hidden; }
+.track { height: 6px; border-radius: 3px; background: var(--ring-track); overflow: hidden; }
 .track i { display: block; height: 100%; border-radius: 3px; }
 .track i.active { background: var(--st-active-fg); }
 .track i.ending { background: var(--st-end-fg); }
@@ -269,7 +331,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .track i.unknown { background: var(--st-neu-fg); }
 
 /* ---- list group ---- */
-.group { background: var(--bg-surface); border: 1px solid var(--bd-subtle); border-radius: 14px; overflow: hidden; }
+.group { background: var(--bg-surface); border-radius: 20px; overflow: hidden; }
 .lrow { display: flex; align-items: center; gap: 12px; padding: 13px 16px; min-height: 50px; width: 100%; text-align: start; }
 .lrow + .lrow { border-top: 1px solid var(--bd-subtle); }
 
@@ -328,14 +390,14 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .chip.muted { background: var(--bg-subtle); color: var(--t-tertiary); }
 
 /* ---- add-method rows ---- */
-.method {
-  display: flex; align-items: center; gap: 12px; width: 100%;
-  padding: 16px; border-radius: 14px;
-  border: 1px solid var(--bd-subtle); background: var(--bg-surface);
+.mhero {
+  width: 100%; padding: 20px; border-radius: 28px;
+  background: var(--bg-brand); text-align: start;
 }
-.mico {
-  width: 44px; height: 44px; border-radius: 10px; flex: none;
-  background: var(--bg-subtle); display: grid; place-items: center;
+.mhero-ico {
+  width: 48px; height: 48px; border-radius: 14px; flex: none;
+  background: var(--accent-solid); color: var(--ctl-fg);
+  display: grid; place-items: center;
 }
 
 /* ---- notice ---- */

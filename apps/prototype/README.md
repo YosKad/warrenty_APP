@@ -30,9 +30,14 @@ it's built for real.
 3. **Check coverage.** Open a product still in warranty → Report a problem.
    Describe a fault ("the screen has vertical lines") versus damage ("I dropped
    it") and watch the verdict change. Every verdict cites a clause.
-4. **Switch language.** Profile → Language → עברית. The whole layout mirrors;
-   serial numbers, model codes and phone numbers stay left-to-right.
-5. **Switch theme and plan.** Profile → Appearance and Subscription.
+4. **Read the Protection Score.** Home leads with one number and the actions
+   that raise it. Each action states what it is worth; open the product it
+   belongs to and *Claim readiness* shows the same score broken into the facts
+   it is made of. The maths is the app's own — `src/domain/protection.ts`,
+   deterministic, no model involved.
+5. **Switch language.** Profile → Language → עברית. The whole layout mirrors;
+   serial numbers, model codes and percentages stay left-to-right.
+6. **Switch theme and plan.** Profile → Appearance and Subscription.
 
 Your data lives in `localStorage` and survives a reload. Reset it from
 **Profile → Reset all data**.

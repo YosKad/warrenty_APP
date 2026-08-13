@@ -2,6 +2,7 @@ import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/theme';
+import { isolateLtr } from '@/lib/format';
 import type { SuggestedAction } from '@/domain/protection';
 import type { ProtectionProductRow } from '@/hooks/useProtection';
 import { CheckIcon, ProductImage, Text } from '@/ui';
@@ -105,7 +106,7 @@ export function SuggestedActions({ actions, productFor, onSelect }: SuggestedAct
               {/* What the action is worth. Shown because a score you can't move on
                   purpose is a score you stop believing. */}
               <Text variant="caption" style={{ color: theme.colors.text.accent }}>
-                {t('protection.worth', { count: action.weight })}
+                {isolateLtr(t('protection.worth', { count: action.weight }))}
               </Text>
             </Pressable>
           );

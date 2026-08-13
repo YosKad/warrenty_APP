@@ -122,6 +122,28 @@ const STRINGS = {
     noProducts: 'Add your first product to get started',
     active: 'Active', endingSoon: 'Ending soon', expired: 'Expired', unknownStatus: 'Warranty not set',
     attention: 'Needs your attention', reviewWarranty: 'Review warranty',
+    protectionTitle: 'Protection score', claimReady: 'claim ready',
+    bandStrong: 'Your records are in good shape',
+    bandFair: 'A few details are still missing',
+    bandNeedsAttention: 'Key details are missing',
+    bandEmpty: 'Add a product to start tracking',
+    tracked_one: '{n} product tracked', tracked_other: '{n} products tracked',
+    recommendedActions: 'Recommended actions',
+    recommendedSub: 'Each one makes a claim easier to file',
+    allOnFile: 'Everything we need is on file',
+    claimReadiness: 'Claim readiness',
+    gapsLeft_one: '{n} detail missing', gapsLeft_other: '{n} details missing',
+    yourProducts: 'Your products',
+    protectedShort: 'Protected', endingShort: 'Ending soon',
+    expiredShort: 'Expired', unknownShort: 'Warranty not set',
+    pfPurchase_date: 'Purchase date', pfWarranty_end: 'Warranty end date',
+    pfProof_of_purchase: 'Proof of purchase', pfWarranty_provider: 'Warranty provider',
+    pfWarranty_terms: 'Warranty terms', pfSerial_number: 'Serial number',
+    pfService_provider: 'Service contact', pfModel: 'Model number',
+    paPurchase_date: 'Add the purchase date', paWarranty_end: 'Add when the warranty ends',
+    paProof_of_purchase: 'Attach the receipt', paWarranty_provider: 'Add who provides the warranty',
+    paWarranty_terms: 'Add the warranty terms', paSerial_number: 'Add the serial number',
+    paService_provider: 'Add a service contact', paModel: 'Add the model number',
     recentlyAdded: 'Recently added', seeAll: 'See all', addProduct: 'Add a product',
     slotsUsed: '{used} of {limit} products used',
     myProducts: 'My products', searchPlaceholder: 'Search products, brands, models',
@@ -201,6 +223,28 @@ const STRINGS = {
     noProducts: 'הוסיפו מוצר ראשון כדי להתחיל',
     active: 'בתוקף', endingSoon: 'מסתיימת בקרוב', expired: 'פגה', unknownStatus: 'האחריות לא הוגדרה',
     attention: 'דורש תשומת לב', reviewWarranty: 'בדיקת האחריות',
+    protectionTitle: 'ציון הגנה', claimReady: 'מוכן לתביעה',
+    bandStrong: 'התיעוד שלכם במצב טוב',
+    bandFair: 'עדיין חסרים כמה פרטים',
+    bandNeedsAttention: 'חסרים פרטים חשובים',
+    bandEmpty: 'הוסיפו מוצר כדי להתחיל לעקוב',
+    tracked_one: 'מוצר אחד במעקב', tracked_other: '{n} מוצרים במעקב',
+    recommendedActions: 'פעולות מומלצות',
+    recommendedSub: 'כל אחת מהן מקלה על הגשת תביעה',
+    allOnFile: 'כל מה שצריך נמצא אצלנו',
+    claimReadiness: 'מוכנות לתביעה',
+    gapsLeft_one: 'חסר פרט אחד', gapsLeft_other: 'חסרים {n} פרטים',
+    yourProducts: 'המוצרים שלכם',
+    protectedShort: 'מוגן', endingShort: 'מסתיים בקרוב',
+    expiredShort: 'פג', unknownShort: 'האחריות לא הוגדרה',
+    pfPurchase_date: 'תאריך רכישה', pfWarranty_end: 'מועד סיום האחריות',
+    pfProof_of_purchase: 'הוכחת רכישה', pfWarranty_provider: 'נותן האחריות',
+    pfWarranty_terms: 'תנאי האחריות', pfSerial_number: 'מספר סידורי',
+    pfService_provider: 'איש קשר לשירות', pfModel: 'מספר דגם',
+    paPurchase_date: 'הוספת תאריך הרכישה', paWarranty_end: 'הוספת מועד סיום האחריות',
+    paProof_of_purchase: 'צירוף הקבלה', paWarranty_provider: 'הוספת נותן האחריות',
+    paWarranty_terms: 'הוספת תנאי האחריות', paSerial_number: 'הוספת המספר הסידורי',
+    paService_provider: 'הוספת איש קשר לשירות', paModel: 'הוספת מספר הדגם',
     recentlyAdded: 'נוספו לאחרונה', seeAll: 'הצג הכול', addProduct: 'הוספת מוצר',
     slotsUsed: '{used} מתוך {limit} מוצרים בשימוש',
     myProducts: 'המוצרים שלי', searchPlaceholder: 'חיפוש מוצרים, מותגים, דגמים',
@@ -310,7 +354,7 @@ function catLabel(slug) {
 
 /* ----------------------------------------------------------------- state -- */
 
-const STORE_KEY = 'mw.prototype.v1';
+const STORE_KEY = 'mw.prototype.v2';
 
 function seedProducts() {
   const now = new Date();
@@ -321,18 +365,21 @@ function seedProducts() {
       category: 'electronics', purchaseDate: iso(-712), durationMonths: 24,
       retailer: 'KSP', price: 8490, currency: 'ILS', serial: 'RZ8N40FKT9L',
       source: 'manufacturer', verified: true, notes: '', createdAt: Date.now() - 4000,
+      hasReceipt: true, warrantyProvider: 'Samsung Israel', serviceProvider: '',
     },
     {
       id: 'p2', name: 'MacBook Pro 14"', brand: 'Apple', model: 'M4 Pro',
       category: 'computers', purchaseDate: iso(-190), durationMonths: 36,
       retailer: 'iDigital', price: 11200, currency: 'ILS', serial: 'C02XG2JMQ6L4',
       source: 'user_entered', verified: true, notes: '', createdAt: Date.now() - 3000,
+      hasReceipt: true, warrantyProvider: '', serviceProvider: '',
     },
     {
       id: 'p3', name: 'Dyson V15 Detect', brand: 'Dyson', model: 'SV47',
       category: 'appliances', purchaseDate: iso(-800), durationMonths: 24,
       retailer: 'Dyson Store', price: 2790, currency: 'ILS', serial: '',
       source: 'user_entered', verified: true, notes: '', createdAt: Date.now() - 2000,
+      hasReceipt: false, warrantyProvider: '', serviceProvider: '',
     },
   ];
 }
@@ -594,6 +641,209 @@ function icon(name, cls) {
   return '<span class="ico ' + (cls || '') + '">' + I[name] + '</span>';
 }
 
+/* --------------------------------------------------------- illustrations --
+   Ported from apps/mobile/src/ui/ProductIllustration.tsx. One 32-unit grid,
+   one stroke weight, accent fill only on the "live" part of each object.
+   V1 drew the same grey box for a television and a vacuum cleaner, which is
+   what made a list of things you own read as a list of database rows. */
+
+const ART = {
+  electronics:
+    '<rect x="3" y="6" width="26" height="16" rx="2" class="acc"/>' +
+    '<rect x="3" y="6" width="26" height="16" rx="2" class="st"/>' +
+    '<path d="M12 26h8M16 22v4" class="st" stroke-linecap="round"/>',
+  computers:
+    '<rect x="5" y="7" width="22" height="14" rx="1.8" class="acc"/>' +
+    '<rect x="5" y="7" width="22" height="14" rx="1.8" class="st"/>' +
+    '<path d="M2.5 24.5h27a1.5 1.5 0 001.2-2.4L29 21H3l-1.7 1.1a1.5 1.5 0 001.2 2.4z" class="st"/>',
+  phones:
+    '<rect x="9" y="3" width="14" height="26" rx="3" class="acc"/>' +
+    '<rect x="9" y="3" width="14" height="26" rx="3" class="st"/>' +
+    '<path d="M14 6h4" class="st" stroke-linecap="round"/>' +
+    '<circle cx="16" cy="25.5" r="1.1" class="fillst"/>',
+  appliances:
+    '<rect x="6" y="3" width="20" height="26" rx="2.5" class="st"/>' +
+    '<circle cx="16" cy="19" r="6" class="acc"/>' +
+    '<circle cx="16" cy="19" r="6" class="st"/>' +
+    '<circle cx="16" cy="19" r="2.4" class="st"/>' +
+    '<path d="M10 8h6" class="st" stroke-linecap="round"/>' +
+    '<circle cx="22" cy="8" r="1.2" class="st"/>',
+  vacuum:
+    '<path d="M20 4l-3 14" class="st" stroke-linecap="round"/>' +
+    '<rect x="13" y="16" width="11" height="9" rx="2.5" class="acc" transform="rotate(-12 18 20)"/>' +
+    '<rect x="13" y="16" width="11" height="9" rx="2.5" class="st" transform="rotate(-12 18 20)"/>' +
+    '<path d="M11 24l-4 4" class="st" stroke-linecap="round"/>' +
+    '<path d="M5 27.5h5" class="st" stroke-linecap="round"/>' +
+    '<circle cx="20.5" cy="4" r="1.8" class="st"/>',
+  audio:
+    '<path d="M6 19v-3a10 10 0 0120 0v3" class="st" stroke-linecap="round"/>' +
+    '<rect x="3" y="18" width="6" height="10" rx="3" class="acc"/>' +
+    '<rect x="3" y="18" width="6" height="10" rx="3" class="st"/>' +
+    '<rect x="23" y="18" width="6" height="10" rx="3" class="acc"/>' +
+    '<rect x="23" y="18" width="6" height="10" rx="3" class="st"/>',
+  watches:
+    '<rect x="10" y="9" width="12" height="14" rx="3.4" class="acc"/>' +
+    '<rect x="10" y="9" width="12" height="14" rx="3.4" class="st"/>' +
+    '<path d="M13 9V5.5A1.5 1.5 0 0114.5 4h3A1.5 1.5 0 0119 5.5V9M13 23v3.5A1.5 1.5 0 0014.5 28h3a1.5 1.5 0 001.5-1.5V23" class="st"/>' +
+    '<path d="M16 13v3l2 1.4" class="st" stroke-linecap="round"/>',
+  furniture:
+    '<path d="M5 15v-3a2.5 2.5 0 015 0v3" class="st"/>' +
+    '<path d="M22 15v-3a2.5 2.5 0 015 0v3" class="st"/>' +
+    '<rect x="4" y="14" width="24" height="9" rx="2.5" class="acc"/>' +
+    '<rect x="4" y="14" width="24" height="9" rx="2.5" class="st"/>' +
+    '<path d="M7 23v3M25 23v3" class="st" stroke-linecap="round"/>',
+  tools:
+    '<path d="M20.5 4a6 6 0 00-5.2 9L4.6 23.7a2.2 2.2 0 103.1 3.1L18.4 16a6 6 0 106.4-9.6l-3.2 3.2-2.9-.6-.6-2.9 3.2-3.2A6 6 0 0020.5 4z" class="acc"/>' +
+    '<path d="M20.5 4a6 6 0 00-5.2 9L4.6 23.7a2.2 2.2 0 103.1 3.1L18.4 16a6 6 0 106.4-9.6l-3.2 3.2-2.9-.6-.6-2.9 3.2-3.2A6 6 0 0020.5 4z" class="st"/>',
+  automotive:
+    '<path d="M4 20v-3.2l2.4-5.4A2.4 2.4 0 018.6 10h14.8a2.4 2.4 0 012.2 1.4L28 16.8V20H4z" class="acc"/>' +
+    '<path d="M4 20v-3.2l2.4-5.4A2.4 2.4 0 018.6 10h14.8a2.4 2.4 0 012.2 1.4L28 16.8V20H4z" class="st"/>' +
+    '<circle cx="9.5" cy="20.5" r="2.6" class="st"/>' +
+    '<circle cx="22.5" cy="20.5" r="2.6" class="st"/>',
+  baby:
+    '<path d="M6 20a10 10 0 0120 0H6z" class="acc"/>' +
+    '<path d="M6 20a10 10 0 0120 0H6z" class="st"/>' +
+    '<path d="M16 10v10" class="st" stroke-linecap="round"/>' +
+    '<circle cx="9" cy="25" r="2.2" class="st"/>' +
+    '<circle cx="23" cy="25" r="2.2" class="st"/>',
+  jewelry:
+    '<path d="M10 5h12l5 7-11 15L5 12z" class="acc"/>' +
+    '<path d="M10 5h12l5 7-11 15L5 12z" class="st"/>' +
+    '<path d="M5 12h22M10 5l6 7 6-7M16 12v15" class="st"/>',
+  other:
+    '<path d="M16 4l11 5.5v13L16 28 5 22.5v-13z" class="acc"/>' +
+    '<path d="M16 4l11 5.5v13L16 28 5 22.5v-13z" class="st"/>' +
+    '<path d="M5 9.5L16 15l11-5.5M16 15v13" class="st"/>',
+};
+
+/** Refines the category by product name: a Dyson V15 is not a washing machine. */
+function artSlug(category, hint) {
+  const s = String(hint || '').toLowerCase();
+  if (/vacuum|hoover|dyson|v15|v11|stick/.test(s)) return 'vacuum';
+  if (/headphone|earbud|airpod|wh-1000|buds|speaker|soundbar|sonos/.test(s)) return 'audio';
+  if (/washer|washing|dryer|dishwasher|fridge|refrigerator|freezer|oven/.test(s)) return 'appliances';
+  if (/macbook|laptop|notebook|thinkpad|surface|imac/.test(s)) return 'computers';
+  if (/iphone|galaxy|pixel|phone|xiaomi/.test(s)) return 'phones';
+  if (/\btv\b|oled|qled|television|monitor|display|s95d|qn90/.test(s)) return 'electronics';
+  if (/watch|garmin|fitbit/.test(s)) return 'watches';
+  return ART[category] ? category : 'other';
+}
+
+/** The product's picture. In the real app a user photo wins; here it is always art. */
+function productArt(p, size) {
+  const slug = artSlug(p.category, p.name);
+  return '<span class="art" style="--art:' + (size || 60) + 'px" aria-hidden="true">' +
+    '<svg viewBox="0 0 32 32" fill="none">' + ART[slug] + '</svg></span>';
+}
+
+/* ------------------------------------------------------------ protection --
+   Ported verbatim from apps/mobile/src/domain/protection.ts. Deterministic:
+   no model involvement, every point traceable to a named factor, which is the
+   only reason the score can be shown as prominently as it is. */
+
+const FACTORS = [
+  { key: 'purchase_date', weight: 20 },
+  { key: 'warranty_end', weight: 20 },
+  { key: 'proof_of_purchase', weight: 18 },
+  { key: 'warranty_provider', weight: 12 },
+  { key: 'warranty_terms', weight: 10 },
+  { key: 'serial_number', weight: 8 },
+  { key: 'service_provider', weight: 7 },
+  { key: 'model', weight: 5 },
+];
+
+function factorSatisfied(key, p) {
+  switch (key) {
+    case 'purchase_date': return !!p.purchaseDate;
+    case 'warranty_end': return !!p.purchaseDate && !!p.durationMonths;
+    case 'proof_of_purchase': return !!p.hasReceipt;
+    case 'warranty_provider': return !!p.warrantyProvider;
+    case 'warranty_terms': return p.source === 'manufacturer';
+    case 'serial_number': return !!(p.serial && p.serial.trim());
+    case 'service_provider': return !!p.serviceProvider;
+    case 'model': return !!(p.model && p.model.trim());
+    default: return false;
+  }
+}
+
+function completeness(p) {
+  let earned = 0;
+  const gaps = [], satisfied = [];
+  FACTORS.forEach((f) => {
+    if (factorSatisfied(f.key, p)) { earned += f.weight; satisfied.push(f.key); }
+    else gaps.push(f);
+  });
+  gaps.sort((a, b) => b.weight - a.weight);
+  return { score: Math.round(earned), gaps: gaps, satisfied: satisfied };
+}
+
+/** An expired product still counts — its records have value — but weighs less. */
+function statusWeight(status) {
+  if (status === 'active' || status === 'ending_soon') return 1;
+  if (status === 'expired') return 0.25;
+  return 0.5;
+}
+
+function portfolioProtection() {
+  if (S.products.length === 0) return { score: null, band: 'empty', count: 0 };
+  const now = today();
+  let sum = 0, weight = 0;
+  S.products.forEach((p) => {
+    const w = statusWeight(snapshot(p, now).status);
+    sum += completeness(p).score * w;
+    weight += w;
+  });
+  const score = weight === 0 ? 0 : Math.round(sum / weight);
+  return {
+    score: score,
+    band: score >= 85 ? 'strong' : score >= 60 ? 'fair' : 'needs_attention',
+    count: S.products.length,
+  };
+}
+
+function urgency(status, days) {
+  if (status === 'expired') return 0.2;
+  if (status === 'unknown') return 1.2;
+  if (days === null) return 1;
+  if (days <= 30) return 2.5;
+  if (days <= 90) return 1.6;
+  return 1;
+}
+
+/** Gap × urgency, so a missing receipt on a warranty ending in 12 days wins. */
+function suggestedActions(limit) {
+  const now = today();
+  const out = [];
+  S.products.forEach((p) => {
+    const s = snapshot(p, now);
+    completeness(p).gaps.forEach((g) => {
+      out.push({
+        product: p, key: g.key, weight: g.weight,
+        priority: g.weight * urgency(s.status, s.daysRemaining),
+      });
+    });
+  });
+  out.sort((a, b) => b.priority - a.priority);
+  return out.slice(0, limit || 4);
+}
+
+/** The score ring. An SVG arc starting at 12 o'clock, like every progress ring. */
+function protectionRing(score, band, size) {
+  const d = size || 116, stroke = 10, r = (d - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const pct = score === null ? 0 : Math.max(0, Math.min(100, score)) / 100;
+  return '<span class="ring" style="--d:' + d + 'px">' +
+    '<svg viewBox="0 0 ' + d + ' ' + d + '" aria-hidden="true">' +
+      '<circle cx="' + d / 2 + '" cy="' + d / 2 + '" r="' + r + '" class="ring-track" stroke-width="' + stroke + '"/>' +
+      (score === null ? '' :
+        '<circle cx="' + d / 2 + '" cy="' + d / 2 + '" r="' + r + '" class="ring-fill' + (band === 'needs_attention' ? ' warn-ring' : '') +
+        '" stroke-width="' + stroke + '" stroke-linecap="round" stroke-dasharray="' +
+        (c * pct).toFixed(2) + ' ' + c.toFixed(2) + '"/>') +
+    '</svg>' +
+    '<span class="ring-label"><span class="num">' + (score === null ? '—' : score + '%') + '</span>' +
+    '<span class="cap ter">' + t('claimReady') + '</span></span></span>';
+}
+
 /* -------------------------------------------------------------- helpers -- */
 
 function statusMeta(status) {
@@ -647,38 +897,39 @@ function alertsList() {
 /* -------------------------------------------------------------- screens -- */
 
 function viewHome() {
-  const c = summary();
-  const protectedCount = c.active + c.ending_soon;
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'greetMorning' : hour < 18 ? 'greetAfternoon' : 'greetEvening';
   const limit = PLANS[S.plan].limit;
 
   if (S.products.length === 0) {
     return section([
-      '<div class="stack g4"><p class="sm sec">' + t(greet) + ', ' + esc(S.name) + '</p>',
-      '<h1 class="h1">' + t('noProducts') + '</h1></div>',
+      '<h2 class="h2" dir="auto">' + t(greet) + ', ' + esc(S.name) + '</h2>',
       emptyState(t('emptyTitle'), t('emptyBody'), t('emptyCta'), "go('addMethod')"),
     ].join(''));
   }
 
+  const pf = portfolioProtection();
   const soonest = alertsList().find((x) => x.s.status === 'ending_soon');
-  const recent = S.products.slice().sort((a, b) => b.createdAt - a.createdAt).slice(0, 3);
+  const actions = suggestedActions(4);
+  const recent = S.products.slice().sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
+  const bandKey = { strong: 'bandStrong', fair: 'bandFair', needs_attention: 'bandNeedsAttention', empty: 'bandEmpty' }[pf.band];
 
   return section([
-    '<div class="stack g4">',
-    '<p class="sm sec">' + t(greet) + ', ' + esc(S.name) + '</p>',
-    '<h1 class="h1">' + tn('protected', protectedCount) + '</h1>',
-    '</div>',
+    '<h2 class="h2" dir="auto">' + t(greet) + ', ' + esc(S.name) + '</h2>',
 
-    '<div class="tiles">',
-    tile(c.active, t('active'), 'active'),
-    tile(c.ending_soon, t('endingSoon'), 'ending'),
-    tile(c.expired, t('expired'), 'expired'),
+    // One number with a sentence about it, in place of V1's three counter tiles.
+    '<div class="hero row g16">' + protectionRing(pf.score, pf.band) +
+      '<div class="stack g4 grow">' +
+        '<p class="meta ter">' + t('protectionTitle') + '</p>' +
+        '<p class="h3">' + t(bandKey) + '</p>' +
+        '<p class="cap sec">' + tn('tracked', pf.count) + '</p>' +
+      '</div>' +
     '</div>',
 
     soonest
-      ? '<div class="card brand stack g8">' +
-        '<p class="meta onb dim">' + t('attention') + '</p>' +
+      ? '<div class="panel brand stack g12">' +
+        '<span class="row g8"><i class="dot" style="background:var(--st-end-fg)"></i>' +
+        '<span class="meta onb dim">' + t('attention') + '</span></span>' +
         '<p class="h3 onb" dir="auto">' + esc(tn('endsIn', Math.max(0, soonest.s.daysRemaining), { name: soonest.p.name })) + '</p>' +
         '<p class="sm onb dim">' + t('endsOn', { d: fmtDate(soonest.s.end, 'long') }) + '</p>' +
         '<button class="linkrow" data-act="go" data-screen="product" data-id="' + soonest.p.id + '">' +
@@ -686,10 +937,19 @@ function viewHome() {
         '</div>'
       : '',
 
-    '<div class="stack g12">',
-    '<div class="row between"><p class="h3">' + t('recentlyAdded') + '</p>',
+    actions.length
+      ? '<div class="stack g8">' +
+        '<div class="stack tiny-gap"><p class="h3">' + t('recommendedActions') + '</p>' +
+        '<p class="cap ter">' + t('recommendedSub') + '</p></div>' +
+        '<div class="stack g4">' + actions.map(actionRow).join('') + '</div>' +
+        '</div>'
+      : '<div class="allgood row g12">' + icon('check', 'sm-ico') +
+        '<span class="sms">' + t('allOnFile') + '</span></div>',
+
+    '<div class="stack g8">',
+    '<div class="row between"><p class="h3">' + t('yourProducts') + '</p>',
     '<button class="link" data-act="tab" data-screen="products">' + t('seeAll') + '</button></div>',
-    recent.map(productCard).join(''),
+    '<div class="stack g4">' + recent.map(productCard).join('') + '</div>',
     '</div>',
 
     '<div class="stack g8">',
@@ -701,23 +961,40 @@ function viewHome() {
   ].join(''));
 }
 
-function tile(n, label, cls) {
-  return '<div class="tile"><div class="rule ' + cls + '"></div>' +
-    '<p class="num">' + n + '</p><p class="cap sec">' + esc(label) + '</p></div>';
+/** Factor copy. Keys look like `purchase_date`, so the lookup is pf/pa + Capitalised. */
+function factorLabel(key) { return t('pf' + key.charAt(0).toUpperCase() + key.slice(1)); }
+function actionLabel(key) { return t('pa' + key.charAt(0).toUpperCase() + key.slice(1)); }
+
+/** One recommended action: what's missing, which product, and what it's worth. */
+function actionRow(a) {
+  return '<button class="act row g12 pressable" data-act="go" data-screen="product" data-id="' + a.product.id + '">' +
+    productArt(a.product, 40) +
+    '<span class="stack tiny-gap grow start">' +
+      '<span class="sms">' + esc(actionLabel(a.key)) + '</span>' +
+      '<span class="cap ter" dir="auto">' + esc(a.product.name) + '</span>' +
+    '</span>' +
+    '<span class="cap worth">' + ltr('+' + a.weight + '%') + '</span>' +
+  '</button>';
 }
 
 function productCard(p) {
   const s = snapshot(p, today());
   const rem = remainingText(s);
-  return '<button class="card tight row g12 pressable" data-act="go" data-screen="product" data-id="' + p.id + '">' +
-    '<span class="thumb">' + icon('box') + '</span>' +
-    '<span class="stack g6 grow start">' +
-      '<span class="stack tiny-gap start">' +
-        '<span class="bds" dir="auto">' + esc(p.name) + '</span>' +
-        (p.brand ? '<span class="cap ter" dir="auto">' + esc(p.brand) + '</span>' : '') +
+  const m = statusMeta(s.status);
+  const label = { active: 'protectedShort', ending_soon: 'endingShort', expired: 'expiredShort' }[s.status] || 'unknownShort';
+
+  // No border: the card separates from the warm canvas by being brighter than
+  // it. Status is a dot and a word rather than a filled pill — a list of eight
+  // pills is louder than the products themselves.
+  return '<button class="pcard row g16 pressable" data-act="go" data-screen="product" data-id="' + p.id + '">' +
+    productArt(p, 60) +
+    '<span class="stack tiny-gap grow start">' +
+      '<span class="bds" dir="auto">' + esc(p.name) + '</span>' +
+      (p.brand ? '<span class="cap ter" dir="auto">' + esc(p.brand) + '</span>' : '') +
+      '<span class="row g8 wrap statusline ' + m.cls + '">' +
+        '<i class="' + m.dot + '"></i><span class="sms">' + esc(t(label)) + '</span>' +
+        (rem ? '<span class="cap ter">·</span><span class="cap sec">' + esc(rem) + '</span>' : '') +
       '</span>' +
-      '<span class="row g8 wrap">' + badge(s.status, true) +
-        (rem ? '<span class="cap sec">' + esc(rem) + '</span>' : '') + '</span>' +
     '</span>' +
   '</button>';
 }
@@ -755,7 +1032,7 @@ function viewProducts() {
     '</div>',
 
     list.length
-      ? '<div class="stack g12">' + list.map(productCard).join('') + '</div>'
+      ? '<div class="stack g4">' + list.map(productCard).join('') + '</div>'
       : filtered
         ? emptyState(t('noMatchTitle'), t('noMatchBody'), t('clear'), "resetFilters()")
         : emptyState(t('emptyTitle'), t('emptyBody'), t('emptyCta'), "go('addMethod')"),
@@ -781,15 +1058,17 @@ function viewProduct() {
     '<button class="link" data-act="go" data-screen="edit" data-id="' + p.id + '">' + t('edit') + '</button>',
     '</div>',
 
-    '<div class="card brand stack g12">',
-    '<div class="stack g4"><p class="h2 onb" dir="auto">' + esc(p.name) + '</p>',
-    (p.brand || p.model
-      ? '<p class="sm onb dim" dir="auto">' + esc(p.brand || '') + (p.model ? ' · ' + esc(ltr(p.model)) : '') + '</p>'
-      : ''),
-    '</div>',
-    '<div class="row g12 wrap">' + badge(s.status) +
-      (rem ? '<span class="sm onb dim2">' + esc(rem) + '</span>' : '') + '</div>',
-    s.end ? '<p class="sm onb dim">' + t('endsOn', { d: fmtDate(s.end, 'long') }) + '</p>' : '',
+    // The product, not a record of it. V1 opened with a dark card of four text
+    // lines and no clue what the thing actually was.
+    '<div class="phero stack g16">' + productArt(p, 120) +
+      '<div class="stack g4">' +
+        '<p class="h1 center" dir="auto">' + esc(p.name) + '</p>' +
+        (p.brand || p.model
+          ? '<p class="sm ter center" dir="auto">' + esc(p.brand || '') + (p.model ? ' · ' + esc(ltr(p.model)) : '') + '</p>'
+          : '') +
+      '</div>' +
+      '<div class="row g8 wrap center-row">' + badge(s.status) +
+        (rem ? '<span class="sm sec">' + esc(rem) + '</span>' : '') + '</div>' +
     '</div>',
 
     !p.verified
@@ -798,7 +1077,7 @@ function viewProduct() {
       : '',
 
     s.start && s.end
-      ? '<div class="card stack g8">' +
+      ? '<div class="panel stack g8">' +
         '<p class="meta ter">' + t('timeline') + '</p>' +
         '<div class="track"><i class="' + statusMeta(s.status).cls + '" style="width:' +
           Math.round((s.progress || 0) * 100) + '%"></i></div>' +
@@ -815,6 +1094,8 @@ function viewProduct() {
       '<span class="cap ter">·</span>' +
       '<span class="cap ' + (p.verified ? 'ok' : 'warn') + '">' +
         (p.verified ? t('confHigh') : t('confLow')) + '</span></div>',
+
+    claimReadiness(p),
 
     claimable
       ? '<button class="btn primary" data-act="coverage" data-id="' + p.id + '">' + t('reportProblem') + '</button>'
@@ -840,6 +1121,36 @@ function viewProduct() {
   ].join(''));
 }
 
+/**
+ * Per-product claim readiness: the same score as Home, broken into the facts it
+ * is made of. Every gap is a row you can act on; the satisfied ones are listed
+ * quietly, because showing only what's missing reads as nagging.
+ */
+function claimReadiness(p) {
+  const c = completeness(p);
+  const tone = c.score >= 85 ? 'active' : c.score >= 60 ? 'ending' : 'expired';
+
+  return '<div class="panel stack g16">' +
+    '<div class="stack g8">' +
+      '<div class="row between g8"><p class="h3">' + t('claimReadiness') + '</p>' +
+      '<p class="cap ter">' + (c.gaps.length ? tn('gapsLeft', c.gaps.length) : t('allOnFile')) + '</p></div>' +
+      '<div class="row between g8"><div class="track grow"><i class="' + tone + '" style="width:' + c.score + '%"></i></div>' +
+      '<span class="meta ' + tone + '-text">' + ltr(c.score + '%') + '</span></div>' +
+    '</div>' +
+    (c.gaps.length
+      ? '<div class="stack g4">' + c.gaps.map((g) =>
+          '<div class="gap row g12"><i class="hollow"></i>' +
+          '<span class="sm grow start">' + esc(actionLabel(g.key)) + '</span>' +
+          '<span class="cap worth">' + ltr('+' + g.weight + '%') + '</span>' +
+          icon('chevron', 'ter sm-ico') + '</div>').join('') + '</div>'
+      : '') +
+    (c.satisfied.length
+      ? '<div class="row wrap g8">' + c.satisfied.map((k) =>
+          '<span class="tick row g4">' + icon('check', 'sm-ico') + esc(factorLabel(k)) + '</span>').join('') + '</div>'
+      : '') +
+  '</div>';
+}
+
 function row(label, value) {
   return '<div class="lrow"><span class="bd grow">' + esc(label) + '</span>' +
     '<span class="sm ter">' + value + '</span></div>';
@@ -858,17 +1169,27 @@ function viewAddMethod() {
     '<div class="row end navrow"><button class="iconbtn" data-act="back" aria-label="' + esc(t('close')) + '">' + icon('close') + '</button></div>',
     '<div class="stack g4"><h1 class="h1">' + t('addTitle') + '</h1>',
     '<p class="bd sec">' + t('addSubtitle') + '</p></div>',
-    '<div class="stack g12">',
-    methods.map((m) =>
-      '<button class="method pressable" data-act="method" data-method="' + m.k + '" data-wired="' + m.wired + '">' +
-        '<span class="mico">' + icon(m.icon) + '</span>' +
+    // V1 gave all four methods the same bordered box, which made the slowest one
+    // (typing it all in) look exactly as attractive as the fastest.
+    '<button class="mhero stack g12 pressable" data-act="method" data-method="' + methods[0].k +
+      '" data-wired="' + methods[0].wired + '">' +
+      '<span class="mhero-ico">' + icon(methods[0].icon) + '</span>' +
+      '<span class="stack g4 start">' +
+        '<span class="row g8"><span class="h3 onb">' + esc(methods[0].title) + '</span>' +
+          (methods[0].locked ? '<span class="chip">Plus</span>' : '') + '</span>' +
+        '<span class="sm onb dim">' + esc(methods[0].body) + '</span>' +
+      '</span>' +
+    '</button>',
+
+    '<div class="group">' + methods.slice(1).map((m) =>
+      '<button class="lrow pressable" data-act="method" data-method="' + m.k + '" data-wired="' + m.wired + '">' +
+        icon(m.icon, 'ter') +
         '<span class="stack tiny-gap grow start">' +
           '<span class="row g8"><span class="bds">' + esc(m.title) + '</span>' +
             (m.locked ? '<span class="chip">Plus</span>' : '') + '</span>' +
           '<span class="cap ter">' + esc(m.body) + '</span>' +
         '</span>' + icon('chevron', 'ter') +
-      '</button>').join(''),
-    '</div>',
+      '</button>').join('') + '</div>',
   ].join(''));
 }
 
@@ -1027,7 +1348,7 @@ function viewAlerts() {
     '<div class="row between"><h1 class="h1">' + t('alerts') + '</h1>' +
       (list.length ? '<button class="link" data-act="readAll">' + t('markAllRead') + '</button>' : '') + '</div>',
     list.length
-      ? '<div class="stack g12">' + list.map((x) => {
+      ? '<div class="stack g4">' + list.map((x) => {
           const unread = S.readAlerts.indexOf(x.p.id) === -1;
           const days = Math.max(0, x.s.daysRemaining || 0);
           return '<button class="card tight row g12 top pressable" data-act="go" data-screen="product" data-id="' + x.p.id + '">' +
@@ -1048,13 +1369,18 @@ function viewProfile() {
   const planLabel = S.plan.charAt(0).toUpperCase() + S.plan.slice(1);
 
   return section([
-    '<div class="stack g4"><h1 class="h1">' + esc(S.name) + '</h1>',
-    '<p class="sm sec">sarah@example.com</p></div>',
+    '<div class="row g16">' +
+      '<span class="mono-av">' + esc(monogram(S.name)) + '</span>' +
+      '<span class="stack tiny-gap grow start">' +
+        '<span class="h2" dir="auto">' + esc(S.name) + '</span>' +
+        '<span class="sm ter">sarah@example.com</span>' +
+      '</span>' +
+    '</div>',
 
-    '<button class="card stack g4 pressable full-w" data-act="go" data-screen="plans">',
-    '<span class="meta ter">' + t('subscription') + '</span>',
-    '<span class="h3">MY Warranty ' + planLabel + '</span>',
-    '<span class="cap ter">' + (limit === null
+    '<button class="panel brand stack g4 pressable full-w start" data-act="go" data-screen="plans">',
+    '<span class="meta onb dim">' + t('subscription') + '</span>',
+    '<span class="h2 onb">MY Warranty ' + planLabel + '</span>',
+    '<span class="cap onb dim">' + (limit === null
       ? (S.lang === 'he' ? 'מוצרים ללא הגבלה' : 'Unlimited products')
       : t('slotsUsed', { used: S.products.length, limit: limit })) + '</span>',
     '</button>',
@@ -1079,6 +1405,14 @@ function viewProfile() {
       '<button class="lrow pressable" data-act="confirmReset"><span class="bd grow start danger-text">' + t('resetData') + '</span></button>' +
     '</div></div>',
   ].join(''));
+}
+
+/** Up to two initials. Takes graphemes, so a Hebrew name works too. */
+function monogram(name) {
+  const w = String(name || '').trim().split(/\s+/).filter(Boolean);
+  if (!w.length) return '?';
+  if (w.length === 1) return Array.from(w[0])[0].toUpperCase();
+  return (Array.from(w[0])[0] + Array.from(w[1])[0]).toUpperCase();
 }
 
 function viewPlans() {
