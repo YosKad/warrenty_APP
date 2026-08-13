@@ -166,11 +166,17 @@ function PlanOption({
       accessibilityLabel={`${planLabel}, ${offering.displayPrice}. ${features}`}
       disabled={disabled || isCurrent}
       onPress={onPress}
+      // Only the recommended plan carries a ring. In V2 a border means
+      // "this one is selected", so putting one on all three said nothing.
       style={({ pressed }) => ({
-        borderRadius: theme.radii.lg,
-        borderWidth: recommended ? theme.borderWidth.thick : theme.borderWidth.thin,
-        borderColor: recommended ? theme.colors.accent.solid : theme.colors.border.subtle,
-        backgroundColor: pressed ? theme.colors.bg.subtle : theme.colors.bg.surface,
+        borderRadius: theme.radii.xl,
+        borderWidth: recommended ? theme.borderWidth.thick : 0,
+        borderColor: theme.colors.accent.solid,
+        backgroundColor: pressed
+          ? theme.colors.bg.subtle
+          : recommended
+            ? theme.colors.bg.surface
+            : theme.colors.bg.subtle,
         padding: theme.spacing.lg,
         gap: theme.spacing.sm,
         opacity: isCurrent ? 0.6 : 1,

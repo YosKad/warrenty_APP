@@ -11,9 +11,14 @@ import { useTheme } from '@/theme';
 /**
  * Card — the app's one container primitive.
  *
- * Elevation is used sparingly: `flat` (a hairline border) is the default because a
- * list of eight shadowed cards reads as noise. Shadow is reserved for surfaces that
- * genuinely float above the content, like the warranty card on a product page.
+ * Elevation is used sparingly: `flat` is the default because a list of eight
+ * shadowed cards reads as noise. Shadow is reserved for surfaces that genuinely
+ * float above the content.
+ *
+ * V2 removed the hairline border. A card separates from the canvas by being
+ * brighter than it, which is the reason the canvas is warm rather than white —
+ * a border on top of that reads as a table cell, which is exactly what the V1
+ * screens looked like.
  */
 
 export type CardProps = ViewProps & {
@@ -46,9 +51,7 @@ export function Card({
 
   const base: ViewStyle = {
     backgroundColor: background,
-    borderRadius: theme.radii.lg,
-    borderWidth: variant === 'flat' ? theme.borderWidth.hairline : 0,
-    borderColor: theme.colors.border.subtle,
+    borderRadius: theme.radii.xl,
     ...(padded ? { padding: theme.spacing.lg } : {}),
     ...theme.elevation(variant === 'raised' ? Math.max(1, elevation) as 1 | 2 | 3 : elevation),
   };

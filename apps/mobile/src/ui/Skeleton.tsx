@@ -71,19 +71,19 @@ export function ProductCardSkeleton() {
     <View
       style={{
         flexDirection: 'row',
-        gap: theme.spacing.md,
-        padding: theme.spacing.lg,
-        borderRadius: theme.radii.lg,
-        borderWidth: theme.borderWidth.hairline,
-        borderColor: theme.colors.border.subtle,
+        alignItems: 'center',
+        gap: theme.spacing.lg,
+        paddingVertical: theme.spacing.lg,
+        paddingHorizontal: theme.spacing.lg,
+        borderRadius: theme.radii.xl,
         backgroundColor: theme.colors.bg.surface,
       }}
     >
-      <Skeleton width={56} height={56} radius={theme.radii.md} />
-      <View style={{ flex: 1, gap: theme.spacing.sm, justifyContent: 'center' }}>
+      <Skeleton width={60} height={60} radius={16} />
+      <View style={{ flex: 1, gap: theme.spacing.sm }}>
         <Skeleton width="70%" height={16} />
         <Skeleton width="45%" height={12} />
-        <Skeleton width={110} height={20} radius={theme.radii.pill} />
+        <Skeleton width={130} height={14} />
       </View>
     </View>
   );
@@ -92,7 +92,7 @@ export function ProductCardSkeleton() {
 export function ListSkeleton({ count = 4 }: { count?: number }) {
   const theme = useTheme();
   return (
-    <View style={{ gap: theme.spacing.md }}>
+    <View style={{ gap: theme.spacing.xs }}>
       {Array.from({ length: count }, (_, index) => (
         <ProductCardSkeleton key={index} />
       ))}

@@ -66,7 +66,7 @@ export default function DeleteAccountScreen() {
         </ScreenFooter>
       }
     >
-      <Card style={{ backgroundColor: theme.colors.feedback.dangerBg, borderWidth: 0 }}>
+      <Card style={{ backgroundColor: theme.colors.feedback.dangerBg }}>
         <Text variant="bodySmall" style={{ color: theme.colors.feedback.dangerFg }}>
           {t('deleteAccount.warning')}
         </Text>

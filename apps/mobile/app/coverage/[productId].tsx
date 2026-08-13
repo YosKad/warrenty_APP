@@ -237,7 +237,7 @@ function CoverageResult({
 
   return (
     <View style={{ gap: theme.spacing.lg }}>
-      <Card style={{ backgroundColor: toneColors.bg, borderWidth: 0 }}>
+      <Card style={{ backgroundColor: toneColors.bg }}>
         <View style={{ gap: theme.spacing.sm }}>
           <Text variant="metadata" style={{ color: toneColors.fg }}>
             {t('coverage.title')}
