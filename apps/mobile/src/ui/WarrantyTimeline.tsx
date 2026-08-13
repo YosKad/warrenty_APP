@@ -41,10 +41,10 @@ export function WarrantyTimeline({
   const trackColor = theme.colors.bg.subtle;
   const fillColor =
     status === 'expired'
-      ? theme.colors.status.expiredFg
+      ? theme.colors.protection.expiredFg
       : status === 'ending_soon'
-        ? theme.colors.status.endingFg
-        : theme.colors.status.activeFg;
+        ? theme.colors.protection.endingFg
+        : theme.colors.protection.activeFg;
 
   const clamped = Math.min(1, Math.max(0, progress));
 

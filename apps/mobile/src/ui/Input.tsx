@@ -62,7 +62,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
     : focused
       ? theme.colors.border.focus
       : needsReview
-        ? theme.colors.status.endingFg
+        ? theme.colors.protection.endingFg
         : theme.colors.border.subtle;
 
   return (
@@ -138,7 +138,7 @@ export const Input = forwardRef<TextInput, InputProps>(function Input(
           {error}
         </Text>
       ) : needsReview ? (
-        <Text variant="caption" style={{ color: theme.colors.status.endingFg }}>
+        <Text variant="caption" style={{ color: theme.colors.protection.endingFg }}>
           {t('scan.checkThis')}
         </Text>
       ) : hint ? (
@@ -204,7 +204,7 @@ export function PickerField({
           borderColor: error
             ? theme.colors.text.danger
             : needsReview
-              ? theme.colors.status.endingFg
+              ? theme.colors.protection.endingFg
               : theme.colors.border.subtle,
           backgroundColor: pressed ? theme.colors.bg.subtle : theme.colors.bg.surface,
         })}

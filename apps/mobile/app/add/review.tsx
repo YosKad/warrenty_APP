@@ -101,7 +101,7 @@ export default function ReceiptReviewScreen() {
                     {isLowConfidence(suggestion.confidence) ? (
                       <Text
                         variant="caption"
-                        style={{ color: theme.colors.status.endingFg }}
+                        style={{ color: theme.colors.protection.endingFg }}
                       >
                         {t('scan.checkThis')}
                       </Text>

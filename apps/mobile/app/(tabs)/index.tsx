@@ -191,19 +191,19 @@ function SummaryRow({
       status: 'active' as const,
       count: active,
       label: t('home.statusActive'),
-      color: theme.colors.status.activeFg,
+      color: theme.colors.protection.activeFg,
     },
     {
       status: 'ending_soon' as const,
       count: endingSoon,
       label: t('home.statusEndingSoon'),
-      color: theme.colors.status.endingFg,
+      color: theme.colors.protection.endingFg,
     },
     {
       status: 'expired' as const,
       count: expired,
       label: t('home.statusExpired'),
-      color: theme.colors.status.expiredFg,
+      color: theme.colors.protection.expiredFg,
     },
   ];
 

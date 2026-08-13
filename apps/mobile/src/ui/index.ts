@@ -16,4 +16,8 @@ export { BottomSheet } from './BottomSheet';
 export { ToastProvider, useToast } from './Toast';
 export { ProvenanceNote, VerifyPrompt } from './ProvenanceNote';
 export { WarrantyTimeline } from './WarrantyTimeline';
+export { ProductImage } from './ProductImage';
+export { ProductIllustration, resolveIllustration } from './ProductIllustration';
+export type { CategorySlug } from './ProductIllustration';
+export { ProtectionRing, ProtectionMeter } from './ProtectionRing';
 export * from './icons';

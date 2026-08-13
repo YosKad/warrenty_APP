@@ -31,26 +31,26 @@ export function StatusBadge({ status, size = 'md', detail }: StatusBadgeProps) {
     switch (status) {
       case 'active':
         return {
-          fg: theme.colors.status.activeFg,
-          bg: theme.colors.status.activeBg,
+          fg: theme.colors.protection.activeFg,
+          bg: theme.colors.protection.activeBg,
           labelKey: 'home.statusActive',
         };
       case 'ending_soon':
         return {
-          fg: theme.colors.status.endingFg,
-          bg: theme.colors.status.endingBg,
+          fg: theme.colors.protection.endingFg,
+          bg: theme.colors.protection.endingBg,
           labelKey: 'home.statusEndingSoon',
         };
       case 'expired':
         return {
-          fg: theme.colors.status.expiredFg,
-          bg: theme.colors.status.expiredBg,
+          fg: theme.colors.protection.expiredFg,
+          bg: theme.colors.protection.expiredBg,
           labelKey: 'home.statusExpired',
         };
       default:
         return {
-          fg: theme.colors.status.neutralFg,
-          bg: theme.colors.status.neutralBg,
+          fg: theme.colors.protection.unknownFg,
+          bg: theme.colors.protection.unknownBg,
           labelKey: 'product.warrantyUnknown',
         };
     }

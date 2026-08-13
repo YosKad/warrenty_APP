@@ -1,73 +1,99 @@
 /**
- * Primitive colour palette.
+ * Primitive colour palette (V2).
  *
- * These are raw values with no meaning attached. Nothing in the app should import
- * from this file except `semantic.ts` — screens and components consume semantic
- * tokens (`colors.text.primary`) so the whole product can be re-skinned, and later
- * re-branded, without touching a single screen.
+ * Raw values with no meaning attached. Nothing imports this except
+ * `semantic.ts` — screens consume semantic tokens, which is what lets the whole
+ * product be re-skinned without touching a screen.
+ *
+ * V2 direction: warm neutrals rather than cool grey-blue. Cool neutrals read as
+ * software; warm ones read as paper and objects, which is what an app about the
+ * things you own should feel like. The brand accent is a deep pine green —
+ * protection and permanence — which also keeps blue out of the palette entirely
+ * so the "generic tech product" association never arrives.
  */
 
 export const palette = {
-  // Deep navy / near-black. The brand's resting state.
+  /** Warm charcoal. The brand's resting ink — replaces V1's navy. */
   ink: {
-    950: '#05080F',
-    900: '#0B1220',
-    800: '#141C2E',
-    700: '#1E2739',
-    600: '#2B3547',
+    950: '#100D0B',
+    900: '#1C1917',
+    800: '#231F1C',
+    700: '#332D26',
+    600: '#453D34',
   },
-  // Cool neutrals for surfaces, borders and secondary text.
-  slate: {
-    50: '#F7F8FA',
-    100: '#F0F2F5',
-    200: '#E3E6EC',
-    300: '#CDD3DC',
-    400: '#A3ABB9',
-    500: '#78828F',
-    600: '#5A6472',
-    700: '#414A57',
-    800: '#2C333D',
-    900: '#1A1F26',
+
+  /** Warm neutrals for canvas, surfaces, borders and secondary text. */
+  sand: {
+    50: '#FAF8F5',
+    100: '#F5F1EC',
+    200: '#EAE3DB',
+    300: '#DBD1C6',
+    400: '#BCAFA3',
+    500: '#9C918A',
+    600: '#6B625B',
+    700: '#514A44',
+    800: '#3A342F',
+    900: '#262220',
   },
-  // Electric blue — used sparingly, for the single most important action per screen.
-  blue: {
-    50: '#EBF2FF',
-    100: '#D6E4FF',
-    300: '#7FAAFF',
-    400: '#4D8DFF',
-    500: '#1F6FEB',
-    600: '#0B57D0',
-    700: '#0A46A6',
+
+  /** Dark-theme surfaces. Lightness-differentiated, so borders are rarely needed. */
+  umber: {
+    950: '#16130F',
+    900: '#211D19',
+    800: '#2B2620',
+    700: '#2F2923',
+    600: '#3D362E',
   },
-  // Refined cyan — the secondary brand accent (timelines, highlights, illustration).
-  cyan: {
-    100: '#D3F1F7',
-    300: '#6FD3E5',
-    400: '#33BDD6',
-    500: '#0E9BB8',
-    600: '#0A7A92',
+
+  /** Pine — the brand accent, and the colour of something being protected. */
+  pine: {
+    50: '#E8F5EF',
+    100: '#DCF2E8',
+    300: '#6FCFAC',
+    400: '#4FBF97',
+    500: '#1F6F5C',
+    600: '#0F7355',
+    700: '#0B5741',
   },
-  green: {
-    100: '#D7F2E6',
-    300: '#5FCFA4',
-    400: '#2FB783',
-    500: '#12855F',
-    600: '#0C6748',
-  },
+
+  /** Warm amber — attention, never alarm. */
   amber: {
-    100: '#FCEBCF',
-    300: '#F2C066',
-    400: '#E0A038',
-    500: '#9A5B00',
-    600: '#7A4700',
+    100: '#FDF0DA',
+    300: '#E8B45E',
+    400: '#D19A3C',
+    500: '#A8620A',
+    600: '#824B06',
   },
-  red: {
-    100: '#FBDDDB',
-    300: '#F5928A',
-    400: '#EB6A60',
-    500: '#B3261E',
-    600: '#8C1D17',
+
+  /** Coral-red — expired and error. Warmer and less shouty than a pure red. */
+  coral: {
+    100: '#FBE3E0',
+    300: '#F0918A',
+    400: '#E06B62',
+    500: '#B0332B',
+    600: '#8A2620',
   },
+
+  /**
+   * Iris — reserved exclusively for derived and AI-assisted content, so the
+   * colour itself teaches the user "this was worked out, not entered".
+   */
+  iris: {
+    100: '#EDE9FB',
+    300: '#A99BF0',
+    400: '#8878E6',
+    500: '#5B4BB8',
+    600: '#453A8F',
+  },
+
+  /** Clay — a quiet secondary for illustration accents. */
+  clay: {
+    100: '#F7E9E1',
+    300: '#DFA98C',
+    400: '#C98A67',
+    500: '#9C5B38',
+  },
+
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',

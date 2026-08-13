@@ -79,7 +79,7 @@ export default function TabsLayout() {
           title: t('tabs.alerts'),
           tabBarBadge: unread.data && unread.data > 0 ? unread.data : undefined,
           tabBarBadgeStyle: {
-            backgroundColor: theme.colors.status.expiredFg,
+            backgroundColor: theme.colors.protection.expiredFg,
             color: theme.colors.text.onBrand,
             fontSize: 11,
           },
