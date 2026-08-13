@@ -162,20 +162,20 @@ settings/*              unchanged
 
 ## 4. Phases
 
-| Phase | Deliverable | Depends on |
-| --- | --- | --- |
-| **A** | Design token evolution — new palette, new semantic roles | — |
-| **B** | Protection domain — score, completeness, gaps, tests | — |
-| **C** | Product imagery — per-category illustration system | A |
-| **D** | Vertical slice — Home, ProductCard, Product Detail, Add, Profile | A, B, C |
-| **E** | V2 core migration — service capabilities, contacts, cases, activity, layers | — |
-| **F** | Visual validation in the browser prototype, light/dark, en/he | D |
-| **G** | Warranty Intelligence + What's covered UI | D, E |
-| **H** | Service Concierge | E |
-| **I** | Activity feed on `activity_events` | E |
-| **J** | Warranty Case + claim flow | E, H |
-| **K** | Pre-expiry checkups | E |
-| **L** | Ask MY | E, G |
+| Phase | Deliverable | Depends on | Status |
+| --- | --- | --- | --- |
+| **A** | Design token evolution — new palette, new semantic roles | — | Done |
+| **B** | Protection domain — score, completeness, gaps, tests | — | Done |
+| **C** | Product imagery — per-category illustration system | A | Done |
+| **D** | Vertical slice — Home, ProductCard, Product Detail, Add, Profile | A, B, C | Done |
+| **E** | V2 core migration — service capabilities, contacts, cases, activity, layers | — | Done |
+| **F** | Visual validation in the browser prototype, light/dark, en/he | D | Done |
+| **G** | Warranty Intelligence + What's covered UI | D, E | Next |
+| **H** | Service Concierge | E | |
+| **I** | Activity feed on `activity_events` | E | |
+| **J** | Warranty Case + claim flow | E, H | |
+| **K** | Pre-expiry checkups | E | |
+| **L** | Ask MY | E, G | |
 
 **A–F is V2 Core and is what this pass implements.** G–L follow once the design
 language is validated rather than being built against a palette that may still

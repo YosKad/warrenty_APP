@@ -82,6 +82,37 @@ publishes new ones in 2027.
 | `subscription_events` | Every store notification, appended before it mutates state, unique on the store's own event id. |
 | `audit_logs` | Sensitive operations. Never contains document contents. |
 
+### V2: service, cases, activity and protection layers
+
+Added by `20260201000000_v2_service_cases_activity.sql`. The reuse decisions
+behind it are in [V2_AUDIT.md](V2_AUDIT.md) §D: three existing tables were
+extended rather than duplicated, and four proposed tables were dropped because
+something already modelled the concept.
+
+| Table | Notes |
+| --- | --- |
+| `service_capabilities` | How an organisation actually delivers service — home visit, pickup, mail-in, walk-in, phone, online — optionally narrowed to one location. Availability is three-valued (`available`/`unavailable`/`unknown`) and defaults to `unknown`. |
+| `provider_contact_methods` | Several ways in per provider, each with its own hours, languages and priority. They are not interchangeable: the WhatsApp number gets answered, the web form does not. |
+| `product_protection_layers` | Manufacturer, importer, retailer extension, extended plan, credit card, insurance, statutory — each with its own dates and provider. `products.warranty_end` remains the primary window, so nothing reading it today changes behaviour. |
+| `activity_events` | Permanent history, server-written. Distinct from `notifications`, which is delivery: deleting what we told you must never erase what happened. |
+| `checkup_templates` / `product_checkups` / `checkup_answers` | Pre-expiry checkups. Schema only in V2 Core; the flow lands in V2.1. |
+| `recall_notices` / `recall_matches` | Recall data and conservative per-product matches. Schema only. A match requires a model hit, never a brand hit — a false "your product is recalled" is worse than a missed one. |
+
+Extensions to existing tables:
+
+| Table | Added |
+| --- | --- |
+| `claims` | `case_number`, `channel`, `contact_method_id`, `appointment_at`, `appointment_location_id`, `estimated_cost`, `actual_cost`, `currency`, `opened_at`, `last_activity_at`. A warranty case is a claim plus how it is being handled, so extending keeps one history rather than splitting a repair across two tables by version. |
+| `claim_messages` | `kind` (typed event), `metadata`, `occurred_at`. The timeline becomes an event stream instead of free text with a role. |
+| `product_documents` | `claim_id`, so a receipt attached to a case is the same object as the receipt on the product. |
+
+`product_protection_completeness(product_id)` returns the claim-readiness score
+and its unsatisfied factors, mirroring `src/domain/protection.ts` weight for
+weight so a `pg_cron` reminder and the number on Home cannot disagree. It is a
+function, not a column: it is a pure function of data already present, and
+storing it would create a cache to invalidate on every product or document edit.
+The parity is pinned by tests in `src/domain/__tests__/protection.test.ts`.
+
 ## Products table
 
 ```sql
@@ -135,6 +166,7 @@ category for list screens, so the caller's RLS still applies.
 | `match_warranty_terms(warranty_id, embedding, count)` | Clause retrieval for coverage analysis. |
 | `effective_plan(user_id)` | Entitlement resolution, honouring grace periods. |
 | `increment_ai_usage(...)` | Atomic usage accounting. |
+| `product_protection_completeness(id)` | Claim-readiness score and its gaps, mirroring `src/domain/protection.ts`. |
 
 `match_warranty_terms` scopes to a single policy *before* ranking. Scoping first
 keeps retrieval cheap and stops clauses from an unrelated brand leaking into an
@@ -143,7 +175,9 @@ answer.
 ## Row Level Security
 
 Enabled on every table; default deny. See
-`20260101000700_row_level_security.sql`.
+`20260101000700_row_level_security.sql`, and
+`20260201000000_v2_service_cases_activity.sql` for the V2 tables, which follow
+exactly the same three shapes.
 
 Shape of the policies:
 
@@ -152,7 +186,8 @@ Shape of the policies:
 - **Reference data** (`product_categories`, `organisations`, `warranties`,
   `warranty_terms`) — SELECT for `authenticated`, no write policy.
 - **Backend-owned** (`subscriptions`, `ai_analyses`, `notifications`,
-  `ocr_jobs`) — SELECT for the owner, and *no INSERT policy at all*. This is what
+  `ocr_jobs`, `activity_events`, `recall_matches`) — SELECT for the owner, and
+  *no INSERT policy at all*. This is what
   makes entitlements and AI verdicts non-client-authoritative: service-role
   bypasses RLS, so Edge Functions can still write them.
 - **`subscription_events`** — no policies whatsoever. Store payloads are
@@ -164,7 +199,15 @@ Column-level grants close the remaining gap:
 revoke update (owner_id, workspace_id, created_at) on products from authenticated;
 revoke update on notifications from authenticated;
 grant  update (read_at) on notifications to authenticated;
+revoke update on recall_matches from authenticated;
+grant  update (dismissed_at) on recall_matches to authenticated;
+revoke update (case_number, opened_at) on claims from authenticated;
+revoke update on claim_messages from authenticated;
 ```
+
+An activity record a client could forge would be worthless as history, and a
+recall match a client could create would be a way to make the app lie to its own
+user. Dismissing a match is the one thing about it that belongs to the user.
 
 Without those, a hand-crafted PostgREST call could pass the row policy and still
 rewrite a field the server owns.

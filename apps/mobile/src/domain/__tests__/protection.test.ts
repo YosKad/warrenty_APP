@@ -278,3 +278,54 @@ describe('buildSuggestedActions', () => {
     expect(actions).toEqual([]);
   });
 });
+
+/**
+ * Parity with the SQL implementation.
+ *
+ * `product_protection_completeness()` in
+ * supabase/migrations/20260201000000_v2_service_cases_activity.sql computes the
+ * same score server-side, so a reminder sent by pg_cron and the number on Home
+ * cannot disagree. These are the exact scenarios that function was run against;
+ * if you change a weight in one language and not the other, this fails.
+ */
+describe('parity with product_protection_completeness() in SQL', () => {
+  const samsung: ProtectionInput = {
+    ...EMPTY,
+    purchaseDate: '2024-09-01',
+    durationMonths: 24,
+    model: 'QE65S95D',
+    serialNumber: 'RZ8N40FKT9L',
+    warrantyProviderId: 'org-samsung-il',
+  };
+
+  it('scores 65 with no proof of purchase', () => {
+    const result = getProtectionCompleteness(samsung);
+    expect(result.score).toBe(65);
+    expect(result.gaps.map((g) => g.key)).toEqual([
+      'proof_of_purchase',
+      'warranty_terms',
+      'service_provider',
+    ]);
+  });
+
+  it('scores 83 once a receipt is attached', () => {
+    const result = getProtectionCompleteness({ ...samsung, proofDocumentCount: 1 });
+    expect(result.score).toBe(83);
+    expect(result.gaps.map((g) => g.key)).toEqual(['warranty_terms', 'service_provider']);
+  });
+
+  it('scores 0 for a product with nothing but a name', () => {
+    const result = getProtectionCompleteness(EMPTY);
+    expect(result.score).toBe(0);
+    expect(result.gaps.map((g) => g.key)).toEqual([
+      'purchase_date',
+      'warranty_end',
+      'proof_of_purchase',
+      'warranty_provider',
+      'warranty_terms',
+      'serial_number',
+      'service_provider',
+      'model',
+    ]);
+  });
+});
