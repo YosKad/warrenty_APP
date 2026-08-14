@@ -35,7 +35,7 @@ import {
  * whether someone's washing machine is covered.
  */
 
-const PROMPT_VERSION = 'coverage-v1';
+const PROMPT_VERSION = 'coverage-v2';
 const COVERAGE_MODEL = Deno.env.get('COVERAGE_MODEL') ?? 'claude-sonnet-5';
 
 /**
@@ -49,6 +49,12 @@ const requestSchema = z.object({
   issueDescription: z.string().min(10).max(4000),
   issueCategory: z.string().max(60).optional(),
   attachmentIds: z.array(z.string().uuid()).max(5).default([]),
+  /**
+   * Answers to a previous round's questions, keyed by question id. Sent
+   * alongside the original description rather than replacing it, so the second
+   * pass reasons about the whole problem instead of only the clarification.
+   */
+  followUpAnswers: z.record(z.string().max(60), z.string().max(500)).default({}),
 });
 
 /** What the model is allowed to return. Anything else is discarded. */
@@ -65,6 +71,17 @@ const modelOutputSchema = z.object({
   citedClauseIds: z.array(z.string()).max(8).default([]),
   exclusions: z.array(z.string().max(400)).max(8).default([]),
   recommendedAction: z.string().max(600).default(''),
+  missingInformation: z.array(z.string().max(300)).max(6).default([]),
+  followUpQuestions: z
+    .array(
+      z.object({
+        id: z.string().max(60),
+        question: z.string().min(1).max(300),
+        options: z.array(z.string().max(120)).max(5).default([]),
+      }),
+    )
+    .max(3)
+    .default([]),
 });
 
 const SYSTEM_PROMPT = `
@@ -77,6 +94,9 @@ Rules you must follow:
 - You are not the warranty provider and cannot approve or deny a claim. Never state that something IS covered — the strongest available verdict is "likely_covered".
 - Cite the id of every clause you relied on in citedClauseIds. A verdict of likely_covered with no cited clause is invalid.
 - If the clauses do not address the described fault, return "insufficient_information".
+- If one specific fact would change the answer — most often how the fault started — return "insufficient_information" and ask for it in followUpQuestions instead of guessing. Ask at most two questions, and offer closed options when the answer is genuinely closed.
+- Put anything else that would improve the assessment in missingInformation, as short noun phrases a consumer could act on.
+- Photographs are NOT provided to you. Never refer to an image, and never state or imply that you examined one.
 - Write the summary in plain language for a consumer. No legal jargon, no mention of clauses by number, no hedging filler.
 - Respond with a single JSON object matching the requested schema. No prose before or after it.
 `.trim();
@@ -92,7 +112,8 @@ Deno.serve(async (request: Request) => {
 
   const parsed = requestSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return errorResponse('validation');
-  const { productId, issueDescription, issueCategory } = parsed.data;
+  const { productId, issueDescription, issueCategory, attachmentIds, followUpAnswers } =
+    parsed.data;
 
   const asUser = userClient(request);
   const admin = serviceClient();
@@ -147,6 +168,10 @@ Deno.serve(async (request: Request) => {
         relevantClauses: [],
         exclusions: [],
         recommendedAction: '',
+        missingInformation: [],
+        followUpQuestions: [],
+        attachmentCount: 0,
+        attachmentsAnalysed: false,
         disclaimer: DISCLAIMER_KEY,
         meta: {
           modelVersion: COVERAGE_MODEL,
@@ -158,6 +183,23 @@ Deno.serve(async (request: Request) => {
       },
     });
   }
+
+  // The version of the document this assessment was made against. Recorded so an
+  // analysis stays explainable after the manufacturer reissues its terms.
+  const { data: policyRow } = await admin
+    .from('warranties')
+    .select('policy_version')
+    .eq('id', warrantyId)
+    .maybeSingle();
+  const policyVersion: string | null = policyRow?.policy_version ?? null;
+
+  // --- attachments ------------------------------------------------------
+  // Counted, not read. The count is verified through the *user* client so an id
+  // belonging to someone else's product cannot be smuggled into the response,
+  // and `attachmentsAnalysed` stays false until multimodal analysis actually
+  // ships — a photo the model never received must never be reported as one it
+  // looked at.
+  const attachmentCount = await countOwnedAttachments(asUser, productId, attachmentIds);
 
   // --- retrieve relevant clauses ----------------------------------------
   const problemText = boundUserText(issueDescription);
@@ -175,7 +217,13 @@ Deno.serve(async (request: Request) => {
   }
 
   // --- reason over only the retrieved clauses ----------------------------
-  const userMessage = buildUserMessage(product, problemText, issueCategory, clauses);
+  const userMessage = buildUserMessage(
+    product,
+    problemText,
+    issueCategory,
+    clauses,
+    followUpAnswers,
+  );
   const modelResult = await callModel(userMessage);
   if (!modelResult) return errorResponse('server');
 
@@ -225,6 +273,7 @@ Deno.serve(async (request: Request) => {
       exclusions: output.exclusions,
       warranty_id: warrantyId,
       retrieved_term_ids: clauses.map((c) => c.id),
+      document_version: policyVersion,
       model_version: COVERAGE_MODEL,
       prompt_version: PROMPT_VERSION,
       input_tokens: modelResult.inputTokens,
@@ -254,12 +303,18 @@ Deno.serve(async (request: Request) => {
       })),
       exclusions: output.exclusions,
       recommendedAction: output.recommendedAction,
+      missingInformation: output.missingInformation,
+      followUpQuestions: output.followUpQuestions,
+      attachmentCount,
+      // Hard-coded false. When multimodal analysis ships this becomes a real
+      // signal; until then a `true` here could only ever be a lie.
+      attachmentsAnalysed: false,
       disclaimer: DISCLAIMER_KEY,
       meta: {
         modelVersion: COVERAGE_MODEL,
         analysedAt: new Date().toISOString(),
         warrantyId,
-        documentVersion: null,
+        documentVersion: policyVersion,
         groundedInDocuments: true,
       },
     },
@@ -349,11 +404,28 @@ async function embed(text: string): Promise<number[] | null> {
   }
 }
 
+async function countOwnedAttachments(
+  // deno-lint-ignore no-explicit-any
+  asUser: any,
+  productId: string,
+  attachmentIds: string[],
+): Promise<number> {
+  if (attachmentIds.length === 0) return 0;
+  const { data } = await asUser
+    .from('product_documents')
+    .select('id')
+    .eq('product_id', productId)
+    .in('id', attachmentIds)
+    .is('deleted_at', null);
+  return data?.length ?? 0;
+}
+
 function buildUserMessage(
   product: ProductFacts,
   problem: string,
   category: string | undefined,
   clauses: Clause[],
+  followUpAnswers: Record<string, string>,
 ): string {
   const clauseBlock = clauses
     .map(
@@ -374,10 +446,21 @@ function buildUserMessage(
     // no more privileged than the document here — either could contain injection.
     quoteUntrusted('user problem description', problem),
     '',
+    // A previous round asked; these are the answers. Quoted as untrusted too:
+    // they arrive from the same client as the description.
+    Object.keys(followUpAnswers).length > 0
+      ? quoteUntrusted(
+          'user answers to earlier questions',
+          Object.entries(followUpAnswers)
+            .map(([id, answer]) => `${id}: ${answer}`)
+            .join('\n'),
+        )
+      : '',
+    '',
     'Relevant warranty clauses:',
     quoteUntrusted('warranty clauses', clauseBlock),
     '',
-    'Return a single JSON object with keys: verdict, confidence, summary, reasoningSummary, citedClauseIds, exclusions, recommendedAction.',
+    'Return a single JSON object with keys: verdict, confidence, summary, reasoningSummary, citedClauseIds, exclusions, recommendedAction, missingInformation, followUpQuestions.',
   ]
     .filter(Boolean)
     .join('\n');
@@ -445,6 +528,10 @@ function buildEmptyAnalysis(warrantyId: string | null) {
     relevantClauses: [],
     exclusions: [],
     recommendedAction: '',
+    missingInformation: [],
+    followUpQuestions: [],
+    attachmentCount: 0,
+    attachmentsAnalysed: false,
     disclaimer: DISCLAIMER_KEY,
     meta: {
       modelVersion: COVERAGE_MODEL,

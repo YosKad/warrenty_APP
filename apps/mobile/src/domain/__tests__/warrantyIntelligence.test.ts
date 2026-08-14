@@ -1,5 +1,6 @@
 import {
   CONFLICT_SCORE_MARGIN,
+  MATCH_STALE_AFTER_DAYS,
   MATCH_SIGNALS,
   MATCH_TOTAL_WEIGHT,
   SOURCE_PRIORITY,
@@ -9,6 +10,7 @@ import {
   groupClauses,
   hasIdentifiedWarranty,
   intelligenceCompleteness,
+  isMatchStale,
   matchState,
   outranksSource,
   rankCandidates,
@@ -452,5 +454,37 @@ describe('completeness and identification', () => {
       matchState: 'needs_confirmation',
     } as unknown as WarrantyIntelligence;
     expect(hasIdentifiedWarranty(intel)).toBe(true);
+  });
+});
+
+/**
+ * Freshness. A match is only as good as when it was worked out: a policy the
+ * manufacturer reissued last month against a match resolved last year is exactly
+ * the case where the app should say "last checked" rather than state a duration
+ * as though it were current.
+ */
+describe('match staleness', () => {
+  const now = new Date('2026-08-14T12:00:00Z');
+  const daysAgo = (days: number) =>
+    new Date(now.getTime() - days * 24 * 60 * 60 * 1000).toISOString();
+
+  it('treats a never-resolved match as stale', () => {
+    expect(isMatchStale(null, now)).toBe(true);
+  });
+
+  it('treats a match resolved today as fresh', () => {
+    expect(isMatchStale(daysAgo(0), now)).toBe(false);
+  });
+
+  it('treats a match just inside the window as fresh', () => {
+    expect(isMatchStale(daysAgo(MATCH_STALE_AFTER_DAYS - 1), now)).toBe(false);
+  });
+
+  it('treats a match past the window as stale', () => {
+    expect(isMatchStale(daysAgo(MATCH_STALE_AFTER_DAYS + 1), now)).toBe(true);
+  });
+
+  it('states the window rather than leaving it a magic number', () => {
+    expect(MATCH_STALE_AFTER_DAYS).toBeGreaterThan(0);
   });
 });

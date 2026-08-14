@@ -474,13 +474,22 @@ async function readCachedMatch(productId: string): Promise<CachedMatch | null> {
   };
 }
 
-/** How old a resolved match may be before the UI calls it stale. */
-export const MATCH_STALE_AFTER_DAYS = 30;
-
-export function isMatchStale(resolvedAt: string | null, now = new Date()): boolean {
-  if (!resolvedAt) return true;
-  const age = now.getTime() - new Date(resolvedAt).getTime();
-  return age > MATCH_STALE_AFTER_DAYS * 24 * 60 * 60 * 1000;
+/**
+ * Asks the resolver to run again and persist a fresh match.
+ *
+ * The client cannot write `product_warranty_matches` — a client that could write
+ * its own match could make the app assert a warranty that does not exist, to its
+ * own user. So "search again" is a request, not a write.
+ */
+export async function refreshWarrantyMatch(productId: string): Promise<void> {
+  try {
+    const { error } = await supabase.functions.invoke('warranty-resolve', {
+      body: { productId },
+    });
+    if (error) throw error;
+  } catch (error) {
+    throw toAppError(error);
+  }
 }
 
 // --------------------------------------------------------------------------

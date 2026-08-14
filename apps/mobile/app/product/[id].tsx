@@ -1,5 +1,5 @@
 import { Alert, Pressable, View } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 
@@ -18,6 +18,7 @@ import {
 } from '@/domain/warranty';
 import { hasEntitlement } from '@/domain/entitlements';
 import { listDocuments } from '@/services/documentService';
+import { refreshWarrantyMatch } from '@/services/warrantyIntelligenceService';
 import { ProtectionBreakdown } from '@/features/protection/ProtectionBreakdown';
 import { WarrantyIntelligenceSection } from '@/features/warranty/WarrantyIntelligenceSection';
 import { SomethingWrongCard } from '@/features/warranty/SomethingWrongCard';
@@ -50,6 +51,7 @@ export default function ProductDetailScreen() {
   const router = useRouter();
   const { t } = useTranslation();
   const toast = useToast();
+  const queryClient = useQueryClient();
   const { locale, today } = useLocale();
   const { id } = useLocalSearchParams<{ id: string }>();
   const productId = id ?? '';
@@ -66,6 +68,17 @@ export default function ProductDetailScreen() {
 
   const protection = useProductProtection(productId);
   const intelligence = useWarrantyIntelligence(productId);
+
+  // "Search again" is a request to the resolver, not a client-side write: the
+  // match row is service-role only, deliberately.
+  const resolveMatch = useMutation({
+    mutationFn: () => refreshWarrantyMatch(productId),
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.warranty.intelligence(productId),
+      }),
+    onError: () => toast.show(t('errors.unknown'), 'error'),
+  });
 
   if (product.isLoading || !product.data) {
     return (
@@ -288,6 +301,8 @@ export default function ProductDetailScreen() {
             onAddWarranty={() => router.push(`/add/manual?productId=${productId}`)}
             onUploadDocument={() => router.push(`/add/document?productId=${productId}`)}
             onScanReceipt={() => router.push('/add/scan')}
+            onSearchAgain={() => resolveMatch.mutate()}
+            searching={resolveMatch.isPending}
           />
         ) : null}
 

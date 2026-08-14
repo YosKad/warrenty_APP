@@ -39,6 +39,8 @@ export type WarrantyIntelligenceSectionProps = {
   onAddWarranty: () => void;
   onUploadDocument: () => void;
   onScanReceipt: () => void;
+  onSearchAgain: () => void;
+  searching?: boolean;
 };
 
 export function WarrantyIntelligenceSection({
@@ -49,6 +51,8 @@ export function WarrantyIntelligenceSection({
   onAddWarranty,
   onUploadDocument,
   onScanReceipt,
+  onSearchAgain,
+  searching = false,
 }: WarrantyIntelligenceSectionProps) {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -61,6 +65,8 @@ export function WarrantyIntelligenceSection({
         onAddWarranty={onAddWarranty}
         onUploadDocument={onUploadDocument}
         onScanReceipt={onScanReceipt}
+        onSearchAgain={onSearchAgain}
+        searching={searching}
       />
     );
   }
@@ -383,10 +389,14 @@ function NotIdentified({
   onAddWarranty,
   onUploadDocument,
   onScanReceipt,
+  onSearchAgain,
+  searching,
 }: {
   onAddWarranty: () => void;
   onUploadDocument: () => void;
   onScanReceipt: () => void;
+  onSearchAgain: () => void;
+  searching: boolean;
 }) {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -395,6 +405,13 @@ function NotIdentified({
     { key: 'upload', label: t('warrantyIntel.actionUploadDocument'), onPress: onUploadDocument },
     { key: 'manual', label: t('warrantyIntel.actionAddManually'), onPress: onAddWarranty },
     { key: 'scan', label: t('warrantyIntel.actionScanReceipt'), onPress: onScanReceipt },
+    // Last, because it is the only one that changes nothing about what we know.
+    // Offering it first would suggest the app simply has not tried yet.
+    {
+      key: 'again',
+      label: searching ? t('common.loading') : t('warrantyIntel.actionSearchAgain'),
+      onPress: onSearchAgain,
+    },
   ];
 
   return (

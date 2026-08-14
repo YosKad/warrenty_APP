@@ -473,6 +473,23 @@ export function intelligenceCompleteness(intel: {
   return checks.filter(Boolean).length / checks.length;
 }
 
+/**
+ * How old a resolved match may be before the UI calls it stale.
+ *
+ * A match is only as good as when it was worked out: a policy the manufacturer
+ * reissued last month against a match resolved last year is exactly the case
+ * where the app should say "last checked" rather than state a duration as though
+ * it were current.
+ */
+export const MATCH_STALE_AFTER_DAYS = 30;
+
+export function isMatchStale(resolvedAt: string | null, now = new Date()): boolean {
+  // Not knowing when we last checked is the same as not having checked.
+  if (!resolvedAt) return true;
+  const age = now.getTime() - new Date(resolvedAt).getTime();
+  return age > MATCH_STALE_AFTER_DAYS * 24 * 60 * 60 * 1000;
+}
+
 /** True when there is enough to show the "Your warranty" section at all. */
 export function hasIdentifiedWarranty(intel: WarrantyIntelligence): boolean {
   return intel.policy !== null && intel.matchState !== 'unknown';
