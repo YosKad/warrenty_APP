@@ -58,3 +58,48 @@ output rather than re-deriving the chain.
 
 Claim tracking is explicitly out of scope. Phase H ends at *request prepared*;
 the timeline, provider replies and repair status belong to Phase I.
+
+
+---
+
+## D. What shipped
+
+| Requirement | Where |
+| --- | --- |
+| 3 Provider chain UX | `collapseChain()`, `ServiceRouteCard` — one company, all its roles |
+| 4 Get Service screen | `app/service/[productId].tsx` |
+| 5 Recommendation engine | `recommendRoute()` — deterministic, ordered by user effort |
+| 6 Contact purposes | `contact_purpose` enum, `PURPOSE_RANK` |
+| 7 Tap-to-action | `ContactActions`, `urlFor()` — no dead buttons |
+| 8 Capabilities | Nine new enum values, `capabilityState()` with synonyms |
+| 9 Human-friendly options | `ServiceOptions` — three states, "not confirmed" is one of them |
+| 10–12 Locations, nearest, matching | `find_service_locations()` filters, `rankLocations()` ranks |
+| 13 Map actions | `mapUrl()` for Apple, Google and Waze |
+| 14 Opening hours | `openingStatus()` in the branch's own timezone |
+| 15–16 Preparation and readiness | `serviceReadiness()`, `ServiceReadinessCard` |
+| 18–20 Prepared request | `buildServiceRequest()`, editable, copied not sent |
+| 21 Service forms | `web_form` outranks `website` in `KIND_RANK` |
+| 22–24 Provenance and freshness | `source`, `verification`, `verified_at` on every record; `freshness()` |
+| 25 Corrections | `service_data_reports`, `ReportDataSheet` |
+| 27 Israel-first | Hebrew names, Israeli dialling in `toDialable()`, bidi isolates |
+| 28 Product-specific routing | The resolved policy drives `get_service_route()` |
+| 29 Unknown route | `UnknownRoute` — no generic support number |
+| 35–36 Integration | `ServicePreview` on Product Detail, coverage result carries context |
+| 39 Activity hooks | `record-activity` Edge Function |
+| 40 Analytics | Ten events, none carrying a number, address or issue text |
+| 41–42 Tests | 56 domain tests, 15 SQL assertions, a dedicated privacy file |
+| 47 Data strategy | `docs/SERVICE_DATA_STRATEGY.md` |
+
+## E. Known limitations
+
+- **The tables are empty outside fixtures.** This is the binding constraint on
+  the product and the subject of `SERVICE_DATA_STRATEGY.md`.
+- **No admin review screen.** `service_data_reports` has a queue and no
+  reviewer, so every correction is currently a manual SQL statement.
+- **`record-activity` maps several service interactions onto `case_updated`.**
+  The `activity_event_kind` enum has no service-specific values yet; the precise
+  action is carried in the payload. Phase I should decide whether to widen it.
+- **Distance ranking is straight-line.** Adequate for "which branch is nearest",
+  and it means the app never needs a routing API or precise GPS.
+- **Opening hours do not model holidays.** An Israeli service network closed for
+  a festival will still read as open.
