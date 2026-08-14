@@ -46,6 +46,22 @@ export type AnalyticsEvent =
     }
   | { name: 'coverage_followup_requested'; props: { questionCount: number } }
   | { name: 'warranty_match_corrected'; props: { field: string } }
+  /* Service concierge. Note the absence: no phone number, no address, no issue
+     text, no provider name. A route kind and a channel kind is all that is
+     needed to know whether the feature works. */
+  | {
+      name: 'service_viewed';
+      props: { route: string; chainSize: number; hasLocation: boolean };
+    }
+  | { name: 'service_provider_selected'; props: { role: string } }
+  | { name: 'service_call_started'; props: { purpose: string } }
+  | { name: 'service_whatsapp_opened'; props: { purpose: string } }
+  | { name: 'service_email_started'; props: { purpose: string } }
+  | { name: 'service_form_opened'; props: { purpose: string } }
+  | { name: 'service_location_viewed'; props: { usedCoordinates: boolean } }
+  | { name: 'directions_opened'; props: { provider: string } }
+  | { name: 'service_request_prepared'; props: { channel: string; readyCount: number } }
+  | { name: 'service_data_reported'; props: { kind: string } }
   | { name: 'claim_started'; props: Record<string, never> }
   | { name: 'paywall_viewed'; props: { trigger: 'product_limit' | 'ai_coverage' | 'smart_scan' | 'profile' } }
   | { name: 'subscription_started'; props: { plan: string; period: string } }

@@ -167,7 +167,15 @@ export default function CoverageScreen() {
           <CoverageResult
             analysis={analysis}
             matchState={intelligence.data?.matchState ?? null}
-            onStartClaim={() => router.push(`/claim/${id}`)}
+            onStartClaim={() =>
+              router.push(
+                `/service/${id}?issue=${encodeURIComponent(description)}` +
+                  `&verdict=${analysis.verdict}` +
+                  (analysis.relevantClauses[0]?.section
+                    ? `&clause=${encodeURIComponent(analysis.relevantClauses[0].section)}`
+                    : ''),
+              )
+            }
             onAskAnother={() => {
               setAnalysis(null);
               setDescription('');

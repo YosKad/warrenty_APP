@@ -442,6 +442,34 @@ export type Database = {
           },
         ];
       };
+      service_data_reports: {
+        Row: {
+          id: string;
+          reporter_id: string;
+          organisation_id: string | null;
+          service_location_id: string | null;
+          contact_method_id: string | null;
+          product_id: string | null;
+          kind: string;
+          note: string | null;
+          suggested_value: string | null;
+          status: string;
+          created_at: string;
+        };
+        Insert: {
+          reporter_id: string;
+          organisation_id?: string | null;
+          service_location_id?: string | null;
+          contact_method_id?: string | null;
+          product_id?: string | null;
+          kind: string;
+          note?: string | null;
+          suggested_value?: string | null;
+        };
+        // A report is a queue entry. Reviewing it is not the client's to do.
+        Update: Record<string, never>;
+        Relationships: [];
+      };
       product_warranty_overrides: {
         Row: {
           id: string;
@@ -766,6 +794,49 @@ export type Database = {
           matched_retailer: boolean;
           matched_serial: boolean;
           within_validity: boolean;
+        }[];
+        Relationships: [];
+      };
+      get_service_route: {
+        Args: { p_product_id: string };
+        Returns: {
+          role: string;
+          organisation_id: string;
+          name: string;
+          legal_name: string | null;
+          country_code: string | null;
+          website: string | null;
+          is_verified: boolean;
+          contacts: Json;
+          capabilities: Json;
+        }[];
+        Relationships: [];
+      };
+      find_service_locations: {
+        Args: {
+          p_product_id: string;
+          p_country_code?: string | null;
+          p_region?: string | null;
+          p_city?: string | null;
+        };
+        Returns: {
+          id: string;
+          organisation_id: string;
+          name: string | null;
+          country_code: string;
+          region: string | null;
+          city: string | null;
+          address_line: string | null;
+          postal_code: string | null;
+          phone: string | null;
+          latitude: number | null;
+          longitude: number | null;
+          opening_hours: Json | null;
+          time_zone: string | null;
+          appointment_required: boolean | null;
+          verification: VerificationStateDb;
+          verified_at: string | null;
+          is_active: boolean;
         }[];
         Relationships: [];
       };

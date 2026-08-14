@@ -10,6 +10,7 @@ import { useLocale } from '@/hooks/useLocale';
 import { useDeleteProduct, useProduct, useSubscriptionState } from '@/hooks/useProducts';
 import { useProductProtection } from '@/hooks/useProtection';
 import { useWarrantyIntelligence } from '@/hooks/useWarrantyIntelligence';
+import { useServiceRoute } from '@/hooks/useServiceRoute';
 import {
   canStartClaim,
   confidenceForSource,
@@ -22,6 +23,7 @@ import { refreshWarrantyMatch } from '@/services/warrantyIntelligenceService';
 import { ProtectionBreakdown } from '@/features/protection/ProtectionBreakdown';
 import { WarrantyIntelligenceSection } from '@/features/warranty/WarrantyIntelligenceSection';
 import { SomethingWrongCard } from '@/features/warranty/SomethingWrongCard';
+import { ServicePreview } from '@/features/service/ServicePreview';
 import {
   BackIcon,
   Button,
@@ -68,6 +70,7 @@ export default function ProductDetailScreen() {
 
   const protection = useProductProtection(productId);
   const intelligence = useWarrantyIntelligence(productId);
+  const service = useServiceRoute(productId);
 
   // "Search again" is a request to the resolver, not a client-side write: the
   // match row is service-role only, deliberately.
@@ -303,6 +306,17 @@ export default function ProductDetailScreen() {
             onScanReceipt={() => router.push('/add/scan')}
             onSearchAgain={() => resolveMatch.mutate()}
             searching={resolveMatch.isPending}
+          />
+        ) : null}
+
+        {/* Enough to show there is something behind the button. The concierge
+            itself is a screen; this is the promise that it has content. */}
+        {service.route ? (
+          <ServicePreview
+            warrantyHolder={service.route.warrantyHolder}
+            repairer={service.route.repairer}
+            capabilities={service.route.capabilities}
+            onPress={() => router.push(`/service/${productId}`)}
           />
         ) : null}
 

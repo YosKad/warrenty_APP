@@ -62,6 +62,13 @@ export const queryKeys = {
     /** Resolved policy, provider chain and clauses for one product. */
     intelligence: (productId: string) => ['warranty', 'intelligence', productId] as const,
   },
+  service: {
+    /** Compatible branches. Keyed on the manual filter, never on coordinates. */
+    locations: (productId: string, filter: Record<string, unknown> = {}) =>
+      ['service', 'locations', productId, filter] as const,
+    route: (productId: string, hasLocation: boolean) =>
+      ['service', 'route', productId, hasLocation] as const,
+  },
   alerts: {
     list: ['alerts'] as const,
     unreadCount: ['alerts', 'unread-count'] as const,

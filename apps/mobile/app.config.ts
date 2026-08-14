@@ -76,7 +76,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     package: BUNDLE_ID_BY_ENV[APP_ENV],
     versionCode: 1,
     adaptiveIcon: {
-      backgroundColor: '#0B1220',
+      backgroundColor: '#231F1C',
       foregroundImage: './assets/android-icon-foreground.png',
       backgroundImage: './assets/android-icon-background.png',
       monochromeImage: './assets/android-icon-monochrome.png',
@@ -109,7 +109,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
         imageWidth: 180,
         resizeMode: 'contain',
         backgroundColor: '#FFFFFF',
-        dark: { backgroundColor: '#0B1220' },
+        dark: { backgroundColor: '#16130F' },
       },
     ],
     [
@@ -128,12 +128,24 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       },
     ],
     [
+      'expo-location',
+      {
+        // Foreground only, and only when the user taps "use my location" on the
+        // service screen. Everything there works from a typed city instead, so
+        // the permission is genuinely optional rather than nominally so.
+        locationWhenInUsePermission:
+          'MY Warranty can use your location to show the nearest service centre. Searching by city works just as well.',
+        isAndroidBackgroundLocationEnabled: false,
+        isIosBackgroundLocationEnabled: false,
+      },
+    ],
+    [
       'expo-local-authentication',
       { faceIDPermission: 'Use Face ID to unlock MY Warranty.' },
     ],
     [
       'expo-notifications',
-      { icon: './assets/android-icon-monochrome.png', color: '#0B1220' },
+      { icon: './assets/android-icon-monochrome.png', color: '#231F1C' },
     ],
     [
       'expo-build-properties',
