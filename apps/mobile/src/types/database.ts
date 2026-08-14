@@ -104,6 +104,7 @@ type ProductRow = {
   warranty_id: string | null;
   warranty_provider_id: string | null;
   service_provider_id: string | null;
+  importer_id: string | null;
   warranty_verified_by_user: boolean;
   image_path: string | null;
   notes: string | null;
@@ -115,8 +116,9 @@ type ProductRow = {
 
 type ProductInsert = Omit<
   ProductRow,
-  'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'extension_months'
+  'id' | 'created_at' | 'updated_at' | 'deleted_at' | 'extension_months' | 'importer_id'
 > & {
+  importer_id?: string | null;
   id?: string;
   extension_months?: number;
 };
@@ -321,7 +323,13 @@ export type Database = {
           labour_months: number | null;
           coverage_summary: string | null;
           exclusions_summary: string | null;
+          special_conditions_summary: string | null;
           warranty_provider_id: string | null;
+          importer_id: string | null;
+          retailer_id: string | null;
+          serial_patterns: string[];
+          policy_version: string | null;
+          last_checked_at: string | null;
           source_id: string | null;
           valid_from: string | null;
           valid_to: string | null;
@@ -366,6 +374,10 @@ export type Database = {
           verified_by: string | null;
           verification: VerificationStateDb;
           notes: string | null;
+          document_id: string | null;
+          effective_from: string | null;
+          effective_to: string | null;
+          page_count: number | null;
           created_at: string;
           updated_at: string;
         };
@@ -383,10 +395,77 @@ export type Database = {
           clause_type: string;
           coverage_categories: string[];
           language: string;
+          title: string | null;
+          summary: string | null;
+          source_section: string | null;
+          source_page: number | null;
+          confidence: ConfidenceLevelDb;
+          verification: VerificationStateDb;
+          extraction_version: string | null;
+          extracted_by: string | null;
+          extracted_at: string | null;
           created_at: string;
         };
         Insert: Record<string, never>;
         Update: Record<string, never>;
+        Relationships: [];
+      };
+      product_warranty_matches: {
+        Row: {
+          id: string;
+          product_id: string;
+          owner_id: string;
+          warranty_id: string | null;
+          match_score: number;
+          match_state: string;
+          signals: Json;
+          has_conflict: boolean;
+          conflict_summary: Json;
+          candidate_ids: string[];
+          resolved_at: string;
+          source_checked_at: string | null;
+          resolver_version: string;
+          created_at: string;
+          updated_at: string;
+        };
+        // Written by the warranty-resolve function only; RLS grants the client
+        // SELECT and nothing else, so there is no Insert/Update shape here.
+        Insert: Record<string, never>;
+        Update: Record<string, never>;
+        Relationships: [
+          {
+            foreignKeyName: 'product_warranty_matches_warranty_id_fkey';
+            columns: ['warranty_id'];
+            isOneToOne: false;
+            referencedRelation: 'warranties';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      product_warranty_overrides: {
+        Row: {
+          id: string;
+          product_id: string;
+          owner_id: string;
+          field: string;
+          value: Json;
+          previous_value: Json | null;
+          reason: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          owner_id: string;
+          field: string;
+          value: Json;
+          previous_value?: Json | null;
+          reason?: string | null;
+        };
+        Update: {
+          value?: Json;
+          reason?: string | null;
+        };
         Relationships: [];
       };
       claims: {
@@ -665,6 +744,52 @@ export type Database = {
       soft_delete_product: {
         Args: { p_product_id: string };
         Returns: undefined;
+        Relationships: [];
+      };
+      match_warranty_policies: {
+        Args: { p_product_id: string };
+        Returns: {
+          warranty_id: string;
+          duration_months: number | null;
+          verification: VerificationStateDb;
+          confidence: ConfidenceLevelDb;
+          source_kind: WarrantySourceDb;
+          provider_id: string | null;
+          policy_version: string | null;
+          valid_from: string | null;
+          valid_to: string | null;
+          matched_brand: boolean;
+          matched_model: boolean;
+          matched_category: boolean;
+          matched_country: boolean;
+          matched_importer: boolean;
+          matched_retailer: boolean;
+          matched_serial: boolean;
+          within_validity: boolean;
+        }[];
+        Relationships: [];
+      };
+      get_warranty_clauses: {
+        Args: { p_warranty_id: string };
+        Returns: {
+          id: string;
+          clause_type: string;
+          title: string | null;
+          summary: string | null;
+          clause_text: string;
+          section: string | null;
+          source_section: string | null;
+          source_page: number | null;
+          coverage_categories: string[];
+          confidence: ConfidenceLevelDb;
+          verification: VerificationStateDb;
+          ordinal: number;
+        }[];
+        Relationships: [];
+      };
+      product_protection_completeness: {
+        Args: { p_product_id: string };
+        Returns: { score: number; gaps: string[] }[];
         Relationships: [];
       };
     };

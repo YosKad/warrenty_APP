@@ -9,6 +9,7 @@ import { formatCurrency, formatDate, isolateLtr } from '@/lib/format';
 import { useLocale } from '@/hooks/useLocale';
 import { useDeleteProduct, useProduct, useSubscriptionState } from '@/hooks/useProducts';
 import { useProductProtection } from '@/hooks/useProtection';
+import { useWarrantyIntelligence } from '@/hooks/useWarrantyIntelligence';
 import {
   canStartClaim,
   confidenceForSource,
@@ -18,6 +19,8 @@ import {
 import { hasEntitlement } from '@/domain/entitlements';
 import { listDocuments } from '@/services/documentService';
 import { ProtectionBreakdown } from '@/features/protection/ProtectionBreakdown';
+import { WarrantyIntelligenceSection } from '@/features/warranty/WarrantyIntelligenceSection';
+import { SomethingWrongCard } from '@/features/warranty/SomethingWrongCard';
 import {
   BackIcon,
   Button,
@@ -62,6 +65,7 @@ export default function ProductDetailScreen() {
   });
 
   const protection = useProductProtection(productId);
+  const intelligence = useWarrantyIntelligence(productId);
 
   if (product.isLoading || !product.data) {
     return (
@@ -273,19 +277,32 @@ export default function ProductDetailScreen() {
           />
         </View>
 
+        {/* Warranty Intelligence. Sits directly under the timeline because "what
+            does my warranty actually say" is the question the countdown provokes. */}
+        {intelligence.data ? (
+          <WarrantyIntelligenceSection
+            intelligence={intelligence.data}
+            onOpenCoverage={() => router.push(`/warranty/${productId}`)}
+            onOpenSource={() => router.push(`/warranty/${productId}`)}
+            onResolveConflict={() => router.push(`/warranty/${productId}`)}
+            onAddWarranty={() => router.push(`/add/manual?productId=${productId}`)}
+            onUploadDocument={() => router.push(`/add/document?productId=${productId}`)}
+            onScanReceipt={() => router.push('/add/scan')}
+          />
+        ) : null}
+
+        {/* A product-specific action, not a chat box. Only offered while there is
+            a live warranty to check the fault against. */}
         {claimable ? (
-          <View style={{ gap: theme.spacing.md }}>
-            <Button
-              label={t('product.reportProblem')}
-              fullWidth
-              onPress={() => router.push(`/coverage/${productId}`)}
-            />
-            {!canUseCoverage ? (
-              <Text variant="caption" tone="tertiary" align="center">
-                {t('paywall.aiCoverage')}
-              </Text>
-            ) : null}
-          </View>
+          <SomethingWrongCard
+            productName={item.name}
+            locked={!canUseCoverage}
+            onSubmit={(description) =>
+              router.push(
+                `/coverage/${productId}?issue=${encodeURIComponent(description)}`,
+              )
+            }
+          />
         ) : null}
 
         <ListGroup title={t('add.form.sectionPurchase')}>

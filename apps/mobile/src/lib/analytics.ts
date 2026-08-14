@@ -30,6 +30,22 @@ export type AnalyticsEvent =
   | { name: 'warranty_alert_opened'; props: { daysRemaining: number } }
   | { name: 'problem_reported'; props: { category: string } }
   | { name: 'coverage_analysis_completed'; props: { verdict: string; confidenceBand: string } }
+  /* Warranty intelligence. Note what these carry and what they cannot: a match
+     state and a clause *type*, never a clause, a document title or a policy id.
+     Knowing that users open sources is useful; knowing which warranty terms a
+     named person read is not ours to collect. */
+  | {
+      name: 'warranty_intelligence_viewed';
+      props: { matchState: string; hasConflict: boolean; clauseCount: number };
+    }
+  | { name: 'warranty_source_opened'; props: { clauseType: string; hasDocument: boolean } }
+  | { name: 'coverage_check_started'; props: { hasAttachments: boolean; isFollowUp: boolean } }
+  | {
+      name: 'coverage_check_completed';
+      props: { verdict: string; confidenceBand: string; clauseCount: number };
+    }
+  | { name: 'coverage_followup_requested'; props: { questionCount: number } }
+  | { name: 'warranty_match_corrected'; props: { field: string } }
   | { name: 'claim_started'; props: Record<string, never> }
   | { name: 'paywall_viewed'; props: { trigger: 'product_limit' | 'ai_coverage' | 'smart_scan' | 'profile' } }
   | { name: 'subscription_started'; props: { plan: string; period: string } }

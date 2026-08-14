@@ -20,6 +20,12 @@ export type CoverageRequest = {
   issueCategory?: string;
   /** Document ids the user attached to the problem report (photos of the fault). */
   attachmentIds?: string[];
+  /**
+   * Answers to the previous round's follow-up questions, keyed by question id.
+   * Sent alongside the original description rather than replacing it, so the
+   * second analysis reasons about the whole problem and not just the answer.
+   */
+  followUpAnswers?: Record<string, string>;
 };
 
 export type CoverageOutcome =
@@ -39,6 +45,7 @@ export async function analyseCoverage(
         issueDescription: request.issueDescription.trim().slice(0, 4000),
         issueCategory: request.issueCategory,
         attachmentIds: request.attachmentIds?.slice(0, 5) ?? [],
+        followUpAnswers: request.followUpAnswers ?? {},
       },
     });
 

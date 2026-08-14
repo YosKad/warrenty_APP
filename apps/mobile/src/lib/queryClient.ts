@@ -59,6 +59,8 @@ export const queryKeys = {
   protection: ['protection'] as const,
   warranty: {
     detail: (productId: string) => ['warranty', productId] as const,
+    /** Resolved policy, provider chain and clauses for one product. */
+    intelligence: (productId: string) => ['warranty', 'intelligence', productId] as const,
   },
   alerts: {
     list: ['alerts'] as const,
