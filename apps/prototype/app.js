@@ -121,6 +121,50 @@ const STRINGS = {
     protected_other: '{n} products are currently protected',
     noProducts: 'Add your first product to get started',
     active: 'Active', endingSoon: 'Ending soon', expired: 'Expired', unknownStatus: 'Warranty not set',
+    wiTitle: 'Your warranty',
+    wiHeadImporter: 'Official importer warranty — {d}',
+    wiHeadGeneric: 'Warranty — {d}',
+    wiYears_one: '1 year', wiYears_other: '{n} years',
+    wiMonths_one: '1 month', wiMonths_other: '{n} months',
+    wiMatch_verified: 'Verified', wiMatch_strong: 'Strong match',
+    wiMatch_needs_confirmation: 'Needs confirmation', wiMatch_unknown: 'Not identified',
+    wiRole_manufacturer: 'Manufacturer', wiRole_importer: 'Importer',
+    wiRole_retailer: 'Retailer', wiRole_warranty_provider: 'Warranty provider',
+    wiRole_service_provider: 'Service provider',
+    wiRoleHelp_manufacturer: 'Who makes it', wiRoleHelp_importer: 'Who brought it into the country',
+    wiRoleHelp_retailer: 'Where you bought it', wiRoleHelp_warranty_provider: 'Who honours the warranty',
+    wiRoleHelp_service_provider: 'Who repairs it',
+    wiShowAll: 'Show all {n}',
+    wiLastChecked: 'Last checked',
+    wiSeeCovered: "See what's covered",
+    wiConflictT: 'Two sources disagree',
+    wiConflictDuration: 'One source says {a} months, another says {b}.',
+    wiConflictB: "We've used the better-matched source. You can tell us which is right.",
+    wiNotFoundT: 'Warranty not identified yet',
+    wiNotFoundB: "We couldn't confidently find the warranty for this product. Nothing has been guessed.",
+    wiUpload: 'Upload warranty document', wiManual: 'Add warranty manually',
+    wiScan: 'Scan receipt', wiAgain: 'Search again',
+    wiCovered: "What's covered", wiNotCovered: 'Not covered',
+    wiSpecial: 'Special conditions', wiClaim: 'To make a claim', wiGeo: 'Where it applies',
+    wiNoClauses: "We don't have the clause-level terms for this warranty yet.",
+    wiViewSource: 'View source', wiSourceTitle: 'Where this came from',
+    wiOriginalText: 'Original text', wiDocument: 'Document', wiSection: 'Section',
+    wiVersion: 'Version', wiEffective: 'In force from', wiRetrieved: 'Retrieved',
+    wiVerifiedOn: 'Verified', wiPage: 'page {n}',
+    wiSummaryNote: 'Summarised for readability. The original wording is above.',
+    wiWrongT: 'Something wrong?',
+    wiWrongB: "Describe the problem and we'll check it against your warranty.",
+    wiWrongPh: 'e.g. There is a vertical black line on the right of the screen',
+    wiCheck: 'Check coverage',
+    wiBasedOn: 'Based on your warranty document',
+    wiPossibleExclusion: 'Possible exclusion', wiMissingInfo: 'What would help',
+    wiFollowUpT: 'One more thing',
+    wiFollowUpB: 'Answering this will make the assessment more reliable than a guess.',
+    wiCheckAgain: 'Check again',
+    wiGetService: 'Get service', wiAskAnother: 'Ask another question',
+    wiServiceSoon: 'Service booking arrives in the next phase.',
+    wiNoPolicyT: 'No warranty document to check against',
+    wiNoPolicyB: "We won't guess. Add your warranty document and we can check the actual terms.",
     attention: 'Needs your attention', reviewWarranty: 'Review warranty',
     protectionTitle: 'Protection score', claimReady: 'claim ready',
     bandStrong: 'Your records are in good shape',
@@ -222,6 +266,50 @@ const STRINGS = {
     protected_other: '{n} מוצרים מוגנים כרגע',
     noProducts: 'הוסיפו מוצר ראשון כדי להתחיל',
     active: 'בתוקף', endingSoon: 'מסתיימת בקרוב', expired: 'פגה', unknownStatus: 'האחריות לא הוגדרה',
+    wiTitle: 'האחריות שלכם',
+    wiHeadImporter: 'אחריות יבואן רשמי — {d}',
+    wiHeadGeneric: 'אחריות — {d}',
+    wiYears_one: 'שנה', wiYears_other: '{n} שנים',
+    wiMonths_one: 'חודש', wiMonths_other: '{n} חודשים',
+    wiMatch_verified: 'מאומת', wiMatch_strong: 'התאמה חזקה',
+    wiMatch_needs_confirmation: 'דורש אישור', wiMatch_unknown: 'לא זוהתה',
+    wiRole_manufacturer: 'יצרן', wiRole_importer: 'יבואן',
+    wiRole_retailer: 'קמעונאי', wiRole_warranty_provider: 'נותן האחריות',
+    wiRole_service_provider: 'נותן השירות',
+    wiRoleHelp_manufacturer: 'מי מייצר', wiRoleHelp_importer: 'מי ייבא לארץ',
+    wiRoleHelp_retailer: 'איפה קניתם', wiRoleHelp_warranty_provider: 'מי מכבד את האחריות',
+    wiRoleHelp_service_provider: 'מי מתקן',
+    wiShowAll: 'הצגת כל {n}',
+    wiLastChecked: 'נבדק לאחרונה',
+    wiSeeCovered: 'מה מכוסה',
+    wiConflictT: 'שני מקורות סותרים',
+    wiConflictDuration: 'מקור אחד מציין {a} חודשים, אחר מציין {b}.',
+    wiConflictB: 'השתמשנו במקור שמתאים יותר. אתם יכולים לומר לנו מה נכון.',
+    wiNotFoundT: 'האחריות עדיין לא זוהתה',
+    wiNotFoundB: 'לא הצלחנו למצוא בוודאות את האחריות של המוצר הזה. לא ניחשנו כלום.',
+    wiUpload: 'העלאת מסמך אחריות', wiManual: 'הזנת אחריות ידנית',
+    wiScan: 'סריקת קבלה', wiAgain: 'חיפוש מחדש',
+    wiCovered: 'מה מכוסה', wiNotCovered: 'מה לא מכוסה',
+    wiSpecial: 'תנאים מיוחדים', wiClaim: 'להגשת תביעה', wiGeo: 'היכן האחריות חלה',
+    wiNoClauses: 'עדיין אין לנו את סעיפי האחריות המפורטים.',
+    wiViewSource: 'הצגת המקור', wiSourceTitle: 'מאיפה זה הגיע',
+    wiOriginalText: 'הנוסח המקורי', wiDocument: 'מסמך', wiSection: 'סעיף',
+    wiVersion: 'גרסה', wiEffective: 'בתוקף מ־', wiRetrieved: 'נאסף',
+    wiVerifiedOn: 'אומת', wiPage: 'עמוד {n}',
+    wiSummaryNote: 'התקציר נועד לקריאוּת. הנוסח המקורי מופיע למעלה.',
+    wiWrongT: 'משהו לא תקין?',
+    wiWrongB: 'תארו את התקלה ונבדוק אותה מול האחריות שלכם.',
+    wiWrongPh: 'לדוגמה: יש קו שחור אנכי בצד ימין של המסך',
+    wiCheck: 'בדיקת כיסוי',
+    wiBasedOn: 'על בסיס מסמך האחריות שלכם',
+    wiPossibleExclusion: 'חריג אפשרי', wiMissingInfo: 'מה יעזור לנו',
+    wiFollowUpT: 'עוד דבר אחד',
+    wiFollowUpB: 'תשובה לשאלה הזו תיתן הערכה אמינה יותר מניחוש.',
+    wiCheckAgain: 'בדיקה מחדש',
+    wiGetService: 'קבלת שירות', wiAskAnother: 'שאלה נוספת',
+    wiServiceSoon: 'הזמנת שירות תגיע בשלב הבא.',
+    wiNoPolicyT: 'אין מסמך אחריות להשוות מולו',
+    wiNoPolicyB: 'לא ננחש. הוסיפו את מסמך האחריות ונוכל לבדוק את התנאים עצמם.',
     attention: 'דורש תשומת לב', reviewWarranty: 'בדיקת האחריות',
     protectionTitle: 'ציון הגנה', claimReady: 'מוכן לתביעה',
     bandStrong: 'התיעוד שלכם במצב טוב',
@@ -365,21 +453,24 @@ function seedProducts() {
       category: 'electronics', purchaseDate: iso(-712), durationMonths: 24,
       retailer: 'KSP', price: 8490, currency: 'ILS', serial: 'RZ8N40FKT9L',
       source: 'manufacturer', verified: true, notes: '', createdAt: Date.now() - 4000,
-      hasReceipt: true, warrantyProvider: 'Samsung Israel', serviceProvider: '',
+      hasReceipt: true, warrantyProvider: 'samline', serviceProvider: 'samsung-service-il',
+      brandOrg: 'samsung', importer: 'samline', retailer: 'ksp', country: 'IL',
     },
     {
       id: 'p2', name: 'MacBook Pro 14"', brand: 'Apple', model: 'M4 Pro',
       category: 'computers', purchaseDate: iso(-190), durationMonths: 36,
       retailer: 'iDigital', price: 11200, currency: 'ILS', serial: 'C02XG2JMQ6L4',
       source: 'user_entered', verified: true, notes: '', createdAt: Date.now() - 3000,
-      hasReceipt: true, warrantyProvider: '', serviceProvider: '',
+      hasReceipt: true, warrantyProvider: 'idigital', serviceProvider: 'idigital',
+      brandOrg: 'apple', importer: 'idigital', retailer: 'idigital', country: 'IL',
     },
     {
       id: 'p3', name: 'Dyson V15 Detect', brand: 'Dyson', model: 'SV47',
       category: 'appliances', purchaseDate: iso(-800), durationMonths: 24,
       retailer: 'Dyson Store', price: 2790, currency: 'ILS', serial: '',
       source: 'user_entered', verified: true, notes: '', createdAt: Date.now() - 2000,
-      hasReceipt: false, warrantyProvider: '', serviceProvider: '',
+      hasReceipt: false, warrantyProvider: 'dyson', serviceProvider: 'dyson-il',
+      brandOrg: 'dyson', importer: 'dyson-il', retailer: '', country: 'IL',
     },
   ];
 }
@@ -459,6 +550,314 @@ function esc(v) {
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
+/* -------------------------------------------------- warranty intelligence --
+   DEMO DATA. Mirrors supabase/seed_demo_warranty.sql — the same organisations,
+   the same policies, the same clauses with their sections and pages. Nothing
+   below was taken from a real Samsung, Apple or Dyson warranty document.
+
+   The matching and scoring are ported from
+   apps/mobile/src/domain/warrantyIntelligence.ts, weight for weight. */
+
+const ORGS = {
+  samsung:              { name: 'Samsung', legal: 'Samsung Electronics Co.' },
+  samline:              { name: 'Samline', legal: 'סמליין בע״מ', phone: '03-5555000' },
+  'samsung-service-il': { name: 'Samsung Authorised Service', legal: 'שירות מורשה סמסונג', phone: '03-5555100' },
+  apple:                { name: 'Apple', legal: 'Apple Inc.' },
+  idigital:             { name: 'iDigital', legal: 'איי-דיגיטל בע״מ', phone: '03-5555200' },
+  dyson:                { name: 'Dyson', legal: 'Dyson Ltd.' },
+  'dyson-il':           { name: 'Dyson Israel', legal: 'דייסון ישראל', phone: '03-5555300' },
+  ksp:                  { name: 'KSP' },
+};
+
+const POLICIES = [
+  {
+    id: 'samline-tv',
+    brand: 'samsung', importer: 'samline', country: 'IL',
+    modelPattern: /^QE.*S95/i, category: 'electronics',
+    months: 24, provider: 'samline',
+    version: 'SAMLINE-TV-2024.03', validFrom: '2024-01-01',
+    verification: 'unverified', sourceKind: 'manufacturer',
+    source: {
+      title: 'DEMO — Samline television warranty terms',
+      version: '2024-03', url: 'https://example.invalid/samline/warranty-tv.pdf',
+      retrieved: '2026-07-15', verified: '2026-08-12', pages: 6, effectiveFrom: '2024-01-01',
+    },
+    clauses: [
+      { id: 'c1', type: 'coverage', title: 'Manufacturing defects', titleHe: 'פגמי ייצור',
+        summary: 'Faults present when the product left the factory are covered for the full term.',
+        summaryHe: 'תקלות שהיו במוצר כשיצא מהמפעל מכוסות לכל התקופה.',
+        section: 'Section 4.1', page: 2,
+        text: 'Samline warrants that the product will be free from defects in materials and workmanship under normal domestic use for a period of twenty-four (24) months from the date of purchase.' },
+      { id: 'c2', type: 'coverage', title: 'Display panel', titleHe: 'פאנל התצוגה',
+        summary: 'Panel faults such as lines, dead rows or uneven backlight are covered when not caused by impact.',
+        summaryHe: 'תקלות פאנל כמו קווים, שורות מתות או תאורה לא אחידה מכוסות כשלא נגרמו ממכה.',
+        section: 'Section 4.2', page: 2, tags: ['display', 'panel', 'line', 'screen'],
+        text: 'Cover includes the display panel assembly, including defects presenting as persistent horizontal or vertical lines, non-uniform backlighting, or clusters of inoperative pixels exceeding the manufacturer\'s published threshold, where such defects arise other than from external force.' },
+      { id: 'c3', type: 'coverage', title: 'Internal electronics', titleHe: 'רכיבים אלקטרוניים',
+        summary: 'The main board, power supply and internal connections are covered.',
+        summaryHe: 'הלוח הראשי, ספק הכוח והחיווט הפנימי מכוסים.',
+        section: 'Section 4.3', page: 2, tags: ['power', 'board'],
+        text: 'Cover includes the main board, power supply unit, tuner assembly and internal wiring looms.' },
+      { id: 'c4', type: 'exclusion', title: 'Impact damage', titleHe: 'נזק ממכה',
+        summary: 'Damage from a knock, drop or pressure on the screen is not covered.',
+        summaryHe: 'נזק ממכה, נפילה או לחיצה על המסך אינו מכוסה.',
+        section: 'Section 5.1', page: 3, tags: ['display', 'panel', 'physical', 'screen'],
+        text: 'This warranty does not apply to damage caused by impact, external pressure, dropping, or any other external force applied to the product, whether accidental or otherwise.' },
+      { id: 'c5', type: 'exclusion', title: 'Liquid damage', titleHe: 'נזקי נוזלים',
+        summary: 'Any contact with liquid voids cover for the affected parts.',
+        summaryHe: 'מגע עם נוזל מבטל את הכיסוי לחלקים שנפגעו.',
+        section: 'Section 5.2', page: 3, tags: ['liquid'],
+        text: 'Damage resulting from contact with liquids, moisture, humidity beyond the stated operating range, or corrosive substances is excluded.' },
+      { id: 'c6', type: 'exclusion', title: 'Unauthorised repair', titleHe: 'תיקון לא מורשה',
+        summary: 'Cover ends if the product has been opened or repaired by anyone unauthorised.',
+        summaryHe: 'הכיסוי מתבטל אם המוצר נפתח או תוקן על ידי גורם לא מורשה.',
+        section: 'Section 5.4', page: 3,
+        text: 'Cover is void where the product has been disassembled, modified or repaired by any party not authorised in writing by Samline.' },
+      { id: 'c7', type: 'exclusion', title: 'Improper installation', titleHe: 'התקנה לא נכונה',
+        summary: 'Damage from incorrect wall mounting or power supply is not covered.',
+        summaryHe: 'נזק מהתקנה שגויה על הקיר או מחיבור חשמל לא תקין אינו מכוסה.',
+        section: 'Section 5.5', page: 3,
+        text: 'Damage arising from installation not performed in accordance with the supplied instructions, including wall mounting and connection to a non-compliant power supply, is excluded.' },
+      { id: 'c8', type: 'duration', title: 'Main product — 24 months', titleHe: 'המוצר — 24 חודשים',
+        summary: 'The whole product is covered for 24 months from the purchase date.',
+        summaryHe: 'כל המוצר מכוסה ל-24 חודשים מתאריך הרכישה.',
+        section: 'Section 6.1', page: 4,
+        text: 'The warranty period is twenty-four (24) months from the date of purchase as evidenced by the original proof of purchase.' },
+      { id: 'c9', type: 'service_fee', title: 'Technician visit', titleHe: 'ביקור טכנאי',
+        summary: 'On-site service is included above 55 inches; below that a call-out fee may apply.',
+        summaryHe: 'שירות בבית כלול מעל 55 אינץ׳; מתחת לכך ייתכן תשלום עבור הגעה.',
+        section: 'Section 7.2', page: 5,
+        text: 'On-site service is provided without charge for products with a screen size exceeding 55 inches. For smaller products a call-out fee, published in the current service tariff, may be charged where the fault is found not to be covered.' },
+      { id: 'c10', type: 'claim_requirement', title: 'Proof of purchase', titleHe: 'הוכחת רכישה',
+        summary: 'You need the original receipt or invoice to make a claim.',
+        summaryHe: 'צריך את הקבלה או החשבונית המקורית כדי להגיש תביעה.',
+        section: 'Section 8.1', page: 5,
+        text: 'Claims must be accompanied by the original proof of purchase showing the date and place of purchase and the product model.' },
+      { id: 'c11', type: 'geographic_restriction', title: 'Israel only', titleHe: 'ישראל בלבד',
+        summary: 'This warranty is honoured in Israel.', summaryHe: 'האחריות מכובדת בישראל.',
+        section: 'Section 9.1', page: 6,
+        text: 'This warranty is valid only for products imported and sold in Israel by Samline and is honoured within the territory of the State of Israel.' },
+    ],
+  },
+  {
+    // The conflicting candidate: same brand and country, no importer, longer term.
+    id: 'samsung-retail-il',
+    brand: 'samsung', importer: '', country: 'IL',
+    modelPattern: /^QE/i, category: 'electronics',
+    months: 36, provider: 'ksp',
+    version: 'KSP-EXT-2024.02', validFrom: '2024-01-01',
+    verification: 'unverified', sourceKind: 'retailer',
+    source: {
+      title: 'DEMO — retailer extended warranty leaflet',
+      version: '2024-02', url: 'https://example.invalid/ksp/extended.pdf',
+      retrieved: '2026-06-01', verified: null, pages: 2, effectiveFrom: '2024-01-01',
+    },
+    clauses: [
+      { id: 'k1', type: 'duration', title: 'Extended term — 36 months', titleHe: 'הארכה — 36 חודשים',
+        summary: 'The retailer leaflet states a longer term than the importer document.',
+        summaryHe: 'עלון הקמעונאי מציין תקופה ארוכה יותר ממסמך היבואן.',
+        section: 'Warranty', page: 1,
+        text: 'Televisions purchased in store carry a thirty-six (36) month warranty period.' },
+    ],
+  },
+  {
+    id: 'apple-lw',
+    brand: 'apple', importer: 'idigital', country: 'IL',
+    modelPattern: /^M4/i, category: 'computers',
+    months: 12, provider: 'idigital',
+    version: 'APPLE-LW-2024.09', validFrom: '2024-09-01',
+    verification: 'verified', sourceKind: 'manufacturer',
+    source: {
+      title: 'DEMO — Apple one-year limited warranty',
+      version: '2024-09', url: 'https://example.invalid/apple/limited-warranty.pdf',
+      retrieved: '2026-06-15', verified: '2026-08-04', pages: 4, effectiveFrom: '2024-09-01',
+    },
+    clauses: [
+      { id: 'a1', type: 'coverage', title: 'Materials and workmanship', titleHe: 'חומרים וייצור',
+        summary: 'Defects in the computer and its included accessories are covered for one year.',
+        summaryHe: 'פגמים במחשב ובאביזרים הכלולים מכוסים לשנה.',
+        section: 'Section 2.1', page: 1,
+        text: 'Apple warrants the included hardware product and accessories against defects in materials and workmanship for one (1) year from the date of original retail purchase.' },
+      { id: 'a2', type: 'exclusion', title: 'Liquid damage', titleHe: 'נזקי נוזלים',
+        summary: 'Liquid contact is not covered.', summaryHe: 'מגע עם נוזל אינו מכוסה.',
+        section: 'Section 3.2', page: 2, tags: ['liquid'],
+        text: 'This warranty does not apply to damage caused by contact with liquid, fire, earthquake or other external cause.' },
+      { id: 'a3', type: 'exclusion', title: 'Cosmetic damage', titleHe: 'נזק חיצוני',
+        summary: 'Scratches, dents and worn ports are not covered.',
+        summaryHe: 'שריטות, מכות ושחיקה של חיבורים אינם מכוסים.',
+        section: 'Section 3.4', page: 2,
+        text: 'Cosmetic damage, including but not limited to scratches, dents and broken plastic on ports, is excluded unless it resulted from a defect in materials or workmanship.' },
+      { id: 'a4', type: 'condition', title: 'Battery capacity', titleHe: 'קיבולת הסוללה',
+        summary: 'Battery service applies only once capacity falls below 80% of the original.',
+        summaryHe: 'שירות סוללה חל רק כשהקיבולת יורדת מתחת ל-80% מהמקורית.',
+        section: 'Section 4.1', page: 3, tags: ['battery'],
+        text: 'Service coverage for the built-in rechargeable battery applies where the battery\'s capacity to hold an electrical charge has fallen below eighty percent (80%) of its original specification.' },
+      { id: 'a5', type: 'duration', title: 'Hardware — 12 months', titleHe: 'חומרה — 12 חודשים',
+        summary: 'Hardware cover runs for 12 months from purchase.',
+        summaryHe: 'הכיסוי לחומרה נמשך 12 חודשים מהרכישה.',
+        section: 'Section 5.1', page: 3,
+        text: 'The warranty period is twelve (12) months from the date of original retail purchase.' },
+    ],
+  },
+  {
+    id: 'dyson-cordless',
+    brand: 'dyson', importer: '', country: '',
+    modelPattern: /^SV/i, category: 'appliances',
+    months: 24, provider: 'dyson',
+    version: 'DYSON-CORDLESS-2023.05', validFrom: '2023-01-01',
+    verification: 'unverified', sourceKind: 'manufacturer',
+    source: {
+      title: 'DEMO — Dyson cordless vacuum warranty',
+      version: '2023-05', url: 'https://example.invalid/dyson/warranty.pdf',
+      retrieved: '2025-07-10', verified: '2025-07-30', pages: 3, effectiveFrom: '2023-01-01',
+    },
+    clauses: [
+      { id: 'd1', type: 'coverage', title: 'Parts and labour', titleHe: 'חלקים ועבודה',
+        summary: 'Manufacturing faults in the machine are covered, parts and labour.',
+        summaryHe: 'תקלות ייצור במכשיר מכוסות, כולל חלקים ועבודה.',
+        section: 'Section 1.1', page: 1,
+        text: 'Dyson warrants the machine against faults in materials and manufacture, covering both parts and labour, for the applicable warranty period.' },
+      { id: 'd2', type: 'duration', title: 'Digital motor — 60 months', titleHe: 'מנוע דיגיטלי — 60 חודשים',
+        summary: 'The digital motor carries a longer term than the rest of the machine.',
+        summaryHe: 'המנוע הדיגיטלי מכוסה לתקופה ארוכה יותר משאר המכשיר.',
+        section: 'Section 1.3', page: 1, tags: ['motor'],
+        text: 'The Dyson digital motor is covered for sixty (60) months from the date of purchase. All other parts of the machine are covered for twenty-four (24) months.' },
+      { id: 'd3', type: 'exclusion', title: 'Consumables', titleHe: 'חלקים מתכלים',
+        summary: 'Filters, brush bars and batteries consumed by normal use are not covered.',
+        summaryHe: 'מסננים, מברשות וסוללות שנשחקות בשימוש רגיל אינם מכוסים.',
+        section: 'Section 2.1', page: 2,
+        text: 'This guarantee does not cover parts subject to normal wear, including filters, brush bar bristles and, where the fault is attributable to normal use, the battery pack.' },
+      { id: 'd4', type: 'exclusion', title: 'Blockages', titleHe: 'סתימות',
+        summary: 'Loss of suction caused by a blockage is not a fault.',
+        summaryHe: 'ירידה בשאיבה בגלל סתימה אינה תקלת ייצור.',
+        section: 'Section 2.2', page: 2, tags: ['suction'],
+        text: 'Reduced performance resulting from a blockage caused by use is not a manufacturing fault and is not covered by this guarantee.' },
+    ],
+  },
+];
+
+const MATCH_WEIGHTS = {
+  model: 22, brand: 14, country: 14, importer: 14,
+  serial: 10, validity: 10, category: 8, officialSource: 8,
+};
+const SOURCE_RANK = {
+  manufacturer: 1, internal_db: 2, retailer: 3,
+  document_extraction: 4, user_entered: 5, ai_inferred: 6,
+};
+const CONFLICT_MARGIN = 15;
+
+/**
+ * Eligible policies for a product, with the signals that fired.
+ *
+ * Country, importer and retailer are exclusions rather than preferences: a
+ * policy that names one and does not match is the wrong policy, not a weak one.
+ */
+function policyCandidates(p) {
+  return POLICIES
+    .filter((w) => {
+      if (w.brand && p.brandOrg && w.brand !== p.brandOrg) return false;
+      if (w.category && w.category !== p.category) return false;
+      if (w.country && w.country !== (p.country || '')) return false;
+      if (w.importer && w.importer !== (p.importer || '')) return false;
+      if (w.modelPattern && !(p.model && w.modelPattern.test(p.model))) return false;
+      if (w.validFrom && p.purchaseDate && p.purchaseDate < w.validFrom) return false;
+      return true;
+    })
+    .map((w) => {
+      const signals = {
+        model: !!(w.modelPattern && p.model && w.modelPattern.test(p.model)),
+        brand: !!(w.brand && w.brand === p.brandOrg),
+        country: !!(w.country && w.country === p.country),
+        importer: !!(w.importer && w.importer === p.importer),
+        serial: false,
+        validity: !w.validFrom || !p.purchaseDate || p.purchaseDate >= w.validFrom,
+        category: w.category === p.category,
+        officialSource: w.verification === 'official' || w.verification === 'verified',
+      };
+      let score = 0;
+      for (const k in MATCH_WEIGHTS) if (signals[k]) score += MATCH_WEIGHTS[k];
+      return { policy: w, signals: signals, score: score };
+    })
+    .sort((a, b) => b.score - a.score ||
+      (SOURCE_RANK[a.policy.sourceKind] - SOURCE_RANK[b.policy.sourceKind]));
+}
+
+function matchStateFor(score, verification) {
+  const checked = verification === 'official' || verification === 'verified';
+  if (checked && score >= 75) return 'verified';
+  if (score >= 60) return 'strong';
+  if (score >= 30) return 'needs_confirmation';
+  return 'unknown';
+}
+
+/** Only a guess arguing with a document, or an unchecked record arguing with a
+ *  verified one, is silenced. Tier alone must not settle a disagreement. */
+function silences(leader, other) {
+  if (other.sourceKind === 'ai_inferred' && leader.sourceKind !== 'ai_inferred') return true;
+  const leaderChecked = leader.verification === 'official' || leader.verification === 'verified';
+  const otherUnchecked = other.verification === 'unverified' || other.verification === 'ai_extracted';
+  return leaderChecked && otherUnchecked;
+}
+
+/** The assembled object the screens render. Never a raw record. */
+function warrantyIntel(p) {
+  const candidates = policyCandidates(p);
+  const top = candidates[0];
+  if (!top) {
+    return { policy: null, state: 'unknown', score: 0, chain: providerChain(p), clauses: groupClauses([]), conflicts: [] };
+  }
+
+  const conflicts = [];
+  candidates.slice(1).forEach((other) => {
+    if (top.score - other.score > CONFLICT_MARGIN) return;
+    if (silences(top.policy, other.policy)) return;
+    if (top.policy.months !== other.policy.months && !conflicts.length) {
+      conflicts.push({ field: 'duration', chosen: top.policy.months, alternative: other.policy.months });
+    }
+  });
+
+  return {
+    policy: top.policy,
+    state: matchStateFor(top.score, top.policy.verification),
+    score: top.score,
+    signals: top.signals,
+    chain: providerChain(p, top.policy),
+    clauses: groupClauses(top.policy.clauses),
+    conflicts: conflicts,
+  };
+}
+
+/** Five roles, five entries. Never collapsed into one "provider". */
+function providerChain(p, policy) {
+  const wanted = [
+    ['warranty_provider', p.warrantyProvider || (policy && policy.provider)],
+    ['service_provider', p.serviceProvider],
+    ['manufacturer', p.brandOrg],
+    ['importer', p.importer],
+    ['retailer', p.retailer],
+  ];
+  return wanted
+    .filter((entry) => entry[1] && ORGS[entry[1]])
+    .map((entry) => ({ role: entry[0], key: entry[1], org: ORGS[entry[1]] }));
+}
+
+function groupClauses(clauses) {
+  const g = { covered: [], notCovered: [], special: [], claim: [], geo: [] };
+  clauses.forEach((c) => {
+    if (c.type === 'coverage') g.covered.push(c);
+    else if (c.type === 'exclusion') g.notCovered.push(c);
+    else if (c.type === 'duration' || c.type === 'service_fee' || c.type === 'condition') g.special.push(c);
+    else if (c.type === 'claim_requirement' || c.type === 'procedure') g.claim.push(c);
+    else if (c.type === 'geographic_restriction') g.geo.push(c);
+  });
+  return g;
+}
+
+/** Locale-aware clause copy. The source text is never translated — it is the
+ *  document's own wording, which is the whole point of showing it. */
+function clauseTitle(c) { return (S.lang === 'he' && c.titleHe) ? c.titleHe : c.title; }
+function clauseSummary(c) { return (S.lang === 'he' && c.summaryHe) ? c.summaryHe : c.summary; }
+
 /* -------------------------------------------------------------- coverage --
    Simulated. Deterministic keyword routing rather than a model call, but it
    keeps the app's real contract: it never says "covered", and every verdict
@@ -517,8 +916,22 @@ function mentions(text, words) {
   return false;
 }
 
-function analyseCoverage(text, category) {
-  const clause = CLAUSES[category] || CLAUSES._default;
+/**
+ * Coverage assessment against the matched policy.
+ *
+ * Simulated, but it obeys the real contract: it reasons only over clauses that
+ * belong to *this product's* policy, every verdict other than
+ * insufficient_information cites one, and it asks rather than guesses when the
+ * one fact that would decide it — how the fault started — is missing.
+ */
+function analyseCoverage(product, text, answers) {
+  const intel = warrantyIntel(product);
+  answers = answers || {};
+
+  if (!intel.policy) {
+    return { verdict: 'insufficient_information', confidence: 0, clauses: [], exclusions: [],
+             noPolicy: true };
+  }
 
   if (text.trim().length < 12) {
     return { verdict: 'insufficient_information', confidence: 0.15, clauses: [], exclusions: [] };
@@ -526,14 +939,24 @@ function analyseCoverage(text, category) {
 
   const damage = mentions(text, DAMAGE_WORDS);
   const fault = mentions(text, FAULT_WORDS);
+  const clauses = intel.policy.clauses;
+
+  // Retrieval: clauses whose tags appear in the description, then the policy's
+  // general coverage clause. Stands in for the vector search the real app runs
+  // inside Postgres, and is scoped to one policy in exactly the same way.
+  const lower = text.toLowerCase();
+  const tagged = clauses.filter((c) => (c.tags || []).some((tag) => lower.indexOf(tag) !== -1));
+  const generalCover = clauses.filter((c) => c.type === 'coverage');
+  const exclusions = clauses.filter((c) => c.type === 'exclusion');
 
   if (damage) {
+    const cited = tagged.filter((c) => c.type === 'exclusion');
     return {
       verdict: 'likely_not_covered', confidence: 0.78,
       why: S.lang === 'he'
-        ? 'התיאור מצביע על נזק פיזי או חדירת נוזל, ואלה מופיעים במפורש ברשימת החריגים.'
-        : 'What you described points to physical damage or liquid ingress, which the terms list explicitly as an exclusion.',
-      clauses: [{ section: S.lang === 'he' ? 'חריגים' : 'Exclusions', text: EXCLUSION_CLAUSE }],
+        ? 'התיאור מצביע על נזק פיזי או חדירת נוזל, ואלה מופיעים במפורש ברשימת החריגים של האחריות שלכם.'
+        : 'What you described points to physical damage or liquid ingress, which your warranty lists explicitly as an exclusion.',
+      clauses: (cited.length ? cited : exclusions).slice(0, 2),
       exclusions: [],
       action: S.lang === 'he'
         ? 'עדיין כדאי לפנות לנותן השירות — חלק מהיצרנים מציעים תיקון בתשלום מופחת.'
@@ -542,16 +965,61 @@ function analyseCoverage(text, category) {
   }
 
   if (fault) {
+    // The one fact that decides a panel fault is whether it followed an impact.
+    // Asking is cheap; guessing turns a rejected claim into our fault.
+    const coverCited = (tagged.filter((c) => c.type === 'coverage')[0]) || generalCover[0];
+    // The exclusion that matters is the one covering the same part, not the one
+    // the user happened to use the same word for. A panel coverage clause and a
+    // panel impact exclusion are the pair that decides this kind of claim.
+    const coverTags = (coverCited && coverCited.tags) || [];
+    const exclusionRisk = exclusions.filter((c) =>
+      (c.tags || []).some((tag) => coverTags.indexOf(tag) !== -1))[0];
+
+    if (exclusionRisk && !answers.origin) {
+      return {
+        verdict: 'insufficient_information', confidence: 0.35,
+        why: S.lang === 'he'
+          ? 'התיאור תואם סעיף כיסוי, אבל גם חריג. שאלה אחת תכריע.'
+          : 'What you described matches a coverage clause, but also an exclusion. One question decides it.',
+        clauses: [],
+        exclusions: [],
+        followUp: {
+          id: 'origin',
+          question: S.lang === 'he'
+            ? 'האם זה הופיע אחרי מכה או לחיצה על המסך?'
+            : 'Did this appear after the screen was knocked or pressed?',
+          options: S.lang === 'he'
+            ? ['הופיע מעצמו', 'אחרי מכה', 'לא בטוח']
+            : ['It appeared on its own', 'After an impact', "I'm not sure"],
+        },
+        missing: S.lang === 'he'
+          ? ['מתי התקלה התחילה', 'האם המוצר הוזז או הותקן מחדש']
+          : ['When the fault started', 'Whether the product was moved or re-installed'],
+      };
+    }
+
+    const blamedOnImpact = answers.origin && /impact|מכה/i.test(answers.origin);
+    if (blamedOnImpact) {
+      return {
+        verdict: 'likely_not_covered', confidence: 0.8,
+        why: S.lang === 'he'
+          ? 'לפי מה שסיפרתם, התקלה הופיעה אחרי מכה — וזה בדיוק החריג שמופיע באחריות.'
+          : 'From what you told us the fault followed an impact, which is the exclusion your warranty names.',
+        clauses: exclusionRisk ? [exclusionRisk] : exclusions.slice(0, 1),
+        exclusions: [],
+        action: S.lang === 'he'
+          ? 'פנו לנותן השירות ובקשו הצעת מחיר לתיקון בתשלום.'
+          : 'Contact the service provider and ask for a paid-repair quote.',
+      };
+    }
+
     return {
       verdict: 'likely_covered', confidence: 0.84,
       why: S.lang === 'he'
-        ? 'התקלה שתיארתם תואמת לסעיף הכיסוי לכשל ייצור, ולא לחריג הנזק הפיזי.'
-        : 'The fault you described matches the manufacturing-defect clause rather than the physical damage exclusion.',
-      clauses: [{ section: clause.section, text: clause.covered }],
-      exclusions: [
-        S.lang === 'he' ? 'נזק פיזי או חדירת נוזל' : 'Physical or liquid damage',
-        S.lang === 'he' ? 'תיקון על ידי טכנאי לא מורשה' : 'Repair by an unauthorised technician',
-      ],
+        ? 'התקלה שתיארתם תואמת לסעיף הכיסוי של פאנל התצוגה באחריות שלכם, ולא לחריג הנזק הפיזי.'
+        : 'The fault you described matches the display-panel coverage clause in your warranty rather than the physical-damage exclusion.',
+      clauses: coverCited ? [coverCited] : [],
+      exclusions: exclusionRisk ? [clauseSummary(exclusionRisk)] : [],
       action: S.lang === 'he'
         ? 'פנו לנותן השירות המורשה עם הקבלה והמספר הסידורי.'
         : 'Contact the authorised service centre with your receipt and serial number.',
@@ -563,8 +1031,11 @@ function analyseCoverage(text, category) {
     why: S.lang === 'he'
       ? 'התיאור לא מפרט מספיק כדי להתאים אותו לסעיף מסוים. פירוט נוסף ישפר את ההערכה.'
       : "The description doesn't map cleanly onto a specific clause. More detail would sharpen this.",
-    clauses: [{ section: clause.section, text: clause.covered }],
+    clauses: generalCover.slice(0, 1),
     exclusions: [],
+    missing: S.lang === 'he'
+      ? ['מה בדיוק לא עובד', 'מתי זה קורה']
+      : ['Exactly what fails', 'When it happens'],
     action: S.lang === 'he'
       ? 'תארו מתי זה קורה ומה בדיוק לא עובד, ובדקו שוב.'
       : 'Describe when it happens and exactly what fails, then check again.',
@@ -1095,11 +1566,11 @@ function viewProduct() {
       '<span class="cap ' + (p.verified ? 'ok' : 'warn') + '">' +
         (p.verified ? t('confHigh') : t('confLow')) + '</span></div>',
 
+    warrantySection(p),
+
     claimReadiness(p),
 
-    claimable
-      ? '<button class="btn primary" data-act="coverage" data-id="' + p.id + '">' + t('reportProblem') + '</button>'
-      : '',
+    claimable ? somethingWrong(p) : '',
 
     '<div class="stack g8"><p class="meta ter">' + t('purchase') + '</p><div class="group">' +
       row(t('purchased'), fmtDate(p.purchaseDate, 'long')) +
@@ -1126,6 +1597,163 @@ function viewProduct() {
  * is made of. Every gap is a row you can act on; the satisfied ones are listed
  * quietly, because showing only what's missing reads as nagging.
  */
+/**
+ * "Your warranty".
+ *
+ * Four questions at a glance — what applies, who honours it, how long, and how
+ * we know — without becoming a table of database fields. A role we do not know
+ * is absent rather than an empty row, and the provider chain is never collapsed:
+ * Samsung makes the television and Samline honours the warranty, and one word
+ * for both is how someone phones the wrong company.
+ */
+function warrantySection(p) {
+  const intel = warrantyIntel(p);
+
+  if (!intel.policy || intel.state === 'unknown') {
+    return '<div class="panel stack g16">' +
+      '<div class="stack g4">' +
+        '<p class="meta ter">' + t('wiTitle') + '</p>' +
+        '<p class="h3">' + t('wiNotFoundT') + '</p>' +
+        '<p class="sm sec">' + t('wiNotFoundB') + '</p>' +
+      '</div>' +
+      '<div class="stack g4">' +
+        ['wiUpload', 'wiManual', 'wiScan', 'wiAgain'].map((k) =>
+          '<button class="wi-action row between"><span class="sm">' + t(k) + '</span>' +
+          icon('chevron', 'ter sm-ico') + '</button>').join('') +
+      '</div></div>';
+  }
+
+  const months = intel.policy.months;
+  const duration = months % 12 === 0
+    ? tn('wiYears', months / 12)
+    : tn('wiMonths', months);
+  const provider = intel.chain.filter((c) => c.role === 'warranty_provider')[0];
+  const importer = intel.chain.filter((c) => c.role === 'importer')[0];
+  const headline = (provider && importer && provider.key === importer.key)
+    ? t('wiHeadImporter', { d: duration })
+    : t('wiHeadGeneric', { d: duration });
+
+  const visible = intel.chain.slice(0, 2);
+
+  return '<div class="panel stack g16">' +
+    '<div class="stack g6">' +
+      '<p class="meta ter">' + t('wiTitle') + '</p>' +
+      '<p class="h3" dir="auto">' + esc(headline) + '</p>' +
+      matchChip(intel.state) +
+    '</div>' +
+
+    (intel.conflicts.length
+      ? '<div class="conflict stack g6">' +
+        '<p class="sms">' + t('wiConflictT') + '</p>' +
+        '<p class="cap">' + t('wiConflictDuration', {
+            a: intel.conflicts[0].chosen, b: intel.conflicts[0].alternative }) + '</p>' +
+        '<p class="cap">' + t('wiConflictB') + '</p></div>'
+      : '') +
+
+    '<div class="stack g12">' + visible.map((link) =>
+      '<div class="stack tiny-gap">' +
+        '<span class="cap ter">' + t('wiRole_' + link.role) + '</span>' +
+        '<span class="sms" dir="auto">' + esc(link.org.name) + '</span>' +
+        '<span class="cap ter" dir="auto">' +
+          esc(link.org.legal && link.org.legal !== link.org.name
+              ? link.org.legal
+              : t('wiRoleHelp_' + link.role)) + '</span>' +
+      '</div>').join('') +
+      (intel.chain.length > 2
+        ? '<button class="link start" data-act="go" data-screen="whatsCovered" data-id="' + p.id + '">' +
+          t('wiShowAll', { n: intel.chain.length }) + '</button>'
+        : '') +
+    '</div>' +
+
+    '<button class="wi-source row g8" data-act="go" data-screen="whatsCovered" data-id="' + p.id + '">' +
+      icon('info', 'ter sm-ico') +
+      '<span class="cap ter grow start" dir="auto">' + esc(intel.policy.source.title) +
+        ' · ' + esc(ltr(intel.policy.version)) + '</span>' +
+      icon('chevron', 'ter sm-ico') +
+    '</button>' +
+    (intel.policy.source.verified
+      ? '<p class="cap ter">' + t('wiLastChecked') + ': ' + fmtDate(intel.policy.source.verified) + '</p>'
+      : '') +
+
+    '<button class="wi-cta row between" data-act="go" data-screen="whatsCovered" data-id="' + p.id + '">' +
+      '<span class="sms">' + t('wiSeeCovered') + '</span>' + icon('chevron', 'sm-ico') +
+    '</button>' +
+  '</div>';
+}
+
+function matchChip(state) {
+  return '<span class="mchip ' + state + '">' + esc(t('wiMatch_' + state)) + '</span>';
+}
+
+/**
+ * "Something wrong?" — a product-specific action, not a chat box. A chat box
+ * would invite "what's the weather" and then have to refuse it.
+ */
+function somethingWrong(p) {
+  const draft = (S.coverage && S.coverage.text) || '';
+  return '<div class="panel stack g12">' +
+    '<div class="stack g4">' +
+      '<p class="h3">' + t('wiWrongT') + '</p>' +
+      '<p class="sm sec">' + t('wiWrongB') + '</p>' +
+    '</div>' +
+    '<textarea id="wrong" class="input area" rows="3" placeholder="' + esc(t('wiWrongPh')) + '">' +
+      esc(draft) + '</textarea>' +
+    '<button class="btn primary" data-act="startCoverage" data-id="' + p.id + '">' +
+      t('wiCheck') + '</button>' +
+  '</div>';
+}
+
+/**
+ * What's covered.
+ *
+ * Every line comes from a clause in the matched policy. A section with no
+ * clauses is absent rather than padded with generic appliance terms, which would
+ * be right often enough to be dangerous. Covered and excluded carry different
+ * marks as well as different colours, so the distinction survives greyscale.
+ */
+function viewWhatsCovered() {
+  const p = S.products.find((x) => x.id === S.params.id);
+  if (!p) return section('<p class="sm sec">Not found</p>');
+  const intel = warrantyIntel(p);
+
+  const groups = [
+    ['covered', t('wiCovered'), 'ok'],
+    ['notCovered', t('wiNotCovered'), 'bad'],
+    ['special', t('wiSpecial'), 'neutral'],
+    ['claim', t('wiClaim'), 'neutral'],
+    ['geo', t('wiGeo'), 'neutral'],
+  ];
+
+  return section([
+    '<div class="row navrow"><button class="iconbtn" data-act="back" aria-label="' + esc(t('back')) + '">' +
+      icon('backArrow') + '</button></div>',
+    '<div class="stack g6"><h1 class="h1">' + t('wiCovered') + '</h1>' +
+      '<p class="sm ter" dir="auto">' + esc(p.name) + '</p>' +
+      (intel.policy ? matchChip(intel.state) : '') + '</div>',
+
+    intel.policy
+      ? groups.map((g) => clauseGroup(g[1], intel.clauses[g[0]], g[2], intel.policy.id)).join('') +
+        '<p class="cap ter">' + t('disclaimer') + '</p>'
+      : '<div class="panel"><p class="sm sec">' + t('wiNoClauses') + '</p></div>',
+  ].join(''));
+}
+
+function clauseGroup(title, clauses, tone, policyId) {
+  if (!clauses || !clauses.length) return '';
+  const mark = tone === 'ok' ? 'check' : tone === 'bad' ? 'close' : 'info';
+  return '<div class="stack g12"><p class="h3">' + esc(title) + '</p>' +
+    '<div class="group">' + clauses.map((c) =>
+      '<button class="lrow clause row top g12" data-act="viewClause" data-policy="' + policyId +
+        '" data-clause="' + c.id + '">' +
+        '<span class="mark ' + tone + '">' + icon(mark, 'sm-ico') + '</span>' +
+        '<span class="stack tiny-gap grow start">' +
+          '<span class="sms" dir="auto">' + esc(clauseTitle(c)) + '</span>' +
+          '<span class="cap sec" dir="auto">' + esc(clauseSummary(c)) + '</span>' +
+          '<span class="cap acc-text">' + t('wiViewSource') + '</span>' +
+        '</span></button>').join('') +
+    '</div></div>';
+}
+
 function claimReadiness(p) {
   const c = completeness(p);
   const tone = c.score >= 85 ? 'active' : c.score >= 60 ? 'ending' : 'expired';
@@ -1294,37 +1922,77 @@ function viewCoverage() {
 
   if (c && c.state === 'done') {
     const r = c.result;
+    const intel = warrantyIntel(p);
     const vLabel = { likely_covered: t('vLikely'), possibly_covered: t('vPossibly'),
       likely_not_covered: t('vNot'), insufficient_information: t('vInsufficient') }[r.verdict];
     const tone = { likely_covered: 'ok', possibly_covered: 'warn',
       likely_not_covered: 'bad', insufficient_information: 'info' }[r.verdict];
+    const answers = c.answers || {};
 
     return section([
       '<div class="row end navrow"><button class="iconbtn" data-act="back">' + icon('close') + '</button></div>',
+
       '<div class="card verdict ' + tone + ' stack g8">',
-      '<p class="meta">' + t('coverage') + '</p>',
       '<p class="h2">' + esc(vLabel) + '</p>',
+      intel.policy ? matchChip(intel.state) : '',
       r.why ? '<p class="bd body-on-tint">' + esc(r.why) + '</p>' : '',
-      '<p class="cap ter">' + (r.confidence >= 0.75 ? t('confHigh') : t('confLow')) + '</p>',
+      intel.policy ? '<p class="cap ter">' + t('wiBasedOn') + '</p>' : '',
       '</div>',
 
-      r.clauses.length
+      // No document, no assessment. Said plainly rather than dressed up as a
+      // low-confidence answer.
+      r.noPolicy
+        ? '<div class="panel stack g4"><p class="sms">' + t('wiNoPolicyT') + '</p>' +
+          '<p class="sm sec">' + t('wiNoPolicyB') + '</p></div>'
+        : '',
+
+      r.why && r.clauses.length
         ? '<div class="stack g8"><p class="meta ter">' + t('relevantClauses') + '</p>' +
           r.clauses.map((cl) =>
-            '<div class="card subtle stack tiny-gap"><p class="meta ter">' + esc(cl.section) + '</p>' +
-            '<p class="sm quote">' + esc(cl.text) + '</p></div>').join('') + '</div>'
+            '<button class="panel stack tiny-gap start clause" data-act="viewClause" data-policy="' +
+              intel.policy.id + '" data-clause="' + cl.id + '">' +
+            '<span class="meta ter">' + esc(ltr(cl.section)) + '</span>' +
+            '<span class="sm quote" dir="auto">' + esc(cl.text) + '</span>' +
+            '<span class="cap acc-text">' + t('wiViewSource') + '</span></button>').join('') + '</div>'
         : '',
 
       r.exclusions && r.exclusions.length
-        ? '<div class="stack g6"><p class="meta ter">' + t('watchOut') + '</p>' +
-          r.exclusions.map((e) => '<p class="sm sec">• ' + esc(e) + '</p>').join('') + '</div>'
+        ? '<div class="stack g6"><p class="meta ter">' + t('wiPossibleExclusion') + '</p>' +
+          r.exclusions.map((e) => '<p class="sm sec">· ' + esc(e) + '</p>').join('') + '</div>'
+        : '',
+
+      r.missing && r.missing.length
+        ? '<div class="stack g6"><p class="meta ter">' + t('wiMissingInfo') + '</p>' +
+          r.missing.map((m) => '<p class="sm sec">· ' + esc(m) + '</p>').join('') + '</div>'
+        : '',
+
+      // Asking beats guessing. The original description is kept, so the next
+      // pass reasons about the whole problem rather than only the answer.
+      r.followUp
+        ? '<div class="followup stack g12">' +
+          '<div class="stack g4"><p class="h3">' + t('wiFollowUpT') + '</p>' +
+          '<p class="cap">' + t('wiFollowUpB') + '</p></div>' +
+          '<p class="sm">' + esc(r.followUp.question) + '</p>' +
+          '<div class="chips">' + r.followUp.options.map((opt) =>
+            '<button class="dchip' + (answers[r.followUp.id] === opt ? ' on' : '') +
+            '" data-act="answerFollowUp" data-q="' + r.followUp.id + '" data-value="' + esc(opt) + '">' +
+            esc(opt) + '</button>').join('') + '</div>' +
+          '<button class="btn primary" data-act="runCoverage" data-id="' + p.id + '"' +
+            (answers[r.followUp.id] ? '' : ' disabled') + '>' + t('wiCheckAgain') + '</button>' +
+          '</div>'
         : '',
 
       r.action ? '<div class="stack g6"><p class="meta ter">' + t('nextStep') + '</p>' +
         '<p class="sm sec">' + esc(r.action) + '</p></div>' : '',
 
       '<p class="cap ter">' + t('disclaimer') + '</p>',
-      '<button class="btn secondary" data-act="coverageReset" data-id="' + p.id + '">' + t('checkAnother') + '</button>',
+
+      '<div class="stack g8">' +
+        '<button class="btn primary" data-act="raw" data-raw="toast(t(\'wiServiceSoon\'))">' +
+          t('wiGetService') + '</button>' +
+        '<button class="btn secondary" data-act="coverageReset" data-id="' + p.id + '">' +
+          t('wiAskAnother') + '</button>' +
+      '</div>',
     ].join(''));
   }
 
@@ -1474,6 +2142,32 @@ function renderSheet() {
         : 'Subscriptions renew automatically unless cancelled at least 24 hours before the period ends.') + '</p>',
       '<button class="btn ghost" data-act="closeSheet">' + t('notNow') + '</button>',
     ].join('');
+  } else if (s.type === 'clause') {
+    // Original text first and in full, then where it came from, and only then
+    // our summary — labelled as ours. A summary above its source invites trust
+    // in the paraphrase.
+    // Only the section is Latin. Isolating the whole string would drag the
+    // Hebrew page label inside an LTR run and render it back to front.
+    const loc = [
+      s.clause.section ? ltr(s.clause.section) : '',
+      s.clause.page ? t('wiPage', { n: s.clause.page }) : '',
+    ].filter(Boolean).join(' · ');
+    inner = [
+      '<p class="h3">' + t('wiSourceTitle') + '</p>',
+      '<p class="meta ter">' + t('wiOriginalText') + '</p>',
+      '<div class="quote-box"><p class="sm" dir="auto">' + esc(s.clause.text) + '</p></div>',
+      '<div class="stack g6">',
+      srcRow(t('wiDocument'), esc(s.source.title)),
+      loc ? srcRow(t('wiSection'), esc(loc)) : '',
+      srcRow(t('wiVersion'), esc(ltr(s.source.version))),
+      s.source.effectiveFrom ? srcRow(t('wiEffective'), fmtDate(s.source.effectiveFrom)) : '',
+      s.source.retrieved ? srcRow(t('wiRetrieved'), fmtDate(s.source.retrieved)) : '',
+      s.source.verified ? srcRow(t('wiVerifiedOn'), fmtDate(s.source.verified)) : '',
+      '</div>',
+      '<div class="stack g4"><p class="sm sec" dir="auto">' + esc(clauseSummary(s.clause)) + '</p>',
+      '<p class="cap ter">' + t('wiSummaryNote') + '</p></div>',
+      '<button class="btn secondary" data-act="closeSheet">' + t('close') + '</button>',
+    ].join('');
   } else if (s.type === 'categories') {
     inner = '<p class="h3">' + t('fCategory') + '</p><div class="group">' +
       CATEGORIES.map((c) =>
@@ -1509,6 +2203,11 @@ function renderSheet() {
   return '<div class="scrim" data-act="closeSheet"></div>' +
     '<div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>' +
     '<div class="sheet-body stack g16">' + inner + '</div></div>';
+}
+
+function srcRow(label, value) {
+  return '<div class="row between g16"><span class="cap ter">' + esc(label) + '</span>' +
+    '<span class="cap end-text" dir="auto">' + value + '</span></div>';
 }
 
 function planOption(key, name, price, features, rec) {
@@ -1557,6 +2256,7 @@ function currentView() {
     case 'addMethod': return viewAddMethod();
     case 'add': case 'edit': return viewForm();
     case 'coverage': return viewCoverage();
+    case 'whatsCovered': return viewWhatsCovered();
     case 'alerts': return viewAlerts();
     case 'profile': return viewProfile();
     case 'plans': return viewPlans();
@@ -1705,6 +2405,31 @@ document.addEventListener('click', function (e) {
 
     case 'coverage': S.coverage = null; go('coverage', { id: el.dataset.id }); break;
     case 'coverageReset': S.coverage = null; render(); break;
+
+    case 'answerFollowUp': {
+      const answers = Object.assign({}, (S.coverage && S.coverage.answers) || {});
+      answers[el.dataset.q] = el.dataset.value;
+      S.coverage = Object.assign({}, S.coverage, { answers: answers });
+      render();
+      break;
+    }
+
+    case 'startCoverage': {
+      const ta = document.getElementById('wrong');
+      S.coverage = { state: 'idle', text: ta ? ta.value : '', answers: {} };
+      go('coverage', { id: el.dataset.id });
+      break;
+    }
+
+    case 'viewClause': {
+      const policy = POLICIES.filter((w) => w.id === el.dataset.policy)[0];
+      const clause = policy && policy.clauses.filter((c) => c.id === el.dataset.clause)[0];
+      if (clause) {
+        S.sheet = { type: 'clause', clause: clause, source: policy.source };
+        render();
+      }
+      break;
+    }
     case 'runCoverage': {
       if (!PLANS[S.plan].aiCoverage) {
         S.sheet = { type: 'paywall', reason: 'feature', headline: t('coverageLocked') };
@@ -1712,12 +2437,18 @@ document.addEventListener('click', function (e) {
         break;
       }
       const ta = document.getElementById('cov');
-      const text = ta ? ta.value : '';
+      // Prefer the freshly typed text; fall back to what the product screen
+      // already captured, so the sentence the user wrote is never thrown away.
+      const text = ta ? ta.value : (S.coverage && S.coverage.text) || '';
       const p = S.products.find((x) => x.id === el.dataset.id);
-      S.coverage = { state: 'analysing', text: text };
+      const answers = (S.coverage && S.coverage.answers) || {};
+      S.coverage = { state: 'analysing', text: text, answers: answers };
       render();
       setTimeout(function () {
-        S.coverage = { state: 'done', text: text, result: analyseCoverage(text, p ? p.category : 'other') };
+        S.coverage = {
+          state: 'done', text: text, answers: answers,
+          result: analyseCoverage(p, text, answers),
+        };
         render();
       }, 1100);
       break;

@@ -34,8 +34,12 @@ export function ClauseSourceSheet({ clause, source, onDismiss }: ClauseSourceShe
 
   if (!clause) return null;
 
+  // The section is a Latin token ("Section 4.2") and the page label is
+  // translated. Isolating the joined string would drag a Hebrew word inside an
+  // LTR run and render it back to front, so only the section is isolated.
+  const sectionLabel = clause.sourceSection ?? clause.section;
   const location = [
-    clause.sourceSection ?? clause.section,
+    sectionLabel ? isolateLtr(sectionLabel) : null,
     clause.sourcePage ? t('warrantyIntel.sourcePage', { page: clause.sourcePage }) : null,
   ]
     .filter(Boolean)
@@ -71,7 +75,7 @@ export function ClauseSourceSheet({ clause, source, onDismiss }: ClauseSourceShe
             />
           ) : null}
           {location ? (
-            <SourceRow label={t('warrantyIntel.sourceSection')} value={isolateLtr(location)} />
+            <SourceRow label={t('warrantyIntel.sourceSection')} value={location} />
           ) : null}
           {source?.documentVersion ? (
             <SourceRow

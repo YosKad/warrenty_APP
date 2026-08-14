@@ -35,9 +35,23 @@ it's built for real.
    belongs to and *Claim readiness* shows the same score broken into the facts
    it is made of. The maths is the app's own — `src/domain/protection.ts`,
    deterministic, no model involved.
-5. **Switch language.** Profile → Language → עברית. The whole layout mirrors;
-   serial numbers, model codes and percentages stay left-to-right.
-6. **Switch theme and plan.** Profile → Appearance and Subscription.
+5. **Read your warranty.** Open the Samsung and look at *Your warranty*: the
+   term, who honours it, who repairs it, where the information came from, and
+   how sure we are. Two demo sources disagree about the length on purpose, so
+   the conflict state is reachable.
+6. **See what's covered.** Coverage, exclusions, special conditions and claim
+   requirements, each one tappable through to the verbatim clause with its
+   section and page. Nothing on that screen is generated to fill a section out.
+7. **Describe a fault.** "There is a vertical black line on the right of the
+   screen" → the check asks whether it followed an impact rather than guessing,
+   and only then returns a verdict citing Section 4.2.
+8. **Switch language.** Profile → Language → עברית. The whole layout mirrors;
+   serial numbers, model codes, sections and percentages stay left-to-right.
+9. **Switch theme and plan.** Profile → Appearance and Subscription.
+
+The warranty policies, clauses and organisations in the prototype mirror
+`supabase/seed_demo_warranty.sql` and are **demonstration data** — no real
+Samsung, Apple or Dyson warranty text appears anywhere in this repository.
 
 Your data lives in `localStorage` and survives a reload. Reset it from
 **Profile → Reset all data**.
