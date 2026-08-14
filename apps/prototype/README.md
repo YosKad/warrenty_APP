@@ -45,9 +45,18 @@ it's built for real.
 7. **Describe a fault.** "There is a vertical black line on the right of the
    screen" → the check asks whether it followed an impact rather than guessing,
    and only then returns a verdict citing Section 4.2.
-8. **Switch language.** Profile → Language → עברית. The whole layout mirrors;
-   serial numbers, model codes, sections and percentages stay left-to-right.
-9. **Switch theme and plan.** Profile → Appearance and Subscription.
+8. **Get service.** From the coverage result, or from the *Service* card on the
+   product. One recommendation ("book a technician", and why), then compact
+   contact buttons — and note that the spare-parts and general-enquiries lines
+   in the fixture data never appear among them. The provider chain is collapsed
+   so Samline shows once as importer *and* warranty provider, service options
+   distinguish "not available" from "not confirmed", and the nearest centre is
+   the nearest *compatible* one: the phone bar two streets closer is excluded
+   for a television. Nothing on the screen needs a location permission.
+9. **Switch language.** Profile → Language → עברית. The whole layout mirrors;
+   serial numbers, model codes, sections, percentages and company names stay
+   left-to-right without moving to the wrong edge.
+10. **Switch theme and plan.** Profile → Appearance and Subscription.
 
 The warranty policies, clauses and organisations in the prototype mirror
 `supabase/seed_demo_warranty.sql` and are **demonstration data** — no real

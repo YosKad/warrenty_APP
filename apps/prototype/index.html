@@ -443,6 +443,25 @@ button:focus-visible, input:focus-visible, textarea:focus-visible {
 .followup .dchip.on { border-color: var(--ai-fg); background: var(--bg-surface); color: var(--t-primary); }
 button[disabled] { opacity: .45; pointer-events: none; }
 
+/* ---- service concierge ---- */
+.contact-btn {
+  flex: 1; align-items: center; padding: 12px 6px;
+  border-radius: 14px; background: var(--bg-surface); text-align: center;
+}
+.contact-btn:active { background: var(--bg-subtle); }
+.chain-link {
+  display: block; width: 2px; height: 14px; margin-inline-start: 3px;
+  border-radius: 1px; background: var(--bd-default);
+}
+.chip-ok, .chip-neutral, .chip-warn {
+  display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 13px;
+}
+.chip-ok { background: var(--st-active-bg); color: var(--st-active-fg); }
+.chip-warn { background: var(--st-end-bg); color: var(--st-end-fg); }
+.chip-neutral { background: var(--bg-subtle); color: var(--t-secondary); }
+.hollow.needed { border-color: var(--st-end-fg); }
+.ok { color: var(--st-active-fg); }
+
 /* ---- notice ---- */
 .notice {
   display: flex; align-items: flex-start; gap: 10px;

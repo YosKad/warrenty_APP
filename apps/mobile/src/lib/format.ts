@@ -87,6 +87,23 @@ export function isolateLtr(value: string): string {
   return `${LRI}${value}${PDI}`;
 }
 
+/**
+ * First-strong isolate.
+ *
+ * For a fragment whose direction should be decided by its own content, inside a
+ * string that mixes directions — an address like "רחוב הרכבת 58" joined to a
+ * city like "Tel Aviv" with a comma. Without isolation the whole line takes the
+ * direction of its first strong character and the comma lands on the wrong side.
+ *
+ * Unlike `isolateLtr` this is applied in both layouts, because the problem is
+ * the mixture, not the layout.
+ */
+export function isolateAuto(value: string): string {
+  const FSI = '\u2068';
+  const PDI = '\u2069';
+  return `${FSI}${value}${PDI}`;
+}
+
 /** Phone numbers have the same reordering problem as serial numbers. */
 export const formatPhone = isolateLtr;
 

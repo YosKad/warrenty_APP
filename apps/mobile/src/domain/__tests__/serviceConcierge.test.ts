@@ -513,6 +513,43 @@ describe('prepared request', () => {
     expect(message).toContain('Section 4.2');
   });
 
+  it('does not repeat a brand the product name already carries', () => {
+    // "Samsung Samsung OLED S95D" reads as generated, which is the last thing a
+    // service request should look like.
+    const message = buildServiceRequest({
+      productName: 'Samsung OLED S95D',
+      brandName: 'Samsung',
+      model: null,
+      serialNumber: null,
+      purchaseDate: null,
+      warrantyEnd: null,
+      issueDescription: null,
+      coverageVerdict: null,
+      clauseReference: null,
+      providerName: null,
+      labels,
+    });
+    expect(message).toContain('Product: Samsung OLED S95D');
+    expect(message).not.toContain('Samsung Samsung');
+  });
+
+  it('still prefixes the brand when the name omits it', () => {
+    const message = buildServiceRequest({
+      productName: 'OLED S95D',
+      brandName: 'Samsung',
+      model: null,
+      serialNumber: null,
+      purchaseDate: null,
+      warrantyEnd: null,
+      issueDescription: null,
+      coverageVerdict: null,
+      clauseReference: null,
+      providerName: null,
+      labels,
+    });
+    expect(message).toContain('Product: Samsung OLED S95D');
+  });
+
   it('omits facts it does not have instead of writing blanks', () => {
     const message = buildServiceRequest({
       productName: 'OLED S95D',

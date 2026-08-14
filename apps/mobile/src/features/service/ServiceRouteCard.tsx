@@ -2,6 +2,7 @@ import { View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/theme';
+import { isolateAuto } from '@/lib/format';
 import type { ChainNode } from '@/domain/serviceConcierge';
 import { Text } from '@/ui';
 
@@ -44,12 +45,11 @@ export function ServiceRouteCard({ chain }: ServiceRouteCardProps) {
       {chain.map((node, index) => (
         <View key={node.organisationId} style={{ gap: theme.spacing.md }}>
           <View style={{ gap: 1 }}>
-            <Text
-              variant="bodyStrong"
-              numberOfLines={1}
-              style={{ writingDirection: 'auto' }}
-            >
-              {node.name}
+            {/* Isolated rather than writingDirection:'auto': a Latin company
+                name inside an RTL screen should keep its own character order but
+                still hug the line start, which is the right-hand edge there. */}
+            <Text variant="bodyStrong" numberOfLines={1}>
+              {isolateAuto(node.name)}
             </Text>
             {/* Every role this company plays, in one line. "Official importer &
                 warranty provider" is a sentence; two rows saying the same

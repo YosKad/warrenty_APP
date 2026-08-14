@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/theme';
 import { track } from '@/lib/analytics';
-import { isolateLtr } from '@/lib/format';
+import { isolateAuto, isolateLtr } from '@/lib/format';
 import {
   distanceKm,
   mapUrl,
@@ -41,7 +41,12 @@ export function ServiceLocationCard({ location, origin, onReport }: ServiceLocat
   const status = openingStatus(location.openingHours, new Date(), location.timeZone);
   const km = origin ? distanceKm(origin, location) : null;
 
-  const address = [location.addressLine, location.city].filter(Boolean).join(', ');
+  // Each part decides its own direction. A Hebrew street joined to a Latin city
+  // without isolation puts the comma on the wrong side of the line.
+  const address = [location.addressLine, location.city]
+    .filter(Boolean)
+    .map((part) => isolateAuto(part as string))
+    .join(', ');
 
   return (
     <View
@@ -61,12 +66,8 @@ export function ServiceLocationCard({ location, origin, onReport }: ServiceLocat
             gap: theme.spacing.sm,
           }}
         >
-          <Text
-            variant="bodyStrong"
-            numberOfLines={1}
-            style={{ flex: 1, writingDirection: 'auto' }}
-          >
-            {location.name ?? address}
+          <Text variant="bodyStrong" numberOfLines={1} style={{ flex: 1 }}>
+            {isolateAuto(location.name ?? address)}
           </Text>
           {km !== null ? (
             <Text variant="caption" tone="tertiary">
@@ -76,7 +77,7 @@ export function ServiceLocationCard({ location, origin, onReport }: ServiceLocat
         </View>
 
         {address ? (
-          <Text variant="caption" tone="secondary" style={{ writingDirection: 'auto' }}>
+          <Text variant="caption" tone="secondary">
             {address}
           </Text>
         ) : null}

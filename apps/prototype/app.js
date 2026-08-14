@@ -121,6 +121,84 @@ const STRINGS = {
     protected_other: '{n} products are currently protected',
     noProducts: 'Add your first product to get started',
     active: 'Active', endingSoon: 'Ending soon', expired: 'Expired', unknownStatus: 'Warranty not set',
+    svcTitle: 'Get service',
+    svcRoute: 'Your service route',
+    svcRecommended: 'Recommended',
+    svcRoute_book_technician: 'Book a technician',
+    svcRoute_request_pickup: 'Request a pickup',
+    svcRoute_mail_in: 'Send it in',
+    svcRoute_visit_centre: 'Visit a service centre',
+    svcRoute_contact: 'Contact the service provider',
+    svcWhy_book_technician: 'A technician can come to you, so the product does not have to move.',
+    svcWhy_request_pickup: 'A courier can collect it, so you do not have to carry it.',
+    svcWhy_mail_in: 'This provider handles repairs by post.',
+    svcWhy_visit_centre: 'This product has to be brought in.',
+    svcWhy_contact: 'Start by getting in touch — they will tell you how they handle it.',
+    svcRole_manufacturer: 'Manufacturer', svcRole_importer: 'Official importer',
+    svcRole_retailer: 'Retailer', svcRole_warranty_provider: 'Warranty provider',
+    svcRole_service_provider: 'Authorised repairs',
+    svcAction_call: 'Call', svcAction_whatsapp: 'WhatsApp', svcAction_email: 'Email',
+    svcAction_web_form: 'Service form', svcAction_website: 'Website',
+    svcAction_directions: 'Directions',
+    svcPurpose_warranty_claims: 'Warranty claims', svcPurpose_technical_support: 'Technical support',
+    svcPurpose_customer_service: 'Customer service', svcPurpose_appointments: 'Appointments',
+    svcPurpose_spare_parts: 'Spare parts', svcPurpose_general: 'General', svcPurpose_unknown: 'Contact',
+    svcFresh_verified: 'Verified', svcFresh_recheck: 'Worth double-checking',
+    svcFresh_stale: 'May be out of date', svcFresh_unknown: 'Not verified by us',
+    svcOptions: 'Service options',
+    svcCap_home_technician: 'Technician can come to your home',
+    svcCap_courier: 'Courier pickup available',
+    svcCap_mail_in: 'Send it in by post',
+    svcCap_drop_off: 'Drop off at a service centre',
+    svcCap_phone_diagnostics: 'Phone troubleshooting available',
+    svcCap_appointment_required: 'Appointment required',
+    svcUnconfirmed: 'Availability not confirmed',
+    svcPrepare: 'Have these ready',
+    svcReadyCount: '{r} of {n} ready',
+    svcReady_proof_of_purchase: 'Receipt or invoice',
+    svcReady_serial_number: 'Serial number',
+    svcReady_model: 'Model number',
+    svcReady_warranty_document: 'Warranty document',
+    svcReady_issue_description: 'Description of the problem',
+    svcReady_issue_photo: 'Photo of the issue',
+    svcNearest: 'Service centres',
+    svcNoCentre: 'No compatible service centre found for this product.',
+    svcCityPh: 'Search by city — e.g. Tel Aviv',
+    svcLocationOptional: 'Location is optional — searching by city works just as well.',
+    svcUseLocation: 'Use my location',
+    svcLocationDenied: "No problem — searching by city works just as well.",
+    svcOpenNow: 'Open now', svcClosesAt: 'closes {time}',
+    svcClosedOpens: 'Closed · Opens {day} at {time}',
+    svcHoursUnknown: 'Opening hours not confirmed',
+    svcAppointment: 'Appointment required',
+    svcDay_sun: 'Sunday', svcDay_mon: 'Monday', svcDay_tue: 'Tuesday', svcDay_wed: 'Wednesday',
+    svcDay_thu: 'Thursday', svcDay_fri: 'Friday', svcDay_sat: 'Saturday',
+    svcRequestTitle: 'Your service request',
+    svcRequestHint: 'Edit anything before you send it. Nothing is sent automatically.',
+    svcCopy: 'Copy', svcCopied: 'Copied — paste it wherever you contact them.',
+    svcOpening: 'In the real app this opens your phone, WhatsApp, mail or browser.',
+    svcCalling: 'In the real app this opens your dialler.',
+    svcOpenMaps: 'Open in',
+    svcMap_apple: 'Apple Maps', svcMap_google: 'Google Maps', svcMap_waze: 'Waze',
+    svcGreeting: 'Hello', svcIntro: 'I would like to request warranty service for the following product.',
+    svcProduct: 'Product', svcModel: 'Model', svcSerial: 'Serial number',
+    svcPurchased: 'Purchased', svcWarrantyUntil: 'Warranty until', svcIssue: 'Issue',
+    svcAssessment: 'App assessment', svcClause: 'Referenced clause',
+    svcClosing: 'Please let me know how to proceed. Thank you.',
+    svcUnknownT: 'We found your warranty, but not the service route yet',
+    svcUnknownB: "We won't send you to a general support number that can't help.",
+    svcUnknownAgain: 'Search again', svcUnknownSource: 'Open the official warranty source',
+    svcUnknownAdd: 'Add a provider manually',
+    svcReportTitle: 'Report a problem with this information',
+    svcReport_wrong_phone: 'This number is wrong',
+    svcReport_location_closed: 'This place has closed',
+    svcReport_wrong_importer: 'Wrong importer',
+    svcReport_service_unavailable: 'They no longer service this',
+    svcReport_wrong_address: 'The address is wrong',
+    svcReport_wrong_hours: 'The opening hours are wrong',
+    svcReportSent: "Thanks — we'll check it.",
+    svcReportNote: "We review reports before changing anything, so one report can't remove a number that's still right.",
+    svcPreview: 'Service', svcPreviewRepairs: 'Repairs', svcGetService: 'Get service',
     wiTitle: 'Your warranty',
     wiHeadImporter: 'Official importer warranty — {d}',
     wiHeadGeneric: 'Warranty — {d}',
@@ -266,6 +344,84 @@ const STRINGS = {
     protected_other: '{n} מוצרים מוגנים כרגע',
     noProducts: 'הוסיפו מוצר ראשון כדי להתחיל',
     active: 'בתוקף', endingSoon: 'מסתיימת בקרוב', expired: 'פגה', unknownStatus: 'האחריות לא הוגדרה',
+    svcTitle: 'קבלת שירות',
+    svcRoute: 'מסלול השירות שלכם',
+    svcRecommended: 'מומלץ',
+    svcRoute_book_technician: 'הזמנת טכנאי',
+    svcRoute_request_pickup: 'בקשת איסוף',
+    svcRoute_mail_in: 'שליחה בדואר',
+    svcRoute_visit_centre: 'הגעה למעבדת שירות',
+    svcRoute_contact: 'יצירת קשר עם נותן השירות',
+    svcWhy_book_technician: 'טכנאי יכול להגיע אליכם, כך שאין צורך להזיז את המוצר.',
+    svcWhy_request_pickup: 'שליח יכול לאסוף את המוצר, כך שלא תצטרכו לסחוב.',
+    svcWhy_mail_in: 'נותן השירות מטפל בתיקונים בדואר.',
+    svcWhy_visit_centre: 'את המוצר הזה צריך להביא פיזית.',
+    svcWhy_contact: 'התחילו ביצירת קשר — הם יסבירו איך זה עובד אצלם.',
+    svcRole_manufacturer: 'יצרן', svcRole_importer: 'יבואן רשמי',
+    svcRole_retailer: 'קמעונאי', svcRole_warranty_provider: 'נותן האחריות',
+    svcRole_service_provider: 'מעבדה מורשית',
+    svcAction_call: 'חיוג', svcAction_whatsapp: 'וואטסאפ', svcAction_email: 'אימייל',
+    svcAction_web_form: 'טופס שירות', svcAction_website: 'אתר',
+    svcAction_directions: 'ניווט',
+    svcPurpose_warranty_claims: 'תביעות אחריות', svcPurpose_technical_support: 'תמיכה טכנית',
+    svcPurpose_customer_service: 'שירות לקוחות', svcPurpose_appointments: 'תיאום תורים',
+    svcPurpose_spare_parts: 'חלקי חילוף', svcPurpose_general: 'כללי', svcPurpose_unknown: 'יצירת קשר',
+    svcFresh_verified: 'מאומת', svcFresh_recheck: 'כדאי לוודא',
+    svcFresh_stale: 'ייתכן שאינו עדכני', svcFresh_unknown: 'לא אומת על ידינו',
+    svcOptions: 'אפשרויות שירות',
+    svcCap_home_technician: 'טכנאי יכול להגיע אליכם הביתה',
+    svcCap_courier: 'איסוף על ידי שליח',
+    svcCap_mail_in: 'שליחה בדואר',
+    svcCap_drop_off: 'מסירה במעבדת שירות',
+    svcCap_phone_diagnostics: 'אבחון טלפוני',
+    svcCap_appointment_required: 'נדרש תיאום מראש',
+    svcUnconfirmed: 'הזמינות לא אומתה',
+    svcPrepare: 'כדאי להכין',
+    svcReadyCount: '{r} מתוך {n} מוכנים',
+    svcReady_proof_of_purchase: 'קבלה או חשבונית',
+    svcReady_serial_number: 'מספר סידורי',
+    svcReady_model: 'מספר דגם',
+    svcReady_warranty_document: 'מסמך אחריות',
+    svcReady_issue_description: 'תיאור התקלה',
+    svcReady_issue_photo: 'תמונה של התקלה',
+    svcNearest: 'מעבדות שירות',
+    svcNoCentre: 'לא נמצאה מעבדת שירות שמתאימה למוצר הזה.',
+    svcCityPh: 'חיפוש לפי עיר — לדוגמה תל אביב',
+    svcLocationOptional: 'המיקום הוא רשות — חיפוש לפי עיר עובד בדיוק אותו דבר.',
+    svcUseLocation: 'שימוש במיקום שלי',
+    svcLocationDenied: 'אין בעיה — חיפוש לפי עיר עובד בדיוק אותו דבר.',
+    svcOpenNow: 'פתוח עכשיו', svcClosesAt: 'נסגר ב-{time}',
+    svcClosedOpens: 'סגור · נפתח ב{day} בשעה {time}',
+    svcHoursUnknown: 'שעות הפתיחה לא אומתו',
+    svcAppointment: 'נדרש תיאום מראש',
+    svcDay_sun: 'יום ראשון', svcDay_mon: 'יום שני', svcDay_tue: 'יום שלישי', svcDay_wed: 'יום רביעי',
+    svcDay_thu: 'יום חמישי', svcDay_fri: 'יום שישי', svcDay_sat: 'שבת',
+    svcRequestTitle: 'הפנייה לשירות',
+    svcRequestHint: 'אפשר לערוך הכול לפני השליחה. שום דבר לא נשלח אוטומטית.',
+    svcCopy: 'העתקה', svcCopied: 'הועתק — הדביקו איפה שנוח לכם לפנות אליהם.',
+    svcOpening: 'באפליקציה האמיתית זה פותח את הטלפון, וואטסאפ, המייל או הדפדפן.',
+    svcCalling: 'באפליקציה האמיתית זה פותח את החייגן.',
+    svcOpenMaps: 'פתיחה ב',
+    svcMap_apple: 'מפות אפל', svcMap_google: 'מפות גוגל', svcMap_waze: 'ווייז',
+    svcGreeting: 'שלום', svcIntro: 'אני מבקש/ת שירות אחריות עבור המוצר הבא.',
+    svcProduct: 'מוצר', svcModel: 'דגם', svcSerial: 'מספר סידורי',
+    svcPurchased: 'תאריך רכישה', svcWarrantyUntil: 'אחריות עד', svcIssue: 'התקלה',
+    svcAssessment: 'הערכת האפליקציה', svcClause: 'הסעיף הרלוונטי',
+    svcClosing: 'אשמח לדעת איך להמשיך מכאן. תודה.',
+    svcUnknownT: 'מצאנו את האחריות, אבל עדיין לא את מסלול השירות',
+    svcUnknownB: 'לא נשלח אתכם למספר תמיכה כללי שלא יוכל לעזור.',
+    svcUnknownAgain: 'חיפוש מחדש', svcUnknownSource: 'פתיחת מסמך האחריות הרשמי',
+    svcUnknownAdd: 'הוספת נותן שירות ידנית',
+    svcReportTitle: 'דיווח על בעיה במידע הזה',
+    svcReport_wrong_phone: 'המספר שגוי',
+    svcReport_location_closed: 'המקום נסגר',
+    svcReport_wrong_importer: 'היבואן שגוי',
+    svcReport_service_unavailable: 'הם כבר לא נותנים שירות למוצר',
+    svcReport_wrong_address: 'הכתובת שגויה',
+    svcReport_wrong_hours: 'שעות הפתיחה שגויות',
+    svcReportSent: 'תודה — נבדוק את זה.',
+    svcReportNote: 'אנחנו בודקים דיווחים לפני שמשנים משהו, כך שדיווח אחד לא יכול להסיר מספר שעדיין נכון.',
+    svcPreview: 'שירות', svcPreviewRepairs: 'תיקונים', svcGetService: 'קבלת שירות',
     wiTitle: 'האחריות שלכם',
     wiHeadImporter: 'אחריות יבואן רשמי — {d}',
     wiHeadGeneric: 'אחריות — {d}',
@@ -537,6 +693,15 @@ function fmtMoney(amount, currency) {
       style: 'currency', currency: currency || 'USD', currencyDisplay: 'narrowSymbol',
     }).format(amount);
   } catch (e) { return amount + ' ' + (currency || ''); }
+}
+
+/**
+ * First-strong isolate: the fragment decides its own character order, while the
+ * line keeps the paragraph's alignment. `dir="auto"` on a whole element does the
+ * opposite — it moves a Latin company name to the wrong edge of an RTL screen.
+ */
+function fsi(v) {
+  return '\u2068' + v + '\u2069';
 }
 
 /** Latin identifiers pinned LTR so their digits don't reorder in Hebrew. */
@@ -1040,6 +1205,247 @@ function analyseCoverage(product, text, answers) {
       ? 'תארו מתי זה קורה ומה בדיוק לא עובד, ובדקו שוב.'
       : 'Describe when it happens and exactly what fails, then check again.',
   };
+}
+
+/* ------------------------------------------------------- service concierge --
+   DEMO DATA, mirroring supabase/seed_demo_service.sql. The ranking and the
+   recommendation are ported from apps/mobile/src/domain/serviceConcierge.ts.
+
+   Three deliberately different shapes: Samsung (importer honours cover, a
+   separate company repairs, home technician), Apple (one company holds four
+   roles), Dyson (expired, chargeable). */
+
+const CONTACTS = {
+  samline: [
+    { id: 's1', kind: 'web_form', purpose: 'warranty_claims', value: 'https://example.invalid/samline/warranty-claim',
+      label: 'Warranty service request', labelHe: 'פנייה לשירות אחריות', verified: '2026-08-09' },
+    { id: 's2', kind: 'whatsapp', purpose: 'warranty_claims', value: '+972-3-5555000',
+      label: 'Warranty service on WhatsApp', labelHe: 'שירות אחריות בוואטסאפ', verified: '2026-08-09' },
+    { id: 's3', kind: 'phone', purpose: 'warranty_claims', value: '03-5555000',
+      label: 'Warranty service line', labelHe: 'קו שירות אחריות', verified: '2026-08-09' },
+    { id: 's4', kind: 'email', purpose: 'warranty_claims', value: 'service@example.invalid',
+      label: 'Warranty service email', labelHe: 'אימייל שירות', verified: '2026-08-09' },
+    // Present on purpose, and must never be recommended.
+    { id: 's5', kind: 'phone', purpose: 'customer_service', value: '03-5555099',
+      label: 'General enquiries', labelHe: 'פניות כלליות', verified: null },
+    { id: 's6', kind: 'phone', purpose: 'spare_parts', value: '03-5555077',
+      label: 'Spare parts', labelHe: 'חלקי חילוף', verified: null },
+  ],
+  'samsung-service-il': [
+    { id: 'x1', kind: 'phone', purpose: 'appointments', value: '03-5555100',
+      label: 'Book a repair', labelHe: 'תיאום תיקון', verified: null },
+  ],
+  idigital: [
+    { id: 'i1', kind: 'phone', purpose: 'technical_support', value: '03-5555200',
+      label: 'Technical support', labelHe: 'תמיכה טכנית', verified: '2026-07-25' },
+    { id: 'i2', kind: 'web_form', purpose: 'appointments', value: 'https://example.invalid/idigital/book',
+      label: 'Book a service appointment', labelHe: 'תיאום תור לשירות', verified: '2026-07-25' },
+  ],
+  dyson: [
+    { id: 'd1', kind: 'phone', purpose: 'customer_service', value: '1-800-555-0100',
+      label: 'Customer support', labelHe: 'תמיכת לקוחות', verified: '2025-07-10' },
+  ],
+  'dyson-il': [
+    { id: 'd2', kind: 'phone', purpose: 'technical_support', value: '03-5555300',
+      label: 'Israel support', labelHe: 'תמיכה בישראל', verified: '2025-07-30' },
+  ],
+};
+
+const CAPABILITIES = {
+  'samsung-service-il': [
+    { kind: 'home_technician', state: 'available', lead: 3,
+      fee: 'No charge for screens over 55 inches under warranty.',
+      feeHe: 'ללא תשלום למסכים מעל 55 אינץ׳ בתקופת האחריות.' },
+    { kind: 'appointment_required', state: 'available' },
+    { kind: 'drop_off', state: 'available' },
+    { kind: 'courier', state: 'unknown' },
+  ],
+  samline: [{ kind: 'phone_diagnostics', state: 'available' }],
+  idigital: [
+    { kind: 'drop_off', state: 'available', lead: 5 },
+    { kind: 'courier', state: 'available', lead: 7,
+      fee: 'Collection charged separately outside warranty.',
+      feeHe: 'איסוף בתשלום נפרד מחוץ לתקופת האחריות.' },
+    { kind: 'home_technician', state: 'unavailable' },
+    { kind: 'appointment_required', state: 'available' },
+  ],
+  'dyson-il': [
+    { kind: 'mail_in', state: 'available', lead: 14,
+      fee: 'Chargeable outside the guarantee period.',
+      feeHe: 'בתשלום מחוץ לתקופת האחריות.' },
+    { kind: 'spare_parts', state: 'available' },
+  ],
+};
+
+const LOCATIONS = [
+  { id: 'tlv', org: 'samsung-service-il', name: 'Tel Aviv service centre', nameHe: 'מעבדת שירות תל אביב',
+    city: 'Tel Aviv', cityHe: 'תל אביב', address: 'רחוב הרכבת 58', region: 'Tel Aviv',
+    lat: 32.0640, lon: 34.7800, phone: '03-5555101', appointment: true,
+    categories: ['electronics'],
+    hours: { sun: ['08:30','17:00'], mon: ['08:30','17:00'], tue: ['08:30','17:00'], wed: ['08:30','17:00'], thu: ['08:30','15:00'] } },
+  // Closer to the centre of town, and useless for a television.
+  { id: 'diz', org: 'samsung-service-il', name: 'Dizengoff phone bar', nameHe: 'עמדת הטלפונים בדיזנגוף',
+    city: 'Tel Aviv', cityHe: 'תל אביב', address: 'דיזנגוף 50', region: 'Tel Aviv',
+    lat: 32.0750, lon: 34.7750, phone: '03-5555102', appointment: false,
+    categories: ['phones'],
+    hours: { sun: ['10:00','19:00'], mon: ['10:00','19:00'], tue: ['10:00','19:00'], wed: ['10:00','19:00'], thu: ['10:00','19:00'] } },
+  { id: 'haifa', org: 'samsung-service-il', name: 'Haifa service centre', nameHe: 'מעבדת שירות חיפה',
+    city: 'Haifa', cityHe: 'חיפה', address: 'שדרות ההסתדרות 120', region: 'Haifa',
+    lat: 32.8100, lon: 35.0000, phone: '04-5555103', appointment: true,
+    categories: ['electronics'],
+    hours: { sun: ['08:00','16:00'], mon: ['08:00','16:00'], tue: ['08:00','16:00'], wed: ['08:00','16:00'], thu: ['08:00','14:00'] } },
+  { id: 'ramat', org: 'idigital', name: 'iDigital Ramat Aviv', nameHe: 'איי-דיגיטל רמת אביב',
+    city: 'Tel Aviv', cityHe: 'תל אביב', address: 'איינשטיין 40', region: 'Tel Aviv',
+    lat: 32.1120, lon: 34.8050, phone: '03-5555201', appointment: true,
+    categories: ['computers'],
+    hours: { sun: ['10:00','21:00'], mon: ['10:00','21:00'], tue: ['10:00','21:00'], wed: ['10:00','21:00'], thu: ['10:00','21:00'], fri: ['09:00','14:00'] } },
+];
+
+const PURPOSE_RANK = {
+  warranty_claims: 0, appointments: 1, technical_support: 2, customer_service: 3,
+  general: 4, unknown: 5, spare_parts: 8, sales: 9,
+};
+const KIND_RANK = { web_form: 0, whatsapp: 1, phone: 2, email: 3, chat: 4, sms: 5, website: 6, address: 7 };
+
+/** Purpose beats channel by an order of magnitude. */
+function contactScore(c) { return PURPOSE_RANK[c.purpose] * 10 + KIND_RANK[c.kind]; }
+
+/** Spare parts and sales can never be a warranty-service route. */
+function serviceable(c) { return c.purpose !== 'spare_parts' && c.purpose !== 'sales'; }
+
+function freshnessOf(verified) {
+  if (!verified) return 'unknown';
+  const days = (today().localeCompare ? 0 : 0) +
+    Math.floor((parseDate(today()) - parseDate(verified)) / 86400000);
+  if (days < 0) return 'unknown';
+  if (days <= 90) return 'verified';
+  if (days <= 270) return 'verified';
+  if (days <= 540) return 'recheck';
+  return 'stale';
+}
+
+/** The chain, collapsed so one company appears once with all of its roles. */
+function serviceChain(p) {
+  const wanted = [
+    ['manufacturer', p.brandOrg],
+    ['importer', p.importer],
+    ['retailer', p.retailer],
+    ['warranty_provider', p.warrantyProvider],
+    ['service_provider', p.serviceProvider],
+  ];
+  const byOrg = [];
+  wanted.forEach((entry) => {
+    const role = entry[0], key = entry[1];
+    if (!key || !ORGS[key]) return;
+    const existing = byOrg.filter((n) => n.key === key)[0];
+    if (existing) { if (existing.roles.indexOf(role) === -1) existing.roles.push(role); return; }
+    byOrg.push({ key: key, org: ORGS[key], roles: [role] });
+  });
+  return byOrg;
+}
+
+function capabilityState(caps, kind) {
+  const syn = { home_visit: 'home_technician', pickup: 'courier', walk_in: 'drop_off',
+                phone_support: 'phone_diagnostics', online_support: 'remote_support' };
+  const want = syn[kind] || kind;
+  const matches = caps.filter((c) => (syn[c.kind] || c.kind) === want);
+  if (!matches.length) return 'unknown';
+  if (matches.some((c) => c.state === 'available')) return 'available';
+  if (matches.some((c) => c.state === 'unavailable')) return 'unavailable';
+  return 'unknown';
+}
+
+/** Compatible first, then ordered. The correct centre beats the closest one. */
+function serviceLocations(p, chain) {
+  const orgs = chain.map((n) => n.key);
+  return LOCATIONS.filter((l) =>
+    orgs.indexOf(l.org) !== -1 && l.categories.indexOf(p.category) !== -1);
+}
+
+/**
+ * One recommendation, ordered by how much work each route costs the *user*:
+ * a technician coming to them, then a courier, then the post, then carrying a
+ * 65-inch television across town.
+ */
+function serviceRoute(p) {
+  const chain = serviceChain(p);
+  const contacts = [];
+  const caps = [];
+  chain.forEach((node) => {
+    (CONTACTS[node.key] || []).forEach((c) => contacts.push(Object.assign({ org: node.key }, c)));
+    (CAPABILITIES[node.key] || []).forEach((c) => caps.push(Object.assign({ org: node.key }, c)));
+  });
+
+  const usable = contacts.filter(serviceable).sort((a, b) => contactScore(a) - contactScore(b));
+  const locations = serviceLocations(p, chain);
+
+  let route = 'none';
+  if (capabilityState(caps, 'home_technician') === 'available') route = 'book_technician';
+  else if (capabilityState(caps, 'courier') === 'available') route = 'request_pickup';
+  else if (capabilityState(caps, 'mail_in') === 'available') route = 'mail_in';
+  else if (capabilityState(caps, 'drop_off') === 'available' && locations.length) route = 'visit_centre';
+  else if (usable.length) route = 'contact';
+
+  const repairer = chain.filter((n) => n.roles.indexOf('service_provider') !== -1)[0]
+    || chain.filter((n) => n.roles.indexOf('warranty_provider') !== -1)[0] || null;
+  const holder = chain.filter((n) => n.roles.indexOf('warranty_provider') !== -1)[0]
+    || chain.filter((n) => n.roles.indexOf('importer') !== -1)[0] || null;
+
+  return { chain: chain, contacts: usable, all: contacts, caps: caps,
+           locations: locations, route: route, repairer: repairer, holder: holder };
+}
+
+/** Open now / closes at / opens next. Unknown stays unknown. */
+function openingStatus(hours) {
+  if (!hours) return { state: 'unknown' };
+  const days = ['sun','mon','tue','wed','thu','fri','sat'];
+  const now = new Date();
+  const key = days[now.getDay()];
+  const mins = now.getHours() * 60 + now.getMinutes();
+  const toMin = (v) => Number(v.split(':')[0]) * 60 + Number(v.split(':')[1]);
+  const t0 = hours[key];
+  if (t0) {
+    if (mins >= toMin(t0[0]) && mins < toMin(t0[1])) return { state: 'open', closes: t0[1] };
+    if (mins < toMin(t0[0])) return { state: 'closed', day: key, opens: t0[0] };
+  }
+  for (let i = 1; i <= 7; i += 1) {
+    const k = days[(now.getDay() + i) % 7];
+    if (hours[k]) return { state: 'closed', day: k, opens: hours[k][0] };
+  }
+  return { state: 'unknown' };
+}
+
+function contactLabel(c) { return (S.lang === 'he' && c.labelHe) ? c.labelHe : c.label; }
+function capFee(c) { return (S.lang === 'he' && c.feeHe) ? c.feeHe : c.fee; }
+function locName(l) { return (S.lang === 'he' && l.nameHe) ? l.nameHe : l.name; }
+function locCity(l) { return (S.lang === 'he' && l.cityHe) ? l.cityHe : l.city; }
+
+/** The prepared request. Facts only, editable, never sent automatically. */
+function serviceMessage(p) {
+  const s = snapshot(p, today());
+  const route = serviceRoute(p);
+  const issue = (S.coverage && S.coverage.text) || '';
+  const lines = [];
+  if (route.repairer) lines.push(t('svcGreeting') + ' ' + route.repairer.org.name + ',', '');
+  lines.push(t('svcIntro'), '');
+  // "Samsung Samsung OLED S95D" reads as generated. Most people name a product
+  // with its brand already in it.
+  const named = p.brand && p.name.toLowerCase().indexOf(p.brand.toLowerCase()) !== -1;
+  lines.push(t('svcProduct') + ': ' + (named ? p.name : [p.brand, p.name].filter(Boolean).join(' ')));
+  if (p.model) lines.push(t('svcModel') + ': ' + p.model);
+  if (p.serial) lines.push(t('svcSerial') + ': ' + p.serial);
+  if (p.purchaseDate) lines.push(t('svcPurchased') + ': ' + fmtDate(p.purchaseDate, 'long'));
+  if (s.end) lines.push(t('svcWarrantyUntil') + ': ' + fmtDate(s.end, 'long'));
+  if (issue) lines.push('', t('svcIssue') + ':', issue);
+  if (S.coverage && S.coverage.result && S.coverage.result.verdict) {
+    const v = { likely_covered: t('vLikely'), possibly_covered: t('vPossibly'),
+      likely_not_covered: t('vNot'), insufficient_information: t('vInsufficient') }[S.coverage.result.verdict];
+    lines.push('', t('svcAssessment') + ': ' + v);
+    const cited = S.coverage.result.clauses && S.coverage.result.clauses[0];
+    if (cited) lines.push(t('svcClause') + ': ' + cited.section);
+  }
+  lines.push('', t('svcClosing'));
+  return lines.join('\n');
 }
 
 /* ------------------------------------------------------------------- nav -- */
@@ -1568,6 +1974,8 @@ function viewProduct() {
 
     warrantySection(p),
 
+    servicePreview(p),
+
     claimReadiness(p),
 
     claimable ? somethingWrong(p) : '',
@@ -1681,6 +2089,31 @@ function warrantySection(p) {
   '</div>';
 }
 
+/**
+ * Enough to answer "is there anything behind this button?" before the tap.
+ * One company holding both roles is one row — repeating the name is what makes
+ * a three-company chain look like a bureaucracy.
+ */
+function servicePreview(p) {
+  const r = serviceRoute(p);
+  if (!r.holder && !r.repairer) return '';
+  const same = r.holder && r.repairer && r.holder.key === r.repairer.key;
+  const highlight = ['home_technician', 'courier', 'drop_off']
+    .filter((k) => capabilityState(r.caps, k) === 'available')[0];
+
+  return '<button class="panel stack g12 start full-w pressable" data-act="go" data-screen="service" data-id="' + p.id + '">' +
+    '<span class="meta ter">' + t('svcPreview') + '</span>' +
+    (r.holder ? '<span class="stack tiny-gap start"><span class="cap ter">' + t('svcRole_warranty_provider') + '</span>' +
+      '<span class="sms">' + fsi(esc(r.holder.org.name)) + '</span></span>' : '') +
+    (r.repairer && !same ? '<span class="stack tiny-gap start"><span class="cap ter">' + t('svcPreviewRepairs') + '</span>' +
+      '<span class="sms">' + fsi(esc(r.repairer.org.name)) + '</span></span>' : '') +
+    (highlight ? '<span class="row g8"><span class="mark ok">' + icon('check', 'sm-ico') + '</span>' +
+      '<span class="cap ok">' + t('svcCap_' + highlight) + '</span></span>' : '') +
+    '<span class="row between full-w"><span class="sms acc-text">' + t('svcGetService') + '</span>' +
+      icon('chevron', 'sm-ico acc-text') + '</span>' +
+  '</button>';
+}
+
 function matchChip(state) {
   return '<span class="mchip ' + state + '">' + esc(t('wiMatch_' + state)) + '</span>';
 }
@@ -1711,6 +2144,172 @@ function somethingWrong(p) {
  * be right often enough to be dangerous. Covered and excluded carry different
  * marks as well as different colours, so the distinction survives greyscale.
  */
+/**
+ * Get service.
+ *
+ * One recommendation, then the alternatives compactly. Six equal contact cards
+ * would hand the user back the problem they came here with.
+ */
+function viewService() {
+  const p = S.products.find((x) => x.id === S.params.id);
+  if (!p) return section('<p class="sm sec">Not found</p>');
+  const r = serviceRoute(p);
+  const s = snapshot(p, today());
+
+  if (r.route === 'none') {
+    return section([
+      '<div class="row navrow"><button class="iconbtn" data-act="back">' + icon('backArrow') + '</button></div>',
+      '<h1 class="h1">' + t('svcTitle') + '</h1>',
+      '<div class="panel stack g16">' +
+        '<div class="stack g4"><p class="h3">' + t('svcUnknownT') + '</p>' +
+        '<p class="sm sec">' + t('svcUnknownB') + '</p></div>' +
+        '<div class="stack g4">' +
+          ['svcUnknownAgain', 'svcUnknownSource', 'svcUnknownAdd'].map((k) =>
+            '<button class="wi-action row between"><span class="sm">' + t(k) + '</span>' +
+            icon('chevron', 'ter sm-ico') + '</button>').join('') +
+        '</div></div>',
+    ].join(''));
+  }
+
+  const ready = serviceReadinessOf(p);
+
+  return section([
+    '<div class="row navrow"><button class="iconbtn" data-act="back">' + icon('backArrow') + '</button></div>',
+
+    '<div class="row g16">' + productArt(p, 64) +
+      '<div class="stack g4 grow">' +
+        '<p class="h2" dir="auto">' + esc(p.name) + '</p>' +
+        '<div class="row g8">' + badge(s.status, true) +
+          (remainingText(s) ? '<span class="cap sec">' + esc(remainingText(s)) + '</span>' : '') +
+        '</div>' +
+      '</div></div>',
+
+    // The one recommendation, with the sentence that justifies it.
+    '<div class="panel brand stack g8">' +
+      '<p class="meta onb dim">' + t('svcRecommended') + '</p>' +
+      '<p class="h2 onb">' + t('svcRoute_' + r.route) + '</p>' +
+      '<p class="sm onb dim">' + t('svcWhy_' + r.route) + '</p>' +
+      (r.repairer ? '<p class="sms onb">' + fsi(esc(r.repairer.org.name)) + '</p>' : '') +
+    '</div>',
+
+    // Compact actions, not five giant cards.
+    '<div class="stack g8">' +
+      '<div class="row g8">' + r.contacts.slice(0, 4).map((c) =>
+        '<button class="contact-btn stack tiny-gap" data-act="contact" data-id="' + c.id + '">' +
+          '<span class="sms">' + t('svcAction_' + (c.kind === 'phone' ? 'call' : c.kind)) + '</span>' +
+          '<span class="cap ter">' + t('svcPurpose_' + c.purpose) + '</span>' +
+        '</button>').join('') + '</div>' +
+      '<p class="cap ter">' + t('svcFresh_' + freshnessOf(r.contacts[0] && r.contacts[0].verified)) + '</p>' +
+    '</div>',
+
+    // The chain, collapsed.
+    '<div class="panel stack g12">' +
+      '<p class="meta ter">' + t('svcRoute') + '</p>' +
+      r.chain.map((node, i) =>
+        '<div class="stack tiny-gap">' +
+          // Isolated rather than dir="auto": a Latin company name inside an RTL
+          // screen should keep its own character order but still hug the line
+          // start, which is the right-hand edge here.
+          '<span class="bds">' + fsi(esc(node.org.name)) + '</span>' +
+          '<span class="cap sec">' + node.roles.map((role) => t('svcRole_' + role)).join(' · ') + '</span>' +
+        '</div>' +
+        (i < r.chain.length - 1 ? '<span class="chain-link"></span>' : '')).join('') +
+    '</div>',
+
+    // Three states, and the third is the point.
+    r.caps.length
+      ? '<div class="panel stack g12"><p class="h3">' + t('svcOptions') + '</p>' +
+        '<div class="stack g8">' +
+        ['home_technician','courier','mail_in','drop_off','phone_diagnostics','appointment_required']
+          .filter((k) => r.caps.some((c) => (c.kind === k)))
+          .map((k) => {
+            const state = capabilityState(r.caps, k);
+            const mark = state === 'available' ? '<span class="mark ok">' + icon('check','sm-ico') + '</span>'
+              : state === 'unavailable' ? '<span class="mark neutral">' + icon('close','sm-ico') + '</span>'
+              : '<i class="hollow"></i>';
+            return '<div class="row top g12">' + mark +
+              '<div class="stack tiny-gap grow">' +
+                '<span class="sm' + (state === 'unavailable' ? ' ter' : '') + '">' + t('svcCap_' + k) + '</span>' +
+                (state === 'unknown' ? '<span class="cap ter">' + t('svcUnconfirmed') + '</span>' : '') +
+              '</div></div>';
+          }).join('') + '</div>' +
+        (r.caps.filter((c) => c.fee && c.state === 'available')[0]
+          ? '<p class="cap sec" dir="auto">' + esc(capFee(r.caps.filter((c) => c.fee && c.state === 'available')[0])) + '</p>'
+          : '') +
+        '</div>'
+      : '',
+
+    // A checklist, not a score.
+    '<div class="panel stack g12">' +
+      '<div class="row between"><p class="h3">' + t('svcPrepare') + '</p>' +
+      '<p class="cap ter">' + t('svcReadyCount', { r: ready.ready, n: ready.items.length }) + '</p></div>' +
+      '<div class="stack g8">' + ready.items.map((it) =>
+        '<div class="row g12">' +
+          (it.ready ? '<span class="mark ok">' + icon('check','sm-ico') + '</span>'
+                    : '<i class="hollow' + (it.required ? ' needed' : '') + '"></i>') +
+          '<span class="sm' + (it.ready ? '' : ' sec') + ' grow start">' + t('svcReady_' + it.key) + '</span>' +
+        '</div>').join('') + '</div>' +
+    '</div>',
+
+    // Location is optional and the manual path is offered first.
+    '<div class="stack g12"><p class="h3">' + t('svcNearest') + '</p>' +
+      '<div class="panel stack g8">' +
+        '<input id="city" class="input" placeholder="' + esc(t('svcCityPh')) + '" value="' + esc(S.serviceCity || '') + '">' +
+        '<p class="cap ter">' + t('svcLocationOptional') + '</p>' +
+        '<button class="link start" data-act="useLocation">' + t('svcUseLocation') + '</button>' +
+      '</div>' +
+      (r.locations.length
+        ? r.locations.map(locationCard).join('')
+        : '<p class="sm sec">' + t('svcNoCentre') + '</p>') +
+    '</div>',
+
+    '<div class="panel stack g12">' +
+      '<div class="stack g4"><p class="h3">' + t('svcRequestTitle') + '</p>' +
+      '<p class="cap ter">' + t('svcRequestHint') + '</p></div>' +
+      '<textarea id="req" class="input area" rows="9">' + esc(serviceMessage(p)) + '</textarea>' +
+      '<button class="btn secondary" data-act="raw" data-raw="toast(t(\'svcCopied\'))">' + t('svcCopy') + '</button>' +
+    '</div>',
+
+    '<button class="link start" data-act="reportService">' + t('svcReportTitle') + '</button>',
+  ].join(''));
+}
+
+function locationCard(l) {
+  const st = openingStatus(l.hours);
+  const chip = st.state === 'open'
+    ? '<span class="chip-ok">' + t('svcOpenNow') + ' · ' + t('svcClosesAt', { time: ltr(st.closes) }) + '</span>'
+    : st.state === 'closed'
+      ? '<span class="chip-neutral">' + t('svcClosedOpens', { day: t('svcDay_' + st.day), time: ltr(st.opens) }) + '</span>'
+      : '<span class="chip-neutral">' + t('svcHoursUnknown') + '</span>';
+
+  return '<div class="panel stack g12">' +
+    '<div class="stack tiny-gap">' +
+      '<span class="bds">' + fsi(esc(locName(l))) + '</span>' +
+      '<span class="cap sec"><span dir="auto">' + esc(l.address) + '</span>, ' +
+        '<span dir="auto">' + esc(locCity(l)) + '</span></span>' +
+    '</div>' +
+    '<div class="row g8 wrap">' + chip +
+      (l.appointment ? '<span class="chip-warn">' + t('svcAppointment') + '</span>' : '') + '</div>' +
+    '<div class="row g8">' +
+      '<button class="btn secondary grow" data-act="directions" data-id="' + l.id + '">' + t('svcAction_directions') + '</button>' +
+      '<button class="btn secondary grow" data-act="raw" data-raw="toast(t(\'svcCalling\'))">' + t('svcAction_call') + '</button>' +
+    '</div></div>';
+}
+
+/** A checklist, derived from what the product already has. */
+function serviceReadinessOf(p) {
+  const issue = (S.coverage && S.coverage.text) || '';
+  const items = [
+    { key: 'proof_of_purchase', ready: !!p.hasReceipt, required: true },
+    { key: 'serial_number', ready: !!(p.serial && p.serial.trim()), required: false },
+    { key: 'model', ready: !!(p.model && p.model.trim()), required: false },
+    { key: 'warranty_document', ready: !!warrantyIntel(p).policy, required: false },
+    { key: 'issue_description', ready: issue.trim().length > 0, required: true },
+    { key: 'issue_photo', ready: false, required: false },
+  ];
+  return { items: items, ready: items.filter((i) => i.ready).length };
+}
+
 function viewWhatsCovered() {
   const p = S.products.find((x) => x.id === S.params.id);
   if (!p) return section('<p class="sm sec">Not found</p>');
@@ -1988,7 +2587,7 @@ function viewCoverage() {
       '<p class="cap ter">' + t('disclaimer') + '</p>',
 
       '<div class="stack g8">' +
-        '<button class="btn primary" data-act="raw" data-raw="toast(t(\'wiServiceSoon\'))">' +
+        '<button class="btn primary" data-act="go" data-screen="service" data-id="' + p.id + '">' +
           t('wiGetService') + '</button>' +
         '<button class="btn secondary" data-act="coverageReset" data-id="' + p.id + '">' +
           t('wiAskAnother') + '</button>' +
@@ -2142,6 +2741,23 @@ function renderSheet() {
         : 'Subscriptions renew automatically unless cancelled at least 24 hours before the period ends.') + '</p>',
       '<button class="btn ghost" data-act="closeSheet">' + t('notNow') + '</button>',
     ].join('');
+  } else if (s.type === 'maps') {
+    // Which map apps exist is a device fact; hard-coding one is how an app
+    // sends an Android user to Apple Maps.
+    inner = [
+      '<p class="h3">' + t('svcOpenMaps') + '</p>',
+      ['apple', 'google', 'waze'].map((m) =>
+        '<button class="lrow pressable" data-act="openMap">' +
+        '<span class="bd grow start">' + t('svcMap_' + m) + '</span>' + icon('chevron', 'ter') + '</button>').join(''),
+    ].join('');
+  } else if (s.type === 'report') {
+    inner = [
+      '<p class="h3">' + t('svcReportTitle') + '</p>',
+      ['wrong_phone','location_closed','wrong_importer','service_unavailable','wrong_address','wrong_hours']
+        .map((k) => '<button class="lrow pressable" data-act="sendReport">' +
+          '<span class="bd grow start">' + t('svcReport_' + k) + '</span>' + icon('chevron', 'ter') + '</button>').join(''),
+      '<p class="cap ter">' + t('svcReportNote') + '</p>',
+    ].join('');
   } else if (s.type === 'clause') {
     // Original text first and in full, then where it came from, and only then
     // our summary — labelled as ours. A summary above its source invites trust
@@ -2257,6 +2873,7 @@ function currentView() {
     case 'add': case 'edit': return viewForm();
     case 'coverage': return viewCoverage();
     case 'whatsCovered': return viewWhatsCovered();
+    case 'service': return viewService();
     case 'alerts': return viewAlerts();
     case 'profile': return viewProfile();
     case 'plans': return viewPlans();
@@ -2418,6 +3035,45 @@ document.addEventListener('click', function (e) {
       const ta = document.getElementById('wrong');
       S.coverage = { state: 'idle', text: ta ? ta.value : '', answers: {} };
       go('coverage', { id: el.dataset.id });
+      break;
+    }
+
+    case 'contact': {
+      // Nothing is sent. Every channel opens with the message pre-filled and
+      // waits for the person whose name is on it.
+      toast(t('svcOpening'));
+      break;
+    }
+
+    case 'openMap': {
+      S.sheet = null;
+      toast(t('svcOpening'));
+      render();
+      break;
+    }
+
+    case 'directions': {
+      S.sheet = { type: 'maps', id: el.dataset.id };
+      render();
+      break;
+    }
+
+    case 'useLocation': {
+      // A request, and a shrug if refused. The city field above already works.
+      toast(t('svcLocationDenied'));
+      break;
+    }
+
+    case 'reportService': {
+      S.sheet = { type: 'report' };
+      render();
+      break;
+    }
+
+    case 'sendReport': {
+      S.sheet = null;
+      toast(t('svcReportSent'));
+      render();
       break;
     }
 

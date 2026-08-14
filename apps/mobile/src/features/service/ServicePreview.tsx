@@ -2,6 +2,7 @@ import { Pressable, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
 import { useTheme } from '@/theme';
+import { isolateAuto } from '@/lib/format';
 import {
   capabilityState,
   type ChainNode,
@@ -109,8 +110,8 @@ function PreviewRow({ name, role }: { name: string; role: string }) {
       <Text variant="caption" tone="tertiary">
         {role}
       </Text>
-      <Text variant="bodySmallStrong" numberOfLines={1} style={{ writingDirection: 'auto' }}>
-        {name}
+      <Text variant="bodySmallStrong" numberOfLines={1}>
+        {isolateAuto(name)}
       </Text>
     </View>
   );

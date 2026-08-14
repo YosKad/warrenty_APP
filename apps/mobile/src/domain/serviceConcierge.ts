@@ -664,7 +664,7 @@ export function buildServiceRequest(input: ServiceRequestInput): string {
     if (label && value) lines.push(`${label}: ${value}`);
   };
 
-  fact(l.product, [input.brandName, input.productName].filter(Boolean).join(' '));
+  fact(l.product, productLabel(input.brandName, input.productName));
   fact(l.model, input.model);
   fact(l.serial, input.serialNumber);
   fact(l.purchased, input.purchaseDate);
@@ -683,6 +683,19 @@ export function buildServiceRequest(input: ServiceRequestInput): string {
 
   lines.push('', l.closing ?? 'Please let me know how to proceed. Thank you.');
   return lines.join('\n');
+}
+
+/**
+ * "Samsung OLED S95D", not "Samsung Samsung OLED S95D".
+ *
+ * Most people name a product with its brand already in it. Prefixing blindly
+ * produces a message that reads as generated, which is the last thing a service
+ * request should look like.
+ */
+function productLabel(brandName: string | null, productName: string): string {
+  if (!brandName) return productName;
+  const alreadyNamed = productName.toLowerCase().includes(brandName.toLowerCase());
+  return alreadyNamed ? productName : `${brandName} ${productName}`;
 }
 
 // --------------------------------------------------------------------------
