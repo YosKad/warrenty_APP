@@ -1,5 +1,6 @@
 import {
   confidenceBand,
+  needsClarification,
   parseCoverageAnalysis,
   verdictTone,
 } from '../coverage';
@@ -122,5 +123,86 @@ describe('presentation helpers', () => {
     expect(verdictTone('possibly_covered')).toBe('warning');
     expect(verdictTone('likely_not_covered')).toBe('danger');
     expect(verdictTone('insufficient_information')).toBe('info');
+  });
+});
+
+/**
+ * Phase G additions. A result that asks a question instead of guessing is a
+ * better result, but only if the app can tell the difference — and a photo the
+ * model never received must never be reported as one it looked at.
+ */
+describe('clarification and attachments', () => {
+  it('accepts follow-up questions on an insufficient-information verdict', () => {
+    const result = parseCoverageAnalysis({
+      ...valid,
+      verdict: 'insufficient_information',
+      confidence: 0.2,
+      relevantClauses: [],
+      followUpQuestions: [
+        {
+          id: 'impact',
+          question: 'Did the line appear after the screen was knocked or pressed?',
+          options: ['After an impact', 'It appeared on its own', "I'm not sure"],
+        },
+      ],
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(needsClarification(result.analysis)).toBe(true);
+      expect(result.analysis.followUpQuestions[0]?.options).toHaveLength(3);
+    }
+  });
+
+  it('does not treat a plain insufficient verdict as a clarification request', () => {
+    const result = parseCoverageAnalysis({
+      ...valid,
+      verdict: 'insufficient_information',
+      relevantClauses: [],
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(needsClarification(result.analysis)).toBe(false);
+  });
+
+  it('never treats a confident verdict as a clarification request', () => {
+    const result = parseCoverageAnalysis({
+      ...valid,
+      followUpQuestions: [{ id: 'q', question: 'Anything else?', options: [] }],
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(needsClarification(result.analysis)).toBe(false);
+  });
+
+  it('carries missing information as a list the user can act on', () => {
+    const result = parseCoverageAnalysis({
+      ...valid,
+      missingInformation: ['The purchase date', 'A photo of the fault'],
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.analysis.missingInformation).toHaveLength(2);
+  });
+
+  it('defaults to attachments not analysed', () => {
+    // The default has to be false. A default of true would mean a forgotten flag
+    // becomes the app claiming to have looked at a photo it never received.
+    const result = parseCoverageAnalysis(valid);
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.analysis.attachmentsAnalysed).toBe(false);
+      expect(result.analysis.attachmentCount).toBe(0);
+      expect(result.analysis.followUpQuestions).toEqual([]);
+      expect(result.analysis.missingInformation).toEqual([]);
+    }
+  });
+
+  it('rejects more follow-up questions than a person will answer', () => {
+    const result = parseCoverageAnalysis({
+      ...valid,
+      followUpQuestions: Array.from({ length: 4 }, (_, i) => ({
+        id: `q${i}`,
+        question: 'Why?',
+        options: [],
+      })),
+    });
+    expect(result.ok).toBe(false);
   });
 });
