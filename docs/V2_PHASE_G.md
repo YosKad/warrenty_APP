@@ -88,3 +88,47 @@ regress.
 The coverage verdict vocabulary does not gain a "covered". The demotion rule —
 `likely_covered` with no cited clause becomes `possibly_covered` — stays enforced
 in both the Edge Function and the client.
+
+
+---
+
+## E. What shipped
+
+| Requirement | Where |
+| --- | --- |
+| 2 Your warranty | `src/features/warranty/WarrantyIntelligenceSection.tsx` |
+| 3 Entity separation | `products.importer_id`, `buildProviderChain()` — five roles, never collapsed |
+| 4 What's covered | `app/warranty/[productId].tsx`, `groupClauses()` |
+| 5 Clause structure | `warranty_terms` + title, summary, source section, page, confidence, verification, extraction provenance; three new clause types |
+| 6 Source traceability | `ClauseSourceSheet` — verbatim text, section, page, version, retrieved and verified dates |
+| 7 Source hierarchy + conflicts | `SOURCE_PRIORITY`, `outranksSource()`, `detectConflicts()` |
+| 8 Matching | `match_warranty_policies()` — brand, model, category, country, importer, retailer, serial, validity |
+| 9 Match confidence | `MATCH_SIGNALS` (100 total) → `verified` / `strong` / `needs_confirmation` / `unknown` |
+| 10 Unknown state | `NotIdentified` with four real actions |
+| 11 Document ingestion | `supabase/functions/warranty-extract` |
+| 12 AI provenance | `extraction_version`, `extracted_by`, `extracted_at`, `verification = 'ai_extracted'` |
+| 13 Something wrong? | `src/features/warranty/SomethingWrongCard.tsx` |
+| 15 Result contract | `missingInformation`, `followUpQuestions`, `attachmentCount`, `attachmentsAnalysed` |
+| 16–17 Result UX + clarification | `app/coverage/[productId].tsx` |
+| 19–20 Service | `src/services/warrantyIntelligenceService.ts` |
+| 21–22 Cache + freshness | `product_warranty_matches`, `isMatchStale()` |
+| 23 Overrides | `product_warranty_overrides`, `applyOverride()` |
+| 26 Fixtures | `supabase/seed_demo_warranty.sql` |
+| 27 Tests | `src/domain/__tests__/warrantyIntelligence.test.ts`, `supabase/tests/warranty_matching_test.sql` |
+| 29 Analytics | six events, carrying states and types — never clause text |
+
+## F. Known limitations
+
+- **Embeddings and the model are unconfigured.** Retrieval falls back to the
+  policy's coverage and exclusion clauses, which is grounded but less precise.
+  `EMBEDDING_PROVIDER_URL`, `EMBEDDING_API_KEY`, `EMBEDDING_MODEL` and
+  `ANTHROPIC_API_KEY` are still required.
+- **No warranty corpus.** The matcher is only as good as what it matches
+  against, and outside the demo fixtures there are no policies.
+- **Photos are stored, not analysed.** `attachmentsAnalysed` is hard-coded
+  false and the UI says so.
+- **Conflict resolution is read-only.** The conflict is shown and the user can
+  correct the fields it concerns, but there is no one-tap "this one is right"
+  that pins the losing candidate.
+- **`warranty-extract` needs `extracted_text`.** PDFs still have to go through
+  OCR first; the two pipelines are not yet chained.
