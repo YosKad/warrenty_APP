@@ -75,6 +75,36 @@ describe('evaluateResolution', () => {
     expect(outcome.matchedWarrantyId).toBeNull();
   });
 
+  it('gives a reason when the only policy is too weak to state', () => {
+    // A brand-only match on a product bought abroad. There is a candidate, so
+    // "no policy" is not the reason — but nothing is stated, so a stage must not
+    // fail silently.
+    const outcome = evaluateResolution(
+      resolvable({
+        candidates: [candidate({ signals: { brand: true } })],
+        policyCountryCode: null,
+      }),
+    );
+    expect(outcome.matchState).toBe('unknown');
+    expect(outcome.stages.warranty_resolved).toBe(false);
+    expect(outcome.failureReasons).toContain('policy_missing');
+  });
+
+  it('never leaves a failed stage without a reason', () => {
+    const cases = [
+      resolvable({ candidates: [] }),
+      resolvable({ candidates: [candidate({ signals: { brand: true } })] }),
+      resolvable({ brandResolvedToOrganisation: false }),
+      resolvable({ warrantyProviderKnown: false }),
+      resolvable({ actionableContactCount: 0 }),
+      resolvable({ contactVerifiedAt: '2020-01-01T00:00:00Z' }),
+    ];
+    for (const input of cases) {
+      const outcome = evaluateResolution(input);
+      if (!outcome.fullyResolved) expect(outcome.failureReasons.length).toBeGreaterThan(0);
+    }
+  });
+
   it('treats two comparable policies that disagree as a failure, not a coin toss', () => {
     const outcome = evaluateResolution(
       resolvable({

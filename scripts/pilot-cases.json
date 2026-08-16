@@ -1,0 +1,98 @@
+[
+  {
+    "label": "Samsung OLED, official importer",
+    "brandName": "Samsung",
+    "model": "QE65S95DATXXH",
+    "countryCode": "IL",
+    "purchaseDate": "2025-03-14",
+    "importerName": "Samline"
+  },
+  {
+    "label": "Samsung OLED, importer not on receipt",
+    "brandName": "Samsung",
+    "model": "QE65S95DATXXH",
+    "countryCode": "IL",
+    "purchaseDate": "2025-03-14",
+    "importerName": null
+  },
+  {
+    "label": "Samsung model we have no terms for",
+    "brandName": "Samsung",
+    "model": "UE43T5300",
+    "countryCode": "IL",
+    "purchaseDate": "2025-06-01",
+    "importerName": null
+  },
+  {
+    "label": "MacBook, one company in four roles",
+    "brandName": "Apple",
+    "model": "M4 MacBook Air 13",
+    "countryCode": "IL",
+    "purchaseDate": "2025-01-20",
+    "importerName": "iDigital"
+  },
+  {
+    "label": "MacBook, no importer named",
+    "brandName": "Apple",
+    "model": "M4 MacBook Air 13",
+    "countryCode": "IL",
+    "purchaseDate": "2025-01-20",
+    "importerName": null
+  },
+  {
+    "label": "Dyson vacuum, global terms only",
+    "brandName": "Dyson",
+    "model": "SV18",
+    "countryCode": "IL",
+    "purchaseDate": "2023-05-02",
+    "importerName": null
+  },
+  {
+    "label": "Dyson bought before our terms start",
+    "brandName": "Dyson",
+    "model": "SV18",
+    "countryCode": "IL",
+    "purchaseDate": "2019-01-01",
+    "importerName": null
+  },
+  {
+    "label": "Receipt with no purchase date",
+    "brandName": "Samsung",
+    "model": "QE65S95DATXXH",
+    "countryCode": "IL",
+    "purchaseDate": null,
+    "importerName": null
+  },
+  {
+    "label": "Brand we have never heard of",
+    "brandName": "Hisense",
+    "model": "65U8K",
+    "countryCode": "IL",
+    "purchaseDate": "2025-02-02",
+    "importerName": null
+  },
+  {
+    "label": "Samsung bought abroad, brought to Israel",
+    "brandName": "Samsung",
+    "model": "QE65S95DATXXH",
+    "countryCode": "DE",
+    "purchaseDate": "2025-03-14",
+    "importerName": null
+  },
+  {
+    "label": "Apple, model written as on the box",
+    "brandName": "Apple",
+    "model": "MacBook Air M4",
+    "countryCode": "IL",
+    "purchaseDate": "2025-01-20",
+    "importerName": null
+  },
+  {
+    "label": "Samsung with the importer's legal name",
+    "brandName": "Samsung",
+    "model": "QE65S95DATXXH",
+    "countryCode": "IL",
+    "purchaseDate": "2025-03-14",
+    "importerName": "סמליין בע״מ"
+  }
+]

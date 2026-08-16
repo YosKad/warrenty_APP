@@ -124,7 +124,11 @@ export function evaluateResolution(input: ResolutionInput): ResolutionOutcome {
   const state = leader ? matchState(score ?? 0, leader.verification) : null;
   const conflicts = detectConflicts(input.candidates);
 
-  if (!leader) failures.add('policy_missing');
+  // No policy at all, and a policy too weak to state, are the same outcome for
+  // the person asking: we have nothing we are willing to tell them. Reporting
+  // only the first would leave a stage failing with no reason attached, which
+  // is the one thing a failure-reason list must never do.
+  if (!leader || state === 'unknown') failures.add('policy_missing');
   if (conflicts.length > 0) failures.add('conflicting_policy');
 
   if (

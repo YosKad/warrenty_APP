@@ -93,3 +93,57 @@ is today — read reference data, write nothing.
 
 `verification_state` is not redefined. The resolver's source hierarchy depends on
 its ordering, and it is pinned by tests in both languages.
+
+---
+
+## D. What shipped
+
+| Requirement | Where |
+| --- | --- |
+| 1–2 Audit before touching the schema | This document, sections A–C |
+| 3 Console application | `apps/admin` — Next.js, TypeScript, desktop-first |
+| 4 Admin authorization, default deny | `admin_members` + `is_admin()`; no service-role key in the console, so RLS decides every request |
+| 5 Dashboard led by work, not totals | `app/(console)/page.tsx` |
+| 6–8 Organisations and scoped, dated relationships | `organisation_relationships`, `/relationships` |
+| 9–11 Warranty policies, clause review against source | `/warranties/[id]`, `ClauseReview` |
+| 12 Verification lifecycle | `publication_status`, orthogonal to `verification` |
+| 13–14 Sources and snapshots | `warranty_source_snapshots`, `/sources` |
+| 15–16 Conflicts, product match | `/queues/conflicts` — resolving never deletes evidence |
+| 17–19 Providers, contacts, locations | `/organisations/[id]`, `/providers/[orgId]/[kind]/[recordId]` |
+| 20 Bulk import (CSV/XLSX) | `/import`, `lib/import/*` — the phase's stated gate |
+| 21 Duplicate detection | `scoreOrganisationDuplicate`, `scoreLocationDuplicate` — explained, never merged |
+| 22–24 Document ingestion and extraction queue | `extraction_jobs`, `/queues/extraction` |
+| 25–26 Per-class freshness, stale queue | `freshness_policies`, `/queues/stale` |
+| 27 Re-verification without auto-overwrite | `markVerified` moves `verified_at` and nothing else |
+| 28 Ingestion adapters, no crawler | Extraction reads what it was pointed at; stated on the queue and sources pages |
+| 29 AI may propose, never publish | Default `candidate`, reviewer-only promotion trigger, explicit write in `warranty-extract` |
+| 30–31 Reviewer productivity | One review queue across every table; queue counts in the sidebar |
+| 32–35 Israel pilot, measured | `supabase/pilot/israel_pilot.sql`, `docs/ISRAEL_CORPUS_PILOT.md` |
+| 36 Full Resolution Rate | `evaluateResolution`, `resolution_rates()`, `/resolution` |
+| 37 Test set, synthetic marked | `scripts/pilot-cases.json`; `detail.synthetic` on every run, labelled in the UI |
+| 38 Resolution tester | `probe_resolution()` + `ResolutionTester` |
+| 39 Audit with before/after | `log_admin_action()`, `/audit` |
+| 40 Failure classification | `resolution_failure` enum, `rankFailureReasons` |
+| 41 Demo fixtures cannot surface as production | `data_environment`, `visible_environments()`, pinned by `publication_workflow_test.sql` |
+| 42 Tests | 66 domain, 35 console, 233 mobile, 4 SQL suites |
+| 43 Coverage dashboard | `/coverage`, `brand_corpus_coverage()` |
+| 47–48 Documentation | `docs/DATA_OPERATIONS.md`, `docs/ISRAEL_CORPUS_PILOT.md` |
+
+## E. Known limitations
+
+- **The pilot's research half was not performed.** This environment has no
+  general web access, so no researched facts and no research-time figure exist.
+  `docs/ISRAEL_CORPUS_PILOT.md` says which numbers are measured and which are
+  absent, rather than filling the gap with an estimate.
+- **The resolution suite is synthetic.** It measures whether the corpus can
+  answer questions somebody wrote down. Real receipts are a different
+  measurement and the console labels the difference on every row.
+- **Model normalisation is weaker than the corpus needs.** "MacBook Air M4"
+  fails against an `M4%` pattern — a real gap the pilot exposed and did not fix.
+- **No snapshot diffing yet.** `warranty_source_snapshots` stores text and a
+  `changed_from_previous` flag; nothing computes the flag, because nothing
+  fetches sources in this environment.
+- **Duplicate detection is quadratic.** Half a second against 200 existing
+  records, roughly a minute at 5,000. Fine now, worth watching.
+- **Organisation roles and relationships can disagree.** Roles are typed on the
+  organisation; who it acts for is a relationship. Nothing reconciles the two.

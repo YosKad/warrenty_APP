@@ -2,14 +2,16 @@
   "name": "my-warranty",
   "version": "0.1.0",
   "private": true,
-  "description": "MY Warranty — mobile app, data operations console and shared domain logic.",
+  "description": "MY Warranty \u2014 mobile app, data operations console and shared domain logic.",
   "workspaces": [
     "packages/domain",
     "apps/admin"
   ],
   "scripts": {
     "test": "npm run test --workspaces --if-present",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "pilot": "esbuild scripts/pilot-measure.mjs --bundle --platform=node --format=esm --outfile=node_modules/.cache/pilot.mjs --log-level=warning && node node_modules/.cache/pilot.mjs",
+    "bench:import": "esbuild scripts/import-benchmark.mjs --bundle --platform=node --format=esm --packages=external --outfile=node_modules/.cache/bench.mjs --log-level=warning && node node_modules/.cache/bench.mjs"
   },
   "engines": {
     "node": ">=20"
