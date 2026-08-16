@@ -42,6 +42,10 @@ describe('publication lifecycle', () => {
     expect(canTransition('verified', 'published')).toBe(true);
   });
 
+  it('lets a reviewer verify a candidate without parking it in a queue first', () => {
+    expect(canTransition('candidate', 'verified')).toBe(true);
+  });
+
   it('lets a machine propose but never publish', () => {
     expect(actorMayPublish('machine', 'candidate')).toBe(true);
     expect(actorMayPublish('machine', 'needs_review')).toBe(true);

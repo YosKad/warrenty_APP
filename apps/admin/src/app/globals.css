@@ -1,0 +1,498 @@
+/*
+ * The console is a tool, not a product surface.
+ *
+ * It deliberately does not look like the app. Reviewers spend hours in here
+ * comparing a clause against a PDF and clearing queues, so the whole design is
+ * about density and legibility: small type, tight rows, tabular numbers, and
+ * colour reserved for the two things that actually need it — publication state
+ * and freshness. Nothing is a card unless it is genuinely a separate object.
+ */
+
+:root {
+  --bg: #fbfaf8;
+  --surface: #ffffff;
+  --surface-alt: #f4f2ee;
+  --border: #e2ded6;
+  --border-strong: #cfc9be;
+
+  --text: #211d19;
+  --text-secondary: #5c554c;
+  --text-tertiary: #8b8378;
+
+  --accent: #3c5a4a;
+  --accent-soft: #e7efe9;
+
+  --danger: #8c2f22;
+  --danger-soft: #f8e7e4;
+  --warning: #7a5310;
+  --warning-soft: #fbf0da;
+  --ok: #2f5d3f;
+  --ok-soft: #e4f0e6;
+  --info: #2b4a6f;
+  --info-soft: #e5edf6;
+
+  --radius: 4px;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+h1 {
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+h3 {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+/* ---- shell ------------------------------------------------------------- */
+
+.shell {
+  display: grid;
+  grid-template-columns: 208px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  background: var(--surface-alt);
+  border-right: 1px solid var(--border);
+  padding: 14px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-brand {
+  font-weight: 650;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  padding: 0 8px;
+}
+.sidebar-brand span {
+  display: block;
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  letter-spacing: 0;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.nav-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-tertiary);
+  padding: 6px 8px 2px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.nav-item:hover {
+  background: rgba(0, 0, 0, 0.04);
+  text-decoration: none;
+}
+.nav-item[aria-current='page'] {
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 550;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+.nav-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+.nav-count[data-urgent='true'] {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.topbar-sub {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  margin-top: 2px;
+}
+.topbar-identity {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.content {
+  padding: 18px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---- panels ------------------------------------------------------------ */
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.panel-body {
+  padding: 12px;
+}
+.panel-note {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+}
+.grid-2 {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+
+/* ---- tables ------------------------------------------------------------ */
+
+.table-wrap {
+  overflow-x: auto;
+}
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table.data th {
+  text-align: start;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+}
+table.data td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+table.data tbody tr:hover {
+  background: var(--surface-alt);
+}
+table.data td.num,
+table.data th.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+}
+.muted {
+  color: var(--text-tertiary);
+}
+.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+/* ---- chips ------------------------------------------------------------- */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 550;
+  white-space: nowrap;
+  background: var(--surface-alt);
+  color: var(--text-secondary);
+}
+.chip[data-tone='ok'] {
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+.chip[data-tone='warn'] {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+.chip[data-tone='danger'] {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+.chip[data-tone='info'] {
+  background: var(--info-soft);
+  color: var(--info);
+}
+
+/* ---- metrics ----------------------------------------------------------- */
+
+.metric {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.metric-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-tertiary);
+}
+.metric-value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-top: 2px;
+}
+.metric-note {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.bar {
+  height: 6px;
+  background: var(--surface-alt);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+.bar > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+/* ---- forms ------------------------------------------------------------- */
+
+label.field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='date'],
+input[type='url'],
+input[type='file'],
+select,
+textarea {
+  font: inherit;
+  font-size: 13px;
+  padding: 5px 7px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  width: 100%;
+}
+textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+button,
+.button {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 550;
+  padding: 5px 11px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+button:hover:not(:disabled),
+.button:hover {
+  background: var(--surface-alt);
+  text-decoration: none;
+}
+button[data-variant='primary'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+button[data-variant='primary']:hover:not(:disabled) {
+  filter: brightness(1.1);
+  background: var(--accent);
+}
+button[data-variant='danger'] {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ---- messages ---------------------------------------------------------- */
+
+.notice {
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  font-size: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+}
+.notice[data-tone='danger'] {
+  background: var(--danger-soft);
+  border-color: #e9c8c2;
+  color: var(--danger);
+}
+.notice[data-tone='warn'] {
+  background: var(--warning-soft);
+  border-color: #e8d6ad;
+  color: var(--warning);
+}
+.notice[data-tone='info'] {
+  background: var(--info-soft);
+  border-color: #c9d8ea;
+  color: var(--info);
+}
+
+.empty {
+  padding: 22px 12px;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+/*
+ * Source text and clause text. Reviewers read these side by side against the
+ * original, so the direction is left to the content: an Israeli warranty booklet
+ * is Hebrew, and forcing it left-to-right makes it unreadable.
+ */
+.source-text {
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.centered {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.card-narrow {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}

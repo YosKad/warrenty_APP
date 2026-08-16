@@ -95,7 +95,12 @@ export type DataEnvironment = 'production' | 'demo';
 
 /** The states a reviewer can move a record into, per current state. */
 export const PUBLICATION_TRANSITIONS: Record<PublicationStatus, PublicationStatus[]> = {
-  candidate: ['needs_review', 'rejected'],
+  // Straight to verified is allowed: `needs_review` is a queue, not a mandatory
+  // stop, and a reviewer who has just read the clause against its source should
+  // not have to park it in a queue addressed to themselves. What they may not do
+  // is skip to published — and whether they are a reviewer at all is checked by
+  // the database, not by this table.
+  candidate: ['needs_review', 'verified', 'rejected'],
   needs_review: ['verified', 'rejected', 'candidate'],
   // Verification and publication are separate acts. A reviewer may confirm a
   // policy is correct and still hold it back — usually because the provider
