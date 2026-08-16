@@ -148,6 +148,11 @@ Deno.serve(async (request: Request) => {
         language,
         confidence: 'low',
         verification: 'ai_extracted',
+        // Stated rather than left to the column default. This function runs
+        // with the service role, which bypasses RLS and the publication
+        // trigger alike, so the one thing standing between a model's reading
+        // of a PDF and a user being told it is their warranty is this line.
+        publication_status: 'candidate',
         extraction_version: EXTRACTION_VERSION,
         extracted_by: 'warranty-extract',
         extracted_at: new Date().toISOString(),

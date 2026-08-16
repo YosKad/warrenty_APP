@@ -14,6 +14,12 @@
 
 begin;
 
+-- The fixtures are marked `data_environment = 'demo'`, and the resolver does not
+-- serve demo rows to anyone who has not asked for them. Asking here, for this
+-- transaction only, is also a test in itself: if this line stopped working the
+-- assertions below would start failing, which is how a guard should behave.
+set local app.include_demo_data = 'on';
+
 create or replace function assert(p_condition boolean, p_label text)
 returns void language plpgsql as $$
 begin

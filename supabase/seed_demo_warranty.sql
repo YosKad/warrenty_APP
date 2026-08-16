@@ -334,3 +334,34 @@ values
    'The manufacturer''s global page states a 12-month term.',
    'Samsung products carry a standard twelve (12) month manufacturer warranty unless a longer period is provided by the local importer.',
    array['general'], 'en', 'low', 'unverified', 'demo-1', 'demo-fixture', now());
+
+-- --------------------------------------------------------------------------
+-- Mark it as demo data — structurally
+--
+-- The header above says this is a fixture. A header is a comment, and a comment
+-- has never stopped a row being served to a user. `data_environment = 'demo'`
+-- is what actually stops it: `match_warranty_policies()` excludes demo rows
+-- unless a developer opts their own database in with
+--
+--   alter database postgres set app.include_demo_data = 'on';
+--
+-- The status is set to 'published' at the same time, so this dataset exercises
+-- the *published* path — a fixture that sat in 'candidate' would prove the
+-- resolver ignores candidates, which is not what these fixtures are for.
+-- --------------------------------------------------------------------------
+
+update warranty_sources
+   set data_environment = 'demo', publication_status = 'published'
+ where id::text like 'a0000000-%';
+
+update warranties
+   set data_environment = 'demo', publication_status = 'published'
+ where id::text like 'b0000000-%';
+
+update warranty_terms
+   set data_environment = 'demo', publication_status = 'published'
+ where warranty_id::text like 'b0000000-%';
+
+update organisations
+   set data_environment = 'demo', publication_status = 'published'
+ where slug in ('samline', 'samsung-service-il', 'apple', 'idigital', 'dyson', 'dyson-il');

@@ -5,7 +5,7 @@
 -- data writable for the first time, and the only thing standing between a
 -- normal consumer and that data is these policies.
 --
--- Run against a database with the migrations applied and two users seeded:
+-- Run against a database with the migrations applied. It seeds its own users:
 --
 --   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f supabase/tests/admin_authorization_test.sql
 --
@@ -88,6 +88,10 @@ declare
   v_importer uuid;
   v_count    int;
 begin
+  -- The profile rows follow from the `auth.users` trigger, same as in production.
+  insert into auth.users (id, email)
+  values (v_user, 'user@authorization.test'), (v_admin, 'admin@authorization.test');
+
   insert into organisations (slug, name, roles, country_code)
   values ('test-brand', 'Test Brand', array['manufacturer']::org_role[], 'IL')
   returning id into v_org;

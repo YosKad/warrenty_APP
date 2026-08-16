@@ -205,3 +205,36 @@ values
    array[(select id from organisations where slug = 'apple')],
    array[(select id from product_categories where slug = 'computers')],
    'retailer', 'community_submitted', now() - interval '20 days', null);
+
+-- --------------------------------------------------------------------------
+-- Mark it as demo data — structurally
+--
+-- Same reason as in seed_demo_warranty.sql: the warning in the header is a
+-- comment, and this is the part a query can see. Every contact, capability and
+-- branch below belongs to a demonstration organisation, so the whole set is
+-- marked by that membership rather than one row at a time.
+-- --------------------------------------------------------------------------
+
+with demo_orgs as (
+  select id from organisations
+   where slug in ('samline', 'samsung-service-il', 'apple', 'idigital', 'dyson', 'dyson-il')
+)
+update provider_contact_methods
+   set data_environment = 'demo', publication_status = 'published'
+ where organisation_id in (select id from demo_orgs);
+
+with demo_orgs as (
+  select id from organisations
+   where slug in ('samline', 'samsung-service-il', 'apple', 'idigital', 'dyson', 'dyson-il')
+)
+update service_capabilities
+   set data_environment = 'demo', publication_status = 'published'
+ where organisation_id in (select id from demo_orgs);
+
+with demo_orgs as (
+  select id from organisations
+   where slug in ('samline', 'samsung-service-il', 'apple', 'idigital', 'dyson', 'dyson-il')
+)
+update service_locations
+   set data_environment = 'demo', publication_status = 'published'
+ where organisation_id in (select id from demo_orgs);

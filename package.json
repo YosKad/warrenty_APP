@@ -13,5 +13,9 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "overridesNote": "exceljs pins uuid ^8, which has an unpatched buffer bounds check (GHSA-w5hq-g745-h8pq). v11 keeps the named v4 export exceljs uses; the XLSX parsing test covers it.",
+  "overrides": {
+    "uuid": "^11.1.1"
   }
 }
