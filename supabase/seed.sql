@@ -35,20 +35,20 @@ on conflict (key) do nothing;
 
 -- A minimal organisation graph showing the four distinct roles for one product.
 with brand as (
-  insert into organisations (slug, name, roles, website, is_verified)
-  values ('samsung', 'Samsung', array['manufacturer']::org_role[], 'https://www.samsung.com', true)
+  insert into organisations (slug, name, roles, website, is_verified, publication_status)
+  values ('samsung', 'Samsung', array['manufacturer']::org_role[], 'https://www.samsung.com', true, 'published')
   on conflict (slug) do update set name = excluded.name
   returning id
 ), importer as (
-  insert into organisations (slug, name, legal_name, roles, country_code, website, is_verified)
+  insert into organisations (slug, name, legal_name, roles, country_code, website, is_verified, publication_status)
   values (
     'samsung-il', 'Samsung Israel', 'Samsung Electronics Israel Ltd.',
     array['importer','warranty_provider','service_provider']::org_role[],
-    'IL', 'https://www.samsung.com/il/', true
+    'IL', 'https://www.samsung.com/il/', true, 'published'
   )
   on conflict (slug) do update set name = excluded.name
   returning id
 )
-insert into organisations (slug, name, roles, country_code, is_verified)
-values ('ksp', 'KSP', array['retailer']::org_role[], 'IL', true)
+insert into organisations (slug, name, roles, country_code, is_verified, publication_status)
+values ('ksp', 'KSP', array['retailer']::org_role[], 'IL', true, 'published')
 on conflict (slug) do nothing;
