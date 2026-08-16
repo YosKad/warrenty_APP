@@ -1,0 +1,17 @@
+{
+  "name": "my-warranty",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MY Warranty — mobile app, data operations console and shared domain logic.",
+  "workspaces": [
+    "packages/domain",
+    "apps/admin"
+  ],
+  "scripts": {
+    "test": "npm run test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -12,7 +12,8 @@
     "verbatimModuleSyntax": false,
     "types": ["jest", "node"],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@mw/domain": ["../../packages/domain/src/index.ts"]
     }
   },
   "include": [

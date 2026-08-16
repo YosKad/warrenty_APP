@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.local
+.DS_Store
+
+# Next.js
+.next/
+out/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Test and build output
+coverage/
+*.tsbuildinfo

@@ -150,7 +150,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-build-properties',
       {
-        ios: { deploymentTarget: '16.0' },
+        // SDK 57's minimum. Anything lower fails config validation before the
+        // bundler ever runs.
+        ios: { deploymentTarget: '16.4' },
         android: { minSdkVersion: 26, compileSdkVersion: 36, targetSdkVersion: 36 },
       },
     ],
