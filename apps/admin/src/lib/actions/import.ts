@@ -14,6 +14,7 @@ import {
   guessMapping,
   type ImportTarget,
 } from '@/lib/import/targets';
+import { readProvenance } from '@/lib/import/provenance';
 
 /**
  * Bulk import.
@@ -164,6 +165,33 @@ export async function validateImport(jobId: string): Promise<ImportActionResult>
     if (org.legal_name) byName.set(normaliseName(org.legal_name), org.id);
   }
 
+  // Approved aliases too, so a package written in Hebrew resolves against a
+  // corpus written in English without the researcher having to translate.
+  const { data: orgAliases } = await supabase
+    .from('organisation_aliases')
+    .select('organisation_id, normalized_key, publication_status, verification')
+    .limit(4000);
+  for (const alias of orgAliases ?? []) {
+    const usable =
+      (alias.publication_status === 'published' || alias.publication_status === 'verified') &&
+      alias.verification !== 'unverified' &&
+      alias.verification !== 'ai_extracted';
+    if (usable && !byName.has(alias.normalized_key)) {
+      byName.set(alias.normalized_key, alias.organisation_id);
+    }
+  }
+
+  // Models, for the alias file that points at them.
+  const { data: models } = await supabase
+    .from('product_models')
+    .select('id, canonical_model, normalized_key, manufacturer_id')
+    .limit(4000);
+  const modelByKey = new Map<string, string>();
+  for (const model of models ?? []) {
+    modelByKey.set(model.normalized_key, model.id);
+    modelByKey.set(normaliseName(model.canonical_model), model.id);
+  }
+
   const { data: locations } =
     spec.duplicateKey === 'location'
       ? await supabase
@@ -175,7 +203,9 @@ export async function validateImport(jobId: string): Promise<ImportActionResult>
   const existing =
     spec.duplicateKey === 'organisation'
       ? ((organisations ?? []) as Record<string, unknown>[])
-      : ((locations ?? []) as Record<string, unknown>[]);
+      : spec.duplicateKey === 'model'
+        ? ((models ?? []) as Record<string, unknown>[])
+        : ((locations ?? []) as Record<string, unknown>[]);
 
   let valid = 0;
   let invalid = 0;
@@ -184,6 +214,12 @@ export async function validateImport(jobId: string): Promise<ImportActionResult>
   for (const row of rows ?? []) {
     const mapped = applyMapping(mapping, row.raw as Record<string, string>);
     const { values, errors } = spec.validate(mapped);
+
+    // Provenance decides what the row is allowed to claim. A spreadsheet
+    // asserting "official" with nothing behind it asserts its own authority.
+    const provenance = readProvenance(mapped);
+    values.verification = provenance.verification;
+    for (const note of provenance.notes) errors.push(note);
 
     // Resolve the owning organisation for the targets that need one.
     if (spec.fields.some((field) => field.key === 'organisation')) {
@@ -195,6 +231,44 @@ export async function validateImport(jobId: string): Promise<ImportActionResult>
         );
       } else {
         values.organisation_id = id;
+      }
+    }
+
+    if (target === 'product_models' || target === 'model_aliases') {
+      const manufacturer = byName.get(normaliseName(mapped.manufacturer ?? ''));
+      if (!manufacturer) {
+        errors.push(
+          `No manufacturer named “${mapped.manufacturer ?? ''}” exists. Import organisations first.`,
+        );
+      } else if (target === 'product_models') {
+        values.manufacturer_id = manufacturer;
+      }
+    }
+
+    if (target === 'model_aliases') {
+      const key = normaliseName(mapped.canonical_model ?? '');
+      const parsedKey = mapped.canonical_model
+        ? modelByKey.get(key) ??
+          modelByKey.get(
+            (spec.validate({ ...mapped, value: mapped.canonical_model }).values
+              .normalized_key as string) ?? '',
+          )
+        : undefined;
+      if (!parsedKey) {
+        errors.push(
+          `No model named “${mapped.canonical_model ?? ''}” exists. Import models before their aliases.`,
+        );
+      } else {
+        values.model_id = parsedKey;
+      }
+    }
+
+    if (target === 'warranty_sources' && mapped.organisation?.trim()) {
+      const publisher = byName.get(normaliseName(mapped.organisation));
+      if (!publisher) {
+        errors.push(`No organisation named “${mapped.organisation}” exists`);
+      } else {
+        values.organisation_id = publisher;
       }
     }
 

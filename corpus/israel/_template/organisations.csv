@@ -1,0 +1,3 @@
+name,legal_name,roles,country,website,phone,email,source_url,source_title,source_kind,retrieved_date,verification,researcher
+Samsung,,manufacturer,,https://example.invalid/samsung,,,https://example.invalid/samsung,Samsung global site,manufacturer,2026-08-16,official,EXAMPLE ROW — DELETE ME
+Samline,סמליין בע"מ,"importer,warranty_provider",IL,https://example.invalid/samline,03-5555000,,https://example.invalid/samline/about,About Samline,manufacturer,2026-08-16,verified,EXAMPLE ROW — DELETE ME

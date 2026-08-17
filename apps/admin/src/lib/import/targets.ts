@@ -1,6 +1,7 @@
 import {
   normaliseCountry,
   normaliseName,
+  parseModel,
   parseSheetDate,
   scoreLocationDuplicate,
   scoreOrganisationDuplicate,
@@ -9,6 +10,7 @@ import {
 } from '@mw/domain';
 
 import { CAPABILITY_KINDS, CONTACT_KINDS, CONTACT_PURPOSES, RELATIONSHIP_KINDS } from '@/lib/fields';
+import { provenanceFields, readProvenance } from './provenance';
 
 /**
  * What each import target expects, and what it refuses.
@@ -25,7 +27,11 @@ export type ImportTarget =
   | 'provider_contacts'
   | 'service_locations'
   | 'service_capabilities'
-  | 'organisation_relationships';
+  | 'organisation_relationships'
+  | 'organisation_aliases'
+  | 'product_models'
+  | 'model_aliases'
+  | 'warranty_sources';
 
 export type FieldSpec = {
   key: string;
@@ -49,7 +55,7 @@ export type TargetSpec = {
   /** Turns one mapped row into column values, or into a list of reasons why not. */
   validate: (row: Record<string, string>) => ValidationResult;
   /** How this target recognises an existing record as the same thing. */
-  duplicateKey: 'organisation' | 'location' | 'none';
+  duplicateKey: 'organisation' | 'location' | 'model' | 'none';
 };
 
 const enumField = (
@@ -370,7 +376,252 @@ export const TARGETS: Record<ImportTarget, TargetSpec> = {
       };
     },
   },
+
+  // -------------------------------------------------------------------------
+  // Phase I.5 — the model corpus
+  // -------------------------------------------------------------------------
+
+  organisation_aliases: {
+    target: 'organisation_aliases',
+    label: 'Organisation aliases',
+    table: 'organisation_aliases',
+    duplicateKey: 'none',
+    fields: [
+      {
+        key: 'organisation',
+        label: 'Organisation',
+        required: true,
+        aliases: ['organisation', 'organization', 'company', 'חברה'],
+      },
+      {
+        key: 'value',
+        label: 'Alias',
+        required: true,
+        aliases: ['alias', 'value', 'name', 'שם'],
+        hint: 'How the company appears somewhere else — a Hebrew spelling, a receipt line, an abbreviation.',
+      },
+      {
+        key: 'kind',
+        label: 'Kind',
+        aliases: ['kind', 'type'],
+        hint: 'trading_name · legal_name · brand · abbreviation · transliteration · receipt_text',
+      },
+      { key: 'country_code', label: 'Country', aliases: ['country'] },
+    ],
+    validate(row) {
+      const errors: string[] = [];
+      const value = row.value?.trim() ?? '';
+      if (!row.organisation?.trim()) errors.push('Organisation is required');
+      if (!value) errors.push('Alias is required');
+
+      const kind = enumField(
+        ['trading_name', 'legal_name', 'brand', 'abbreviation', 'transliteration', 'receipt_text'],
+        'Kind',
+        row.kind ?? '',
+        errors,
+      );
+
+      return {
+        values: {
+          value: value || null,
+          // The comparison key comes from the same folding the resolver uses.
+          normalized_key: normaliseName(value),
+          kind: kind ?? 'trading_name',
+          country_code: normaliseCountry(row.country_code),
+        },
+        errors,
+      };
+    },
+  },
+
+  product_models: {
+    target: 'product_models',
+    label: 'Models',
+    table: 'product_models',
+    duplicateKey: 'model',
+    fields: [
+      {
+        key: 'manufacturer',
+        label: 'Manufacturer',
+        required: true,
+        aliases: ['manufacturer', 'brand', 'maker', 'יצרן'],
+        hint: 'The company that makes it. Not the importer, not the corporate parent.',
+      },
+      {
+        key: 'canonical_model',
+        label: 'Canonical name',
+        required: true,
+        aliases: ['model', 'canonical model', 'name', 'דגם'],
+      },
+      { key: 'family', label: 'Family', aliases: ['family', 'series', 'line'] },
+      { key: 'variant', label: 'Variant', aliases: ['variant', 'edition'] },
+      {
+        key: 'regional_model',
+        label: 'Market part number',
+        aliases: ['regional model', 'part number', 'sku', 'market code'],
+      },
+      { key: 'country_code', label: 'Country', aliases: ['country'] },
+    ],
+    validate(row) {
+      const errors: string[] = [];
+      const canonical = row.canonical_model?.trim() ?? '';
+      if (!row.manufacturer?.trim()) errors.push('Manufacturer is required');
+      if (!canonical) errors.push('Canonical name is required');
+
+      // The key is computed here, by the matcher's own parser. A researcher
+      // never has to work it out, and it cannot drift from the algorithm.
+      const parsed = canonical
+        ? parseModel(canonical, { brands: [row.manufacturer ?? ''] })
+        : null;
+      if (canonical && !parsed?.normalised) {
+        errors.push(`“${canonical}” contains nothing that identifies a product`);
+      }
+
+      return {
+        values: {
+          canonical_model: canonical || null,
+          family: row.family?.trim() || null,
+          variant: row.variant?.trim() || null,
+          regional_model: row.regional_model?.trim() || null,
+          country_code: normaliseCountry(row.country_code),
+          normalized_key: parsed?.normalised ?? '',
+        },
+        errors,
+      };
+    },
+  },
+
+  model_aliases: {
+    target: 'model_aliases',
+    label: 'Model aliases',
+    table: 'model_aliases',
+    duplicateKey: 'none',
+    fields: [
+      {
+        key: 'manufacturer',
+        label: 'Manufacturer',
+        required: true,
+        aliases: ['manufacturer', 'brand', 'יצרן'],
+      },
+      {
+        key: 'canonical_model',
+        label: 'Model',
+        required: true,
+        aliases: ['model', 'canonical model', 'דגם'],
+      },
+      {
+        key: 'value',
+        label: 'Alias',
+        required: true,
+        aliases: ['alias', 'value', 'spelling', 'other name'],
+      },
+      {
+        key: 'kind',
+        label: 'Kind',
+        aliases: ['kind', 'type'],
+        hint: 'trading_name · regional_code · abbreviation · retailer_name · ocr_variant · legacy',
+      },
+    ],
+    validate(row) {
+      const errors: string[] = [];
+      const value = row.value?.trim() ?? '';
+      if (!row.canonical_model?.trim()) errors.push('Model is required');
+      if (!value) errors.push('Alias is required');
+
+      const kind = enumField(
+        ['trading_name', 'regional_code', 'abbreviation', 'retailer_name', 'ocr_variant', 'legacy'],
+        'Kind',
+        row.kind ?? '',
+        errors,
+      );
+
+      const parsed = value ? parseModel(value, { brands: [row.manufacturer ?? ''] }) : null;
+      if (value && !parsed?.normalised) {
+        errors.push(`“${value}” folds to nothing, so it could never match anything`);
+      }
+
+      return {
+        values: {
+          value: value || null,
+          normalized_key: parsed?.normalised ?? '',
+          kind: kind ?? 'trading_name',
+        },
+        errors,
+      };
+    },
+  },
+
+  warranty_sources: {
+    target: 'warranty_sources',
+    label: 'Sources',
+    table: 'warranty_sources',
+    duplicateKey: 'none',
+    fields: [
+      {
+        key: 'document_title',
+        label: 'Document title',
+        required: true,
+        aliases: ['title', 'document', 'document title', 'שם המסמך'],
+      },
+      { key: 'source_url', label: 'URL', aliases: ['url', 'link', 'source url', 'קישור'] },
+      { key: 'organisation', label: 'Published by', aliases: ['organisation', 'publisher', 'company'] },
+      { key: 'kind', label: 'Kind', aliases: ['kind', 'type'] },
+      { key: 'document_version', label: 'Version', aliases: ['version'] },
+      { key: 'language', label: 'Language', aliases: ['language', 'lang', 'שפה'] },
+      { key: 'country_code', label: 'Country', aliases: ['country'] },
+      { key: 'effective_from', label: 'Effective from', aliases: ['effective from', 'from'] },
+      { key: 'content_hash', label: 'Content hash', aliases: ['hash', 'sha256', 'content hash'] },
+    ],
+    validate(row) {
+      const errors: string[] = [];
+      if (!row.document_title?.trim()) errors.push('Document title is required');
+
+      const kind = enumField(
+        ['manufacturer', 'retailer', 'internal_db', 'document_extraction', 'user_entered', 'ai_inferred'],
+        'Kind',
+        row.kind ?? '',
+        errors,
+      );
+
+      const from = row.effective_from?.trim() ? parseSheetDate(row.effective_from) : null;
+      if (row.effective_from?.trim() && !from) {
+        errors.push(`Effective from “${row.effective_from}” could not be read`);
+      }
+
+      return {
+        values: {
+          document_title: row.document_title?.trim() || null,
+          source_url: row.source_url?.trim() || null,
+          kind: kind ?? 'internal_db',
+          document_version: row.document_version?.trim() || null,
+          language: row.language?.trim() || null,
+          country_code: normaliseCountry(row.country_code),
+          effective_from: from,
+          content_hash: row.content_hash?.trim() || null,
+        },
+        errors,
+      };
+    },
+  },
 };
+
+/**
+ * Every corpus target also accepts provenance columns.
+ *
+ * Appended rather than written into each definition so that adding a
+ * provenance field cannot be forgotten for one target — which is how a corpus
+ * ends up with facts nobody can trace.
+ */
+for (const spec of Object.values(TARGETS)) {
+  spec.fields = [...spec.fields, ...provenanceFields()];
+}
+
+/**
+ * The provenance a row carries, and what it is allowed to claim because of it.
+ *
+ * Re-exported here so the importer has one place to ask.
+ */
+export { readProvenance };
 
 /**
  * Guesses the column mapping from the sheet's own headers.
@@ -436,6 +687,34 @@ export function findDuplicate(
   if (spec.duplicateKey === 'none') return null;
 
   let best: DuplicateFinding | null = null;
+
+  // A model is a duplicate when it folds to the same comparison key under the
+  // same manufacturer. Two manufacturers can legitimately both sell an "S95D";
+  // one manufacturer cannot sell two of them.
+  if (spec.duplicateKey === 'model') {
+    for (const candidate of existing) {
+      if (!values.normalized_key || candidate.normalized_key !== values.normalized_key) continue;
+      if (
+        values.manufacturer_id &&
+        candidate.manufacturer_id &&
+        values.manufacturer_id !== candidate.manufacturer_id
+      ) {
+        continue;
+      }
+      return {
+        existingId: String(candidate.id),
+        score: 100,
+        signals: [
+          {
+            key: 'model_key',
+            weight: 100,
+            detail: `“${candidate.canonical_model}” already folds to ${values.normalized_key}`,
+          },
+        ],
+      };
+    }
+    return null;
+  }
 
   for (const candidate of existing) {
     const result =

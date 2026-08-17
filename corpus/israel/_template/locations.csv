@@ -1,0 +1,2 @@
+organisation,branch,country,region,city,address,postal_code,phone,latitude,longitude,timezone,appointment,source_url,source_title,retrieved_date,verification,researcher
+Samline,Tel Aviv service centre,IL,Tel Aviv,תל אביב,הרצל 12,6801234,03-5555100,32.0668,34.7778,Asia/Jerusalem,no,https://example.invalid/samline/branches,Service centres,2026-08-16,official,EXAMPLE ROW — DELETE ME
