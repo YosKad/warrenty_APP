@@ -19,9 +19,23 @@
 -- `20260101000900_scheduling_and_usage.sql`.
 -- ---------------------------------------------------------------------------
 
-create role anon nologin;
-create role authenticated nologin;
-create role service_role nologin;
+-- Roles are cluster-wide, so this file has to be safe to run against a second
+-- database on the same server.
+do $$
+begin
+  create role anon nologin;
+exception when duplicate_object then null;
+end $$;
+do $$
+begin
+  create role authenticated nologin;
+exception when duplicate_object then null;
+end $$;
+do $$
+begin
+  create role service_role nologin;
+exception when duplicate_object then null;
+end $$;
 
 create schema if not exists auth;
 
