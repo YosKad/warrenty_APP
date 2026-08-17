@@ -26,6 +26,7 @@ import {
   evaluateResolution,
   rankCandidates,
   rankFailureReasons,
+  resolveModel,
   resolutionRates,
 } from '../packages/domain/src/index.ts';
 
@@ -76,11 +77,50 @@ const ABLATIONS = {
   'no-contacts': "update provider_contact_methods set publication_status = 'candidate';",
   'no-relationships': "update organisation_relationships set publication_status = 'candidate';",
   'no-clauses': "update warranty_terms set publication_status = 'candidate';",
+  // What the corpus was before Phase I.5: policy patterns and nothing else.
+  'no-model-corpus':
+    "update product_models set publication_status = 'candidate';" +
+    "update model_aliases set publication_status = 'candidate';",
   'policies-only':
     "update provider_contact_methods set publication_status = 'candidate';" +
     "update service_locations set publication_status = 'candidate';" +
     "update service_capabilities set publication_status = 'candidate';",
 };
+
+/**
+ * The model corpus for a brand, so the harness can run the staged matcher
+ * exactly as the console and the app do rather than relying on the SQL
+ * pattern check alone.
+ */
+function probeModels(testCase, setup) {
+  const query =
+    'begin; ' +
+    DEMO_ON +
+    (setup ?? '') +
+    ` select probe_models(${lit(testCase.brandName)}, ${lit(testCase.countryCode)});` +
+    ' rollback;';
+  const line = sql(query).split('\n').filter(Boolean).pop();
+  return JSON.parse(line);
+}
+
+/**
+ * Policies reachable through a resolved model, which is the Phase I.5 path.
+ *
+ * The old `probe_resolution` finds policies by `model_pattern`; this one finds
+ * them by `model_id`, which is how "MacBook Air M4" reaches terms that a `M4%`
+ * pattern could never match.
+ */
+function probePoliciesForModel(modelId, testCase, setup) {
+  const query =
+    'begin; ' +
+    DEMO_ON +
+    (setup ?? '') +
+    ` select probe_policies_for_model(${lit(modelId)}, ${lit(testCase.countryCode)},` +
+    ` ${lit(testCase.purchaseDate)}, null);` +
+    ' rollback;';
+  const line = sql(query).split('\n').filter(Boolean).pop();
+  return JSON.parse(line);
+}
 
 function probe(testCase, setup) {
   const query =
@@ -100,12 +140,35 @@ function lit(value) {
   return `'${String(value).replace(/'/g, "''")}'`;
 }
 
-function evaluate(testCase, found) {
-  const candidates = found.candidates ?? [];
+function evaluate(testCase, found, corpus, setup) {
+  // Phase I.5: the staged matcher decides whether the product was identified.
+  // Passing it in is what turns "model_unknown" into a reason somebody can act
+  // on — and what makes the MacBook Air M4 case resolve at all.
+  const modelResolution = resolveModel(testCase.model ?? '', corpus.models ?? [], {
+    patterns: corpus.patterns ?? [],
+    ...(corpus.brand ? { brands: [corpus.brand.name] } : {}),
+  });
+
+  // When the model resolved, the policies come from the model link. The pattern
+  // path stays as the fallback for a corpus that has no models yet.
+  const viaModel = modelResolution.resolved?.model
+    ? probePoliciesForModel(modelResolution.resolved.model.id, testCase, setup)
+    : null;
+
+  const candidates =
+    viaModel && (viaModel.candidates ?? []).length > 0
+      ? viaModel.candidates
+      : (found.candidates ?? []);
+  const providers =
+    viaModel && (viaModel.candidates ?? []).length > 0
+      ? (viaModel.providers ?? {})
+      : (found.providers ?? {});
+
   const leader = candidates.length > 0 ? rankCandidates(candidates)[0] : null;
-  const facts = leader ? (found.providers ?? {})[leader.warrantyId] : undefined;
+  const facts = leader ? providers[leader.warrantyId] : undefined;
 
   return evaluateResolution({
+    modelResolution,
     brandName: testCase.brandName,
     model: testCase.model,
     categoryKnown: true,
@@ -155,7 +218,14 @@ const table = [];
 
 for (const variant of variants) {
   const started = Date.now();
-  const outcomes = suite.map((testCase) => evaluate(testCase, probe(testCase, ABLATIONS[variant])));
+  const outcomes = suite.map((testCase) =>
+    evaluate(
+      testCase,
+      probe(testCase, ABLATIONS[variant]),
+      probeModels(testCase, ABLATIONS[variant]),
+      ABLATIONS[variant],
+    ),
+  );
   const rates = resolutionRates(outcomes);
   const elapsed = Date.now() - started;
 
@@ -189,7 +259,7 @@ for (const variant of variants) {
 }
 
 console.log('\n=== Full Resolution Rate ===');
-console.log('  variant            product  warranty  provider  route   FULL    ms');
+console.log('  variant            product  warranty  provider  route   FULL   AUTO  AMBIG    ms');
 for (const row of table) {
   console.log(
     `  ${row.variant.padEnd(18)} ${pct(row.rates.productIdentificationRate).padStart(6)}` +
@@ -197,6 +267,8 @@ for (const row of table) {
       `  ${pct(row.rates.providerResolutionRate).padStart(7)}` +
       `  ${pct(row.rates.serviceRouteResolutionRate).padStart(6)}` +
       `  ${pct(row.rates.fullResolutionRate).padStart(5)}` +
+      `  ${pct(row.rates.autoResolutionRate).padStart(5)}` +
+      `  ${pct(row.rates.ambiguityRate).padStart(5)}` +
       `  ${String(row.elapsed).padStart(5)}`,
   );
 }

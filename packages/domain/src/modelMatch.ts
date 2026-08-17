@@ -320,13 +320,29 @@ export function resolveModel(
   return finish(input, candidates, explanation, ocr);
 }
 
+/** Stages that name a *product*. Stage E names a policy instead. */
+const PRECISE_STAGES: MatchStage[] = ['canonical', 'alias', 'normalised'];
+
 function finish(
   input: ParsedModel,
   candidates: ModelCandidate[],
   explanation: string[],
   ocr: ModelResolution['ocr'],
 ): ModelResolution {
-  const trusted = candidates.filter((candidate) => candidate.trust === 'trusted');
+  const trustedAll = candidates.filter((candidate) => candidate.trust === 'trusted');
+
+  /*
+   * A policy pattern that also matches is corroboration, not a rival.
+   *
+   * Stage E identifies a *policy*; stages A–C identify a *product*. Counting
+   * them as competing answers made "Samsung QE65S95DATXXH" ambiguous against
+   * the very policy its own model is linked to — the matcher disagreeing with
+   * itself. When a product is identified precisely, the pattern hit is kept for
+   * display and dropped from the question of whether we know what this is.
+   */
+  const precise = trustedAll.filter((candidate) => PRECISE_STAGES.includes(candidate.stage));
+  const trusted = precise.length > 0 ? precise : trustedAll;
+
   const distinctTargets = new Set(
     trusted.map((candidate) => candidate.model?.id ?? `warranty:${candidate.warrantyId}`),
   );

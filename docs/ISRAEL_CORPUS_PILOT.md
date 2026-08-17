@@ -229,3 +229,70 @@ locally: `20260101000800_storage_and_rpc.sql` and
   is a corpus metric and should be described as one.
 - **A second reviewer.** Reviewer throughput — records verified per hour — is a
   measurement about people, and this pilot had none.
+
+---
+
+## 7. Re-measured after Phase I.5
+
+The same twelve cases, the same fixtures, after model identity was added.
+`npm run pilot -- --ablate`:
+
+```
+  variant            product  warranty  provider  route   FULL   AUTO  AMBIG
+  full                  58%      58%      58%     58%    58%    58%     0%
+  no-contacts           58%      58%      58%     58%     0%     0%     0%
+  no-clauses            58%      58%      58%     58%    58%    58%     0%
+  no-model-corpus       33%      33%      33%     33%    33%    33%     0%
+  policies-only         58%      58%      58%      0%     0%     0%     0%
+```
+
+**Full Resolution Rate: 50% → 58%.** Seven of twelve cases now resolve, and the
+`no-model-corpus` row measures what the phase bought: withhold the canonical
+models and aliases and the rate drops to 33%, the same figure the pattern-only
+corpus produced before. **The model corpus is worth 25 points**, on this suite.
+
+The pinned case resolves:
+
+```
+  #####  Apple, model written as on the box     fully resolved
+```
+
+"MacBook Air M4" reaches its terms through `warranties.model_id`, which a `M4%`
+pattern could never have matched.
+
+Contacts remain the binding constraint — withholding them still takes the rate to
+zero — so the work sequence in section 4 is unchanged.
+
+### What still fails, and why each one is right
+
+| Case | Reason | Verdict |
+| --- | --- | --- |
+| Samsung model we have no terms for | `model_unknown` | A real gap. `UE43T5300` is not in the corpus |
+| Dyson V15 · `SV18` | `model_pattern_too_broad` | **Better than before.** It used to resolve on `SV%` — two literal characters, which would also match `SV22`, a different vacuum. It now refuses and says the pattern needs narrowing |
+| Dyson bought before our terms start | `policy_date_conflict` chain | Correct. The 2022 terms are not the 2019 terms |
+| Brand we have never heard of | `product_unknown` | No invention |
+| Samsung bought abroad (DE) | `model_unknown` | There is no German corpus, and the Israeli model is scoped to Israel |
+
+Two of these five got *worse* on the headline number and better on correctness.
+That is the trade this phase was for: the Dyson case used to be counted as
+resolved and was resolving on a two-character pattern.
+
+**Ambiguity is 0% on this suite**, which is a fact about the fixtures rather than
+about the matcher — three brands with one model each leave nothing to be
+ambiguous between. The ambiguity path is covered by tests, not by this table.
+
+### One bug the re-measurement found
+
+The first run after wiring in the staged matcher produced 17%, *below* the
+Phase I baseline, with four cases reporting `model_ambiguous`. The cause:
+`Samsung QE65S95DATXXH` matched the canonical model at stage A **and** the
+policy pattern `QE%S95%` at stage E, and the two were counted as competing
+answers — the matcher disagreeing with itself about a policy its own model is
+linked to.
+
+Stage E identifies a *policy*; stages A–C identify a *product*. When a product is
+identified precisely, a pattern hit is now corroboration rather than a rival. It
+stays visible in the Model Resolver and drops out of the ambiguity question.
+
+Worth recording because the ablation table is what caught it. A suite that only
+reported the headline number would have shown 17% and left the cause invisible.
