@@ -204,3 +204,32 @@ export const SOURCE_FIELDS: FieldSpec[] = [
   { name: 'effective_to', label: 'Effective to', type: 'date' },
   { name: 'notes', label: 'Notes', type: 'textarea', width: 'full' },
 ];
+
+export const MODEL_FIELDS: FieldSpec[] = [
+  {
+    name: 'canonical_model',
+    label: 'Canonical name',
+    required: true,
+    width: 'full',
+    hint: 'The name a reviewer chose. Every other spelling is an alias.',
+  },
+  {
+    name: 'family',
+    label: 'Family',
+    hint: 'The product line — "S95", "MacBook Air". Researched, not derived from the name.',
+  },
+  { name: 'variant', label: 'Variant', hint: '"Detect Absolute", "13-inch".' },
+  {
+    name: 'regional_model',
+    label: 'Market part number',
+    hint: 'e.g. QE65S95DATXXH. Add the other markets as aliases.',
+  },
+  { name: 'country_code', label: 'Country', placeholder: 'IL' },
+  {
+    name: 'normalized_key',
+    label: 'Comparison key',
+    hint: 'Computed by the matcher. Shown so a mismatch is visible; do not edit by hand.',
+    width: 'full',
+  },
+  { name: 'note', label: 'Note', type: 'textarea', width: 'full' },
+];

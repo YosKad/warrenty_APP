@@ -32,6 +32,10 @@ const WRITABLE = {
   provider_contact_methods: '/providers',
   service_locations: '/providers',
   service_capabilities: '/providers',
+  product_models: '/models',
+  model_aliases: '/models',
+  organisation_aliases: '/organisations',
+  warranty_serial_rules: '/warranties',
 } as const;
 
 export type WritableTable = keyof typeof WRITABLE;

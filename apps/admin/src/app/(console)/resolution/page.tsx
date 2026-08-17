@@ -1,5 +1,6 @@
 import { Metric, PageHeader, Panel, Empty } from '@/components/ui';
 import { ResolutionTester } from '@/components/ResolutionTester';
+import { StagedTester } from '@/components/StagedTester';
 import { requireAdmin } from '@/lib/auth';
 import { supabaseServer } from '@/lib/supabase/server';
 
@@ -40,6 +41,10 @@ export default async function ResolutionPage() {
     provider_resolution_rate: number | null;
     service_route_resolution_rate: number | null;
     full_resolution_rate: number | null;
+    auto_resolution_rate: number | null;
+    ambiguity_rate: number | null;
+    reviewed: number;
+    false_resolution_rate: number | null;
   } | null;
 
   const suiteNames = [
@@ -103,6 +108,39 @@ export default async function ResolutionPage() {
           />
         </div>
       </Panel>
+
+      <Panel
+        title="Quality"
+        note="Correctness before raw resolution. A case we answered wrongly costs a user a wasted trip; a case we could not answer costs them a search."
+      >
+        <div className="grid grid-3">
+          <Metric
+            label="Auto resolution"
+            value={pct(kpi?.auto_resolution_rate)}
+            ratio={kpi?.auto_resolution_rate ?? 0}
+            note="resolved without asking the user anything"
+          />
+          <Metric
+            label="Ambiguity"
+            value={pct(kpi?.ambiguity_rate)}
+            ratio={kpi?.ambiguity_rate ?? 0}
+            note="several credible answers, so we asked"
+          />
+          <Metric
+            label="False resolution"
+            value={pct(kpi?.false_resolution_rate)}
+            ratio={kpi?.false_resolution_rate ?? 0}
+            note={`over ${kpi?.reviewed ?? 0} reviewed run${kpi?.reviewed === 1 ? '' : 's'}`}
+          />
+        </div>
+        <p className="panel-note" style={{ marginTop: 8 }}>
+          False resolution is measured over reviewed runs only. Dividing by every
+          run would drive it towards zero simply by running the suite more often,
+          which is a metric that rewards not looking.
+        </p>
+      </Panel>
+
+      <StagedTester />
 
       <ResolutionTester suites={suiteNames} />
 

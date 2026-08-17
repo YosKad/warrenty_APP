@@ -11,6 +11,7 @@ type NavProps = {
 
 const DATA_LINKS = [
   { href: '/organisations', label: 'Organisations' },
+  { href: '/models', label: 'Models' },
   { href: '/relationships', label: 'Relationships' },
   { href: '/warranties', label: 'Warranty policies' },
   { href: '/providers', label: 'Service providers' },
