@@ -28,13 +28,20 @@ const TRUST_TONE: Record<string, string> = {
  * stopped. Both need the same thing: every stage, with its reasoning, not a
  * verdict.
  */
-export function ModelResolverTool() {
-  const [brandName, setBrandName] = useState('');
-  const [model, setModel] = useState('');
+export function ModelResolverTool({
+  initialResult,
+  initialInput,
+}: {
+  /** Pre-populated result, for previews and component tests. */
+  initialResult?: ResolveModelResult;
+  initialInput?: { brandName?: string; model?: string; importerName?: string };
+} = {}) {
+  const [brandName, setBrandName] = useState(initialInput?.brandName ?? '');
+  const [model, setModel] = useState(initialInput?.model ?? '');
   const [countryCode, setCountryCode] = useState('IL');
   const [purchaseDate, setPurchaseDate] = useState('');
-  const [importerName, setImporterName] = useState('');
-  const [result, setResult] = useState<ResolveModelResult | null>(null);
+  const [importerName, setImporterName] = useState(initialInput?.importerName ?? '');
+  const [result, setResult] = useState<ResolveModelResult | null>(initialResult ?? null);
   const [pending, startTransition] = useTransition();
 
   function run(event: React.FormEvent) {

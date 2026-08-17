@@ -28,7 +28,12 @@ const STATE_TONE: Record<string, string> = {
  * *where* it stopped, what it matched, where that record came from, and how
  * long each step took — which is the difference between a number and a task.
  */
-export function StagedTester() {
+export function StagedTester({
+  initialResult,
+}: {
+  /** Pre-populated result, for previews and component tests. */
+  initialResult?: StagedRunResult;
+} = {}) {
   const [form, setForm] = useState({
     brandName: 'Apple',
     model: 'MacBook Air M4',
@@ -38,7 +43,7 @@ export function StagedTester() {
     retailerName: '',
     serialNumber: '',
   });
-  const [result, setResult] = useState<StagedRunResult | null>(null);
+  const [result, setResult] = useState<StagedRunResult | null>(initialResult ?? null);
   const [pending, startTransition] = useTransition();
 
   const set = (patch: Partial<typeof form>) => setForm((current) => ({ ...current, ...patch }));

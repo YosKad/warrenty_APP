@@ -1,5 +1,6 @@
 import type { CalendarDate } from './date';
 import type { ConfidenceLevel, WarrantySource } from './warranty';
+import type { MatchSignals, MatchState, VerificationState, WarrantyConflict } from '@mw/domain';
 
 /**
  * Warranty intelligence.
@@ -53,7 +54,6 @@ export type {
   WarrantyConflict,
 } from '@mw/domain';
 
-import type { MatchSignals, MatchState, VerificationState, WarrantyConflict } from '@mw/domain';
 
 /**
  * A policy in the running, with the signals that fired for it.

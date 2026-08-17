@@ -74,3 +74,50 @@ Stage E still evaluates it. What changes is that a pattern is no longer the
 The scoring weights are untouched. `MATCH_SIGNALS.model` still carries 22 points;
 what changes is how the `model` signal comes to be true, and that a signal now
 records *which stage* set it.
+
+---
+
+## D. What shipped
+
+| Requirement | Where |
+| --- | --- |
+| 2 Model normalisation, not naive `%` | `packages/domain/src/model.ts` — `parseModel`, `compareModels` |
+| 3 Canonical product identity | `product_models` (manufacturer, canonical, family, variant, regional, key) |
+| 4 Verified aliases with provenance | `model_aliases`, each with its own source and review state |
+| 5 Deterministic first; AI may propose, not establish | `isTrustedAlias` — a candidate alias cannot resolve |
+| 6 Explicit stages A–F | `modelMatch.ts`; only A, B, C and a specific E auto-resolve |
+| 7 Match explanation | `ModelResolution.explanation` + per-candidate `evidence` |
+| 8 Ambiguity, with candidates and evidence | `state: 'ambiguous'`, `distinguishers` computed from what differs |
+| 9 Receipt OCR cleanup | `ocrVariants`, `repairWithOcr` — bounded, unique-hit only, never rewrites |
+| 10 Brand normalisation, four distinct things | `organisation_aliases`, `resolveOrganisation` |
+| 11 Retailer / importer signals | `readReceiptEvidence`, `importer_conflict` |
+| 12 Serial applicability, prepared not inferred | `warranty_serial_rules`, `serialApplicability` returns `unknown` |
+| 13–15 Corpus package contract | `corpus/`, `docs/CORPUS_IMPORT_CONTRACT.md` |
+| 14 Source-grounded imports | `provenance.ts` — a claim above `unverified` needs a source |
+| 16 Dry run before publishing | read → map → validate → preview → candidate |
+| 17 Model Resolver | `/models`, `ModelResolverTool` |
+| 18 Staged tester | `StagedTester` — eight stages with state, record, source, why, latency |
+| 19 Failure analytics | eight new `resolution_failure` values, each naming a fix |
+| 20 Quality KPIs | auto resolution, ambiguity, false resolution (over reviewed runs) |
+| 23 Three-brand readiness | fixtures are demo-only; a real package imports without code changes |
+| 24 Corpus replacement | re-import flags duplicates, never overwrites; demo excluded structurally |
+| 25–26 Tests and the pinned regression | 140 domain, 51 console, 17 SQL |
+| 28 Documentation | `docs/MODEL_RESOLUTION.md`, `docs/CORPUS_IMPORT_CONTRACT.md` |
+
+## E. Known limitations
+
+- **Ambiguity is untested against real data.** The pilot fixtures have one model
+  per brand, so the suite reports 0% ambiguity. The path is covered by unit
+  tests; whether real corpora produce useful distinguishers is unmeasured.
+- **The 80% target is not met and was not chased.** 58% on twelve synthetic
+  cases, and the brief said not to manufacture fixtures to reach a number. Four
+  of the five remaining failures are the corpus correctly refusing.
+- **False Resolution Rate has no observations.** Nothing has been reviewed yet,
+  so it reads 0% over 0 runs. That is an absence of evidence and the console
+  says so rather than showing a green zero.
+- **Stage C tolerates OCR only inside part codes.** A misread *word* — "Alr" for
+  "Air" — still fails. Widening it would cost false matches.
+- **`normalized_key` is stored and can drift.** The model page recomputes it and
+  turns red on disagreement, but nothing repairs it automatically.
+- **No component tests for the console UI.** The tools are covered through the
+  domain and the actions; the React itself is verified by build and by eye.
