@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import type { PolicyCandidate } from '../match';
+import { resolveModel, type CanonicalModel } from '../modelMatch';
 import {
   evaluateResolution,
+  falseResolutionRate,
   rankFailureReasons,
   resolutionRates,
   type ResolutionInput,
@@ -197,5 +199,155 @@ describe('rankFailureReasons', () => {
     ];
     const ranked = rankFailureReasons(outcomes);
     expect(ranked[0]!.reason).toBe('product_unknown');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Phase I.5 — what the staged model matcher adds
+// ---------------------------------------------------------------------------
+
+const canonical = (
+  over: Partial<CanonicalModel> & { canonicalModel: string },
+): CanonicalModel => ({
+  id: over.canonicalModel,
+  manufacturerName: null,
+  family: null,
+  variant: null,
+  regionalModel: null,
+  categoryId: null,
+  aliases: [],
+  ...over,
+});
+
+describe('model resolution inside the five stages', () => {
+  const MBA = canonical({
+    id: 'mba-m4',
+    canonicalModel: 'MacBook Air M4',
+    manufacturerName: 'Apple',
+  });
+
+  it('lets a resolved model identify the product', () => {
+    const outcome = evaluateResolution(
+      resolvable({
+        model: 'MacBook Air 13-inch M4',
+        modelRecognised: false,
+        modelResolution: resolveModel('MacBook Air 13-inch M4', [MBA]),
+      }),
+    );
+    expect(outcome.modelState).toBe('resolved');
+    expect(outcome.stages.product_identified).toBe(true);
+    expect(outcome.autoResolved).toBe(true);
+  });
+
+  it('reports an ambiguous model instead of identifying a product', () => {
+    const twins = [
+      canonical({ id: 'a', canonicalModel: 'Samsung S95D' }),
+      canonical({ id: 'b', canonicalModel: 'Samsung S95D', variant: '2025' }),
+    ];
+    const outcome = evaluateResolution(
+      resolvable({ model: 'Samsung S95D', modelResolution: resolveModel('Samsung S95D', twins) }),
+    );
+    expect(outcome.ambiguous).toBe(true);
+    expect(outcome.failureReasons).toContain('model_ambiguous');
+    expect(outcome.stages.product_identified).toBe(false);
+    // Ambiguity is not automatic resolution, whatever the other stages did.
+    expect(outcome.autoResolved).toBe(false);
+    expect(outcome.distinguishers.length).toBeGreaterThan(0);
+  });
+
+  it('asks for an alias when the nearest thing is a family member', () => {
+    const outcome = evaluateResolution(
+      resolvable({
+        model: 'MacBook Air M9',
+        modelResolution: resolveModel('MacBook Air M9', [MBA]),
+      }),
+    );
+    expect(outcome.failureReasons).toContain('model_alias_missing');
+  });
+
+  it('names a pattern as too broad rather than blaming the model', () => {
+    const outcome = evaluateResolution(
+      resolvable({
+        model: 'M4 Mac mini',
+        modelResolution: resolveModel('M4 Mac mini', [], {
+          patterns: [{ warrantyId: 'w1', pattern: '%M4%' }],
+        }),
+      }),
+    );
+    expect(outcome.failureReasons).toContain('model_pattern_too_broad');
+  });
+});
+
+describe('receipt evidence', () => {
+  it('treats a disagreeing importer as a conflict, not a tie', () => {
+    const outcome = evaluateResolution(
+      resolvable({ receiptImporterId: 'grey-importer', policyImporterId: 'official-importer' }),
+    );
+    expect(outcome.failureReasons).toContain('importer_conflict');
+    expect(outcome.stages.service_route_resolved).toBe(false);
+  });
+
+  it('says nothing when only one side names an importer', () => {
+    const outcome = evaluateResolution(resolvable({ receiptImporterId: 'x' }));
+    expect(outcome.failureReasons).not.toContain('importer_conflict');
+  });
+});
+
+describe('policy dates', () => {
+  it('reports a purchase outside the policy window as a date conflict', () => {
+    const outcome = evaluateResolution(
+      resolvable({
+        purchaseDate: '2019-01-01',
+        candidates: [candidate({ validFrom: '2022-01-01', validTo: null })],
+      }),
+    );
+    expect(outcome.failureReasons).toContain('policy_date_conflict');
+  });
+});
+
+describe('service route reasons', () => {
+  it('distinguishes no capability from no branch', () => {
+    const noCapability = evaluateResolution(
+      resolvable({ serviceOptionKnown: false, serviceCapabilityKnown: false }),
+    );
+    expect(noCapability.failureReasons).toContain('service_capability_missing');
+    expect(noCapability.failureReasons).not.toContain('location_missing');
+
+    const noBranch = evaluateResolution(
+      resolvable({ serviceOptionKnown: false, serviceLocationKnown: false }),
+    );
+    expect(noBranch.failureReasons).toContain('location_missing');
+  });
+});
+
+describe('quality rates', () => {
+  it('separates automatic resolution from resolution', () => {
+    const twins = [
+      canonical({ id: 'a', canonicalModel: 'Samsung S95D' }),
+      canonical({ id: 'b', canonicalModel: 'Samsung S95D', variant: '2025' }),
+    ];
+    const outcomes = [
+      evaluateResolution(resolvable()),
+      evaluateResolution(
+        resolvable({ modelResolution: resolveModel('Samsung S95D', twins) }),
+      ),
+    ];
+    const rates = resolutionRates(outcomes);
+    expect(rates.fullResolutionRate).toBe(0.5);
+    expect(rates.autoResolutionRate).toBe(0.5);
+    expect(rates.ambiguityRate).toBe(0.5);
+  });
+
+  it('measures false resolution over reviewed runs only', () => {
+    // Dividing by every run would drive the number to zero by running the suite
+    // more often, which rewards not looking.
+    const runs = [
+      { falseResolution: true },
+      { falseResolution: false },
+      { falseResolution: null },
+      { falseResolution: null },
+    ];
+    expect(falseResolutionRate(runs)).toEqual({ reviewed: 2, rate: 0.5 });
+    expect(falseResolutionRate([{ falseResolution: null }])).toEqual({ reviewed: 0, rate: 0 });
   });
 });

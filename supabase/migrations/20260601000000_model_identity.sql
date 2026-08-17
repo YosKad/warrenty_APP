@@ -109,7 +109,10 @@ create table model_aliases (
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now(),
 
-  constraint model_aliases_unique unique (model_id, normalized_key)
+  -- Unique on the *spelling*, not on the derived key: "QE65S95D" and
+  -- "QE55S95D" are two real spellings that normalise to the same television in
+  -- two sizes, and refusing the second would lose a fact the corpus researched.
+  constraint model_aliases_unique unique (model_id, value)
 );
 
 create index model_aliases_key_idx on model_aliases(normalized_key);

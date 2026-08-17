@@ -7,6 +7,7 @@ import {
   type PolicyCandidate,
 } from './match';
 import { freshnessOf, type FreshnessState } from './freshness';
+import type { ModelResolution } from './modelMatch';
 
 /**
  * The Full Resolution Rate.
@@ -47,7 +48,19 @@ export type ResolutionFailure =
   | 'conflicting_policy'
   | 'country_mismatch'
   | 'stale_data'
-  | 'insufficient_receipt_data';
+  | 'insufficient_receipt_data'
+  // Added in Phase I.5. Each one names a fix rather than a symptom: an operator
+  // reading "model_alias_missing" knows to add an alias, and a reviewer reading
+  // "model_pattern_too_broad" knows to narrow a pattern before it mismatches
+  // something.
+  | 'model_alias_missing'
+  | 'model_ambiguous'
+  | 'model_pattern_too_broad'
+  | 'model_pattern_no_match'
+  | 'importer_conflict'
+  | 'policy_date_conflict'
+  | 'service_capability_missing'
+  | 'location_missing';
 
 export type ResolutionInput = {
   /** What the case supplies, exactly as a scanned receipt would. */
@@ -74,6 +87,24 @@ export type ResolutionInput = {
 
   /** When the provider contact route was last verified. Drives `stale_data`. */
   contactVerifiedAt: string | null;
+
+  /**
+   * What the staged matcher concluded about the model, when it ran.
+   *
+   * Optional so every existing caller keeps working. When present it replaces
+   * `modelRecognised` as the source of truth, and it is what turns "the model
+   * did not match" into a reason somebody can act on.
+   */
+  modelResolution?: ModelResolution | null;
+
+  /** A receipt naming an importer the resolved policy does not. */
+  receiptImporterId?: string | null;
+  policyImporterId?: string | null;
+
+  /** Split out of `serviceOptionKnown` so the fix is identifiable. */
+  serviceCapabilityKnown?: boolean;
+  serviceLocationKnown?: boolean;
+
   now?: Date;
 };
 
@@ -85,6 +116,16 @@ export type ResolutionOutcome = {
   matchScore: number | null;
   matchState: MatchState | null;
   contactFreshness: FreshnessState;
+
+  /** Resolved with nothing asked of the user. The Auto Resolution Rate. */
+  autoResolved: boolean;
+  /** Several credible answers, so the app asks instead of choosing. */
+  ambiguous: boolean;
+  /** What would settle it, when it is ambiguous. */
+  distinguishers: string[];
+  modelState: 'resolved' | 'ambiguous' | 'unresolved' | 'not_attempted';
+  modelStage: string | null;
+  modelId: string | null;
 };
 
 /**
@@ -103,13 +144,41 @@ export function evaluateResolution(input: ResolutionInput): ResolutionOutcome {
   if (!input.brandName || !input.brandResolvedToOrganisation) {
     failures.add('product_unknown');
   }
-  if (!input.model || !input.modelRecognised) {
+  // The staged matcher, when it ran, is more informative than a boolean: it
+  // knows *why* the model did not resolve, and the difference between "we have
+  // never heard of this" and "two products match and we will not guess" is the
+  // difference between a data task and a product decision.
+  const model = input.modelResolution ?? null;
+  const modelRecognised = model ? model.state === 'resolved' : input.modelRecognised;
+
+  if (model) {
+    if (model.state === 'ambiguous') failures.add('model_ambiguous');
+    if (model.state === 'unresolved') {
+      const best = model.candidates[0];
+      if (!best) {
+        failures.add('model_unknown');
+      } else if (best.stage === 'fuzzy' || best.stage === 'family') {
+        // Near enough to see, not near enough to trust. An alias is the fix.
+        failures.add('model_alias_missing');
+      } else if (best.stage === 'pattern') {
+        failures.add('model_pattern_too_broad');
+      }
+    }
+    if (
+      model.state !== 'resolved' &&
+      model.candidates.length === 0 &&
+      (input.model ?? '') !== ''
+    ) {
+      failures.add('model_pattern_no_match');
+    }
+  } else if (!input.model || !input.modelRecognised) {
     failures.add('model_unknown');
   }
+
   // Brand and model alone are enough to identify a product; the category is
   // usually derivable from the model and is not worth failing a case over.
   const productIdentified =
-    !!input.brandName && input.brandResolvedToOrganisation && input.modelRecognised;
+    !!input.brandName && input.brandResolvedToOrganisation && modelRecognised;
 
   if (!input.purchaseDate) {
     // Not fatal on its own — a policy still applies — but without it the app
@@ -149,8 +218,30 @@ export function evaluateResolution(input: ResolutionInput): ResolutionOutcome {
     conflicts.length === 0 &&
     !failures.has('country_mismatch');
 
+  // A policy whose validity window excludes the purchase is not a near miss —
+  // it is the terms of a different year, and the pilot found this exact case.
+  if (
+    input.purchaseDate &&
+    leader &&
+    ((leader.validFrom !== null && leader.validFrom > input.purchaseDate) ||
+      (leader.validTo !== null && leader.validTo < input.purchaseDate))
+  ) {
+    failures.add('policy_date_conflict');
+  }
+
   // ---- 3. Provider resolved -----------------------------------------------
   if (!input.warrantyProviderKnown) failures.add('provider_unknown');
+
+  // A receipt naming one importer while the policy names another usually means
+  // the product came in outside the official channel — which is precisely when
+  // the official importer's terms do not apply. Not a tie to be broken.
+  if (
+    input.receiptImporterId &&
+    input.policyImporterId &&
+    input.receiptImporterId !== input.policyImporterId
+  ) {
+    failures.add('importer_conflict');
+  }
   // Only worth reporting where it actually blocks the chain: an imported
   // product whose importer is unknown cannot be routed in-country.
   if (!input.importerKnown && !input.warrantyProviderKnown) {
@@ -159,8 +250,18 @@ export function evaluateResolution(input: ResolutionInput): ResolutionOutcome {
   const providerResolved = warrantyResolved && input.warrantyProviderKnown;
 
   // ---- 4. Service route resolved ------------------------------------------
+  // Split when the caller knows the difference: "they have no branches" and
+  // "we do not know what they can do" are different tasks for the data team.
+  if (!input.serviceOptionKnown) {
+    if (input.serviceCapabilityKnown === false) failures.add('service_capability_missing');
+    if (input.serviceLocationKnown === false) failures.add('location_missing');
+  }
+
   const serviceRouteResolved =
-    providerResolved && input.serviceProviderKnown && input.serviceOptionKnown;
+    providerResolved &&
+    input.serviceProviderKnown &&
+    input.serviceOptionKnown &&
+    !failures.has('importer_conflict');
 
   // ---- 5. Contact actionable ----------------------------------------------
   const contactFreshness = freshnessOf(input.contactVerifiedAt, 'provider_contact', { now });
@@ -178,15 +279,29 @@ export function evaluateResolution(input: ResolutionInput): ResolutionOutcome {
     contact_actionable: contactActionable,
   };
 
+  const fullyResolved = RESOLUTION_STAGES.every((stage) => stages[stage]);
+  const ambiguous = model?.state === 'ambiguous';
+
   return {
     stages,
-    fullyResolved: RESOLUTION_STAGES.every((stage) => stages[stage]),
+    fullyResolved,
     // Sorted so two runs of the same case produce comparable rows.
     failureReasons: [...failures].sort(),
     matchedWarrantyId: leader?.warrantyId ?? null,
     matchScore: score,
     matchState: state,
     contactFreshness,
+
+    // Resolved *and* nothing was asked of the user. A case that only worked
+    // because the app stopped to ask which television this is has not been
+    // resolved automatically, and counting it as though it had would hide the
+    // cost the user actually paid.
+    autoResolved: fullyResolved && !ambiguous,
+    ambiguous: Boolean(ambiguous),
+    distinguishers: ambiguous ? [...(model?.distinguishers ?? [])] : [],
+    modelState: model ? model.state : 'not_attempted',
+    modelStage: model?.resolved?.stage ?? model?.candidates[0]?.stage ?? null,
+    modelId: model?.resolved?.model?.id ?? null,
   };
 }
 
@@ -197,6 +312,10 @@ export type ResolutionRates = {
   providerResolutionRate: number;
   serviceRouteResolutionRate: number;
   fullResolutionRate: number;
+  /** Resolved without asking the user anything. */
+  autoResolutionRate: number;
+  /** Several credible candidates, so we asked. */
+  ambiguityRate: number;
 };
 
 /** Rates over a set of outcomes. Zero cases produce zero rates, never 100%. */
@@ -212,6 +331,30 @@ export function resolutionRates(outcomes: ResolutionOutcome[]): ResolutionRates 
     providerResolutionRate: share((o) => o.stages.provider_resolved),
     serviceRouteResolutionRate: share((o) => o.stages.service_route_resolved),
     fullResolutionRate: share((o) => o.fullyResolved),
+    autoResolutionRate: share((o) => o.autoResolved),
+    ambiguityRate: share((o) => o.ambiguous),
+  };
+}
+
+/**
+ * The False Resolution Rate.
+ *
+ * Measured over *reviewed* runs only. Dividing by every run would drive the
+ * number towards zero simply by running the suite more often, which is a metric
+ * that rewards not looking.
+ *
+ * This is the number to watch. A case we could not resolve costs a user a
+ * search; a case we resolved wrongly costs them a trip to a service centre that
+ * was never going to honour their warranty.
+ */
+export function falseResolutionRate(
+  reviewed: { falseResolution: boolean | null }[],
+): { reviewed: number; rate: number } {
+  const judged = reviewed.filter((run) => run.falseResolution !== null);
+  if (judged.length === 0) return { reviewed: 0, rate: 0 };
+  return {
+    reviewed: judged.length,
+    rate: judged.filter((run) => run.falseResolution).length / judged.length,
   };
 }
 
@@ -224,16 +367,28 @@ export function resolutionRates(outcomes: ResolutionOutcome[]): ResolutionRates 
  * identification failure unblocks everything downstream of it.
  */
 const REASON_STAGE_ORDER: Record<ResolutionFailure, number> = {
+  // Stage 0 — the product was not identified. Everything downstream is blocked.
   product_unknown: 0,
   model_unknown: 0,
+  model_alias_missing: 0,
+  model_ambiguous: 0,
+  model_pattern_no_match: 0,
+  model_pattern_too_broad: 0,
+  // Stage 1 — the terms.
   insufficient_receipt_data: 1,
   policy_missing: 1,
   conflicting_policy: 1,
   country_mismatch: 1,
+  policy_date_conflict: 1,
+  // Stage 2 — who is on the hook.
   importer_unknown: 2,
+  importer_conflict: 2,
   provider_unknown: 2,
+  // Stage 3 — how to reach them.
   contact_missing: 3,
   stale_data: 3,
+  service_capability_missing: 3,
+  location_missing: 3,
 };
 
 export function rankFailureReasons(

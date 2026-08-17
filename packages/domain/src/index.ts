@@ -13,6 +13,7 @@ export * from './sources';
 export * from './match';
 export * from './model';
 export * from './modelMatch';
+export * from './identity';
 export * from './normalise';
 export * from './freshness';
 export * from './duplicates';

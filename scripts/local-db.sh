@@ -88,7 +88,8 @@ test_suites() {
   up
   local failed=0
   for f in supabase/tests/*_test.sql; do
-    out=$(run -d "$DB" -v ON_ERROR_STOP=1 -f "$f" 2>&1)
+    # A failing suite must not abort the run — the point is to see every one.
+    out=$(run -d "$DB" -v ON_ERROR_STOP=1 -f "$f" 2>&1 || true)
     n=$(echo "$out" | grep -c 'NOTICE:  ok' || true)
     if echo "$out" | grep -qE 'FAIL|ERROR'; then
       printf '  %-40s FAILED\n' "$(basename "$f")"
