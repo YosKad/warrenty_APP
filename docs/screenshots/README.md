@@ -13,6 +13,10 @@ driven with a result computed by the same code paths the server actions use.
 | `app-dashboard.png` | The consumer app's home screen — Protection Score, what needs attention, recommended actions |
 | `app-dashboard-he.png` | The same screen in Hebrew, right-to-left |
 | `app-dashboard-dark.png` | The same screen in dark mode |
+| `v3-language.png` | The V3 design language — Home and Product side by side, light |
+| `v3-language-dark.png` | The same pair in dark |
+| `v3-language-he.png` | The same pair in Hebrew, right-to-left |
+| `v3-home.png` | The V3 Home on its own, at device framing |
 
 `MacBook Air 13-inch M4` is the phase's pinned regression. Stage A resolves it to
 the canonical `MacBook Air M4` and stage B corroborates through the verified
@@ -27,6 +31,19 @@ The three `app-dashboard*` shots come from `apps/prototype`, the playable
 prototype of the mobile app — the real Expo app cannot run in a browser, and the
 prototype is what the V2 screens were designed and reviewed against. They are
 rendered at 402x874 with a 3x pixel ratio, which is an iPhone's own geometry.
+
+The four `v3-*` shots are a different kind of thing again: they come from
+`apps/prototype/v3-preview.html`, which is a **static design preview**, not the
+app and not the playable prototype. It exists so the direction proposed in
+`docs/V3_MAKEOVER_BRIEF.md` §4 can be judged by eye. Nothing in it is wired to
+data, and none of it has shipped.
+
+Two honest gaps in what those images show. CSS `backdrop-filter` stands in for
+iOS 26's Liquid Glass, which samples and refracts rather than only blurring — on
+a device the material is livelier than this. And Inter stands in for SF Pro,
+which is not installed here; Hebrew is set in Heebo, with the locale-aware
+metrics the brief argues for in F7 rather than the Latin tracking the shipped app
+currently applies to it.
 
 ## Reproducing them
 

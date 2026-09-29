@@ -1,0 +1,730 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MY Warranty — V3 design language preview</title>
+
+<!--
+  A design preview, not the app.
+
+  This page exists so the V3 direction in docs/V3_MAKEOVER_BRIEF.md §4 can be
+  judged by eye instead of read. It renders two screens with the proposed
+  language applied: glass on the navigation layer only, an ambient content layer
+  underneath for the glass to refract, layered shadows, concentric radii and
+  capsule controls.
+
+  Everything here is static. The playable prototype is index.html; the real app
+  is apps/mobile. Numbers shown are the same demo fixtures used elsewhere.
+
+  Where this preview differs from the shipped app by necessity: CSS
+  `backdrop-filter` stands in for iOS 26's Liquid Glass, which samples and
+  refracts rather than only blurring. On device the material is livelier than
+  this. The rules it obeys are the same ones.
+-->
+
+<style>
+/* ---------------------------------------------------------------- fonts ---- */
+/* Inter stands in for SF Pro (unavailable here); Heebo carries Hebrew, which
+   the shipped app must set with its own metrics — see brief F7. */
+@font-face { font-family: Inter; src: url(fonts/inter-latin-400-normal.woff2) format('woff2'); font-weight: 400; font-display: block; }
+@font-face { font-family: Inter; src: url(fonts/inter-latin-500-normal.woff2) format('woff2'); font-weight: 500; font-display: block; }
+@font-face { font-family: Inter; src: url(fonts/inter-latin-600-normal.woff2) format('woff2'); font-weight: 600; font-display: block; }
+@font-face { font-family: Inter; src: url(fonts/inter-latin-700-normal.woff2) format('woff2'); font-weight: 700; font-display: block; }
+@font-face { font-family: Heebo; src: url(fonts/heebo-hebrew-400-normal.woff2) format('woff2'); font-weight: 400; font-display: block; }
+@font-face { font-family: Heebo; src: url(fonts/heebo-hebrew-500-normal.woff2) format('woff2'); font-weight: 500; font-display: block; }
+@font-face { font-family: Heebo; src: url(fonts/heebo-hebrew-600-normal.woff2) format('woff2'); font-weight: 600; font-display: block; }
+@font-face { font-family: Heebo; src: url(fonts/heebo-hebrew-700-normal.woff2) format('woff2'); font-weight: 700; font-display: block; }
+
+/* ---------------------------------------------------------------- stage ---- */
+:root {
+  --stage: #E9E4DC; --stage-ink: #1C1917; --stage-dim: #6B625B;
+  --stage-accent: #1F6F5C; --stage-line: #D7CDC1;
+  --mono: ui-monospace, "SF Mono", Menlo, monospace;
+}
+:root[data-theme="dark"] {
+  --stage: #17130F; --stage-ink: #F5F1EC; --stage-dim: #A89B90;
+  --stage-accent: #4FBF97; --stage-line: #2B2620;
+}
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; }
+body {
+  background: var(--stage); color: var(--stage-ink);
+  font-family: Inter, system-ui, sans-serif;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 26px; padding: 40px 20px 56px;
+  min-height: 100vh;
+}
+.masthead { text-align: center; max-width: 560px; }
+.masthead h1 { font-size: 19px; font-weight: 600; letter-spacing: -.3px; margin: 0 0 6px; }
+.masthead p { font-size: 13.5px; line-height: 1.55; color: var(--stage-dim); margin: 0; }
+.eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--stage-accent); margin: 0 0 10px;
+}
+.frames { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+.framed { display: flex; flex-direction: column; align-items: center; gap: 11px; }
+.framed figcaption { font-size: 12px; color: var(--stage-dim); max-width: 402px; text-align: center; line-height: 1.5; }
+.framed figcaption b { color: var(--stage-ink); font-weight: 600; }
+
+/* --------------------------------------------------------------- device ---- */
+.device {
+  width: 402px; height: 874px; border-radius: 54px; overflow: hidden;
+  position: relative; isolation: isolate;
+  background: var(--bg-canvas);
+  box-shadow:
+    0 0 0 10px #100D0B,
+    0 2px 4px rgba(16,13,11,.28),
+    0 30px 70px -18px rgba(16,13,11,.48);
+}
+
+/* ---------------------------------------------------------- app palette ---- */
+/* Unchanged from the shipped V2 semantic tokens, plus the `material.*` group
+   the brief proposes in §4.4. */
+.app {
+  --bg-canvas: #FAF8F5; --bg-surface: #FFFFFF; --bg-subtle: #F5F1EC;
+  --t-primary: #1C1917; --t-secondary: #6B625B; --t-tertiary: #9C918A;
+  --t-accent: #0F7355;
+  --accent-solid: #1F6F5C;
+  --st-active-fg: #0F7355; --st-active-bg: #DCF2E8;
+  --st-end-fg: #A8620A;    --st-end-bg: #FDF0DA;
+  --ring-track: #E6DED4;   --ring-fill: #1F6F5C;
+  --ai-fg: #5B4BB8; --ai-bg: #EDE9FB;
+
+  /* material.* — the navigation layer */
+  --mat-nav: rgba(250,248,245,.66);
+  --mat-nav-border: rgba(28,25,23,.09);
+  --mat-nav-hair: rgba(255,255,255,.58);
+  --mat-overlay: rgba(255,255,255,.58);
+  --mat-sep: rgba(28,25,23,.07);
+  --ambient: 0.085;
+
+  /* two-layer elevation: a tight contact shadow plus a wide soft one */
+  --e1: 0 1px 2px rgba(60,46,34,.05), 0 3px 10px -3px rgba(60,46,34,.07);
+  --e2: 0 1px 2px rgba(60,46,34,.06), 0 12px 30px -10px rgba(60,46,34,.16);
+  --e3: 0 2px 4px rgba(60,46,34,.08), 0 26px 60px -18px rgba(60,46,34,.26);
+
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--t-primary);
+  background: var(--bg-canvas);
+  position: absolute; inset: 0; overflow: hidden;
+}
+[data-theme="dark"] .app {
+  --bg-canvas: #16130F; --bg-surface: #211D19; --bg-subtle: #2B2620;
+  --t-primary: #F5F1EC; --t-secondary: #BCAFA3; --t-tertiary: #9C918A;
+  --t-accent: #6FCFAC;
+  --accent-solid: #4FBF97;
+  --st-active-fg: #6FCFAC; --st-active-bg: rgba(79,191,151,.17);
+  --st-end-fg: #E8B45E;    --st-end-bg: rgba(232,180,94,.17);
+  --ring-track: #2F2923;   --ring-fill: #4FBF97;
+  --ai-fg: #A99BF0; --ai-bg: rgba(169,155,240,.17);
+
+  --mat-nav: rgba(22,19,15,.62);
+  --mat-nav-border: rgba(245,241,236,.11);
+  --mat-nav-hair: rgba(255,255,255,.10);
+  --mat-overlay: rgba(255,255,255,.09);
+  --mat-sep: rgba(245,241,236,.08);
+  --ambient: 0.16;
+
+  --e1: 0 1px 2px rgba(0,0,0,.36), 0 3px 10px -3px rgba(0,0,0,.42);
+  --e2: 0 1px 2px rgba(0,0,0,.4), 0 12px 30px -10px rgba(0,0,0,.6);
+  --e3: 0 2px 4px rgba(0,0,0,.46), 0 26px 60px -18px rgba(0,0,0,.72);
+}
+
+/* Hebrew: no negative tracking, looser leading. Brief F7. */
+[data-lang="he"] .app { font-family: Heebo, Inter, system-ui, sans-serif; direction: rtl; }
+[data-lang="he"] .app * { letter-spacing: 0 !important; }
+[data-lang="he"] .h-title { line-height: 1.32; }
+[data-lang="he"] .num { font-family: Inter, system-ui, sans-serif; }
+
+/* Bidi isolation. A Latin run or a signed number dropped into Hebrew reorders
+   itself against the paragraph direction — "+8" renders as "8+", a date attaches
+   to the wrong side of a name. Isolating each run is the fix, and it is the same
+   thing `isolateLtr`/`isolateAuto` do in the shipped app. */
+.num, .pts, .micro, .ltr { unicode-bidi: isolate; }
+[data-lang="he"] .pts, [data-lang="he"] .micro, [data-lang="he"] .ltr { direction: ltr; }
+/* The status glyphs are a fixed pictogram order; iOS does not mirror them. */
+[data-lang="he"] .statusline .glyphs { direction: ltr; }
+
+/* --------------------------------------------------- ambient content layer -- */
+/* §4.3 — the glass has to have something to refract. On Home the source is the
+   protection state itself, so the navigation layer quietly carries the colour of
+   your coverage. */
+.ambient { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.ambient::before, .ambient::after { content: ""; position: absolute; border-radius: 50%; }
+.ambient::before {
+  width: 640px; height: 640px; top: -290px; left: 50%; transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(31,111,92,1) 0%, rgba(31,111,92,0) 68%);
+  opacity: var(--ambient);
+}
+.ambient::after {
+  width: 460px; height: 460px; top: 130px; right: -190px;
+  background: radial-gradient(circle, rgba(168,98,10,1) 0%, rgba(168,98,10,0) 70%);
+  opacity: calc(var(--ambient) * .62);
+}
+
+/* ------------------------------------------------------------- scrollbody -- */
+.body {
+  position: absolute; inset: 0; z-index: 1;
+  padding: 0 18px; overflow: hidden;
+}
+.pad-top { height: 106px; }
+.pad-bottom { height: 128px; }
+.stack { display: flex; flex-direction: column; gap: 22px; }
+
+/* ------------------------------------------------- navigation layer: GLASS -- */
+.glass {
+  -webkit-backdrop-filter: blur(34px) saturate(200%);
+  backdrop-filter: blur(34px) saturate(200%);
+  background: var(--mat-nav);
+  border: .5px solid var(--mat-nav-border);
+}
+/* the specular top hairline is most of what makes it read as glass and not blur */
+.glass::before {
+  content: ""; position: absolute; left: 12%; right: 12%; top: 0; height: .5px;
+  background: linear-gradient(90deg, transparent, var(--mat-nav-hair), transparent);
+}
+
+.topbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 92px; z-index: 30;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 0 18px 11px; border-width: 0 0 .5px;
+}
+.statusline {
+  position: absolute; top: 15px; left: 0; right: 0; z-index: 31;
+  display: flex; justify-content: space-between; padding: 0 30px;
+  font-size: 13.5px; font-weight: 600; letter-spacing: -.1px;
+  color: var(--t-primary);
+}
+.statusline .glyphs { display: flex; gap: 5px; align-items: center; opacity: .9; }
+.topbar .tb-title { font-size: 17px; font-weight: 600; letter-spacing: -.35px; }
+.bell {
+  position: relative; width: 34px; height: 34px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--mat-overlay);
+}
+.bell .dot {
+  position: absolute; top: 5px; inset-inline-end: 5px;
+  min-width: 15px; height: 15px; border-radius: 999px;
+  background: #B0332B; color: #fff;
+  font-size: 9.5px; font-weight: 700; display: grid; place-items: center;
+  padding: 0 3px; border: 1.5px solid var(--bg-canvas);
+}
+
+/* ------------------------------------------------------- content layer ------ */
+/* Cards stay opaque. The hardest rule in the brief to hold, and the one that
+   keeps the app legible. */
+.card {
+  background: var(--bg-surface);
+  border-radius: 22px; padding: 16px;
+  box-shadow: var(--e2);
+  position: relative;
+}
+.card.flat { box-shadow: var(--e1); }
+/* concentric: inner radius = outer(22) − padding(16) = 6 */
+.inner { border-radius: 6px; }
+
+.h-title { font-size: 30px; font-weight: 700; letter-spacing: -.9px; line-height: 1.1; margin: 0; }
+.h-sub { font-size: 14.5px; color: var(--t-secondary); margin: 6px 0 0; line-height: 1.45; }
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
+.sec-head h2 { font-size: 17px; font-weight: 600; letter-spacing: -.35px; margin: 0; }
+.sec-head a { font-size: 14px; color: var(--t-accent); text-decoration: none; font-weight: 500; }
+.micro {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .15em;
+  text-transform: uppercase; color: var(--t-tertiary);
+}
+.num { font-variant-numeric: tabular-nums; }
+
+/* -------- protection hero -------- */
+.hero { display: flex; gap: 18px; align-items: center; }
+.ring { width: 104px; height: 104px; flex: none; position: relative; }
+.ring .val {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  flex-direction: column;
+}
+.ring .val b { font-size: 29px; font-weight: 700; letter-spacing: -1px; line-height: 1; }
+.ring .val span { font-size: 9.5px; font-weight: 600; color: var(--t-tertiary); letter-spacing: .1em; text-transform: uppercase; margin-top: 3px; }
+.hero-right { flex: 1; min-width: 0; }
+.hero-right .lab { font-size: 14px; font-weight: 600; letter-spacing: -.2px; }
+.trend { display: flex; align-items: center; gap: 6px; margin-top: 3px; font-size: 12.5px; color: var(--st-active-fg); font-weight: 500; }
+.spark { margin-top: 10px; }
+
+/* -------- attention -------- */
+.attn { border-radius: 22px; padding: 15px 16px; background: var(--st-end-bg); box-shadow: var(--e1); }
+.attn .row { display: flex; gap: 12px; align-items: center; }
+.attn .thumb { width: 46px; height: 46px; border-radius: 10px; flex: none; display: grid; place-items: center; background: rgba(255,255,255,.55); }
+[data-theme="dark"] .attn .thumb { background: rgba(0,0,0,.24); }
+.attn .name { font-size: 15px; font-weight: 600; letter-spacing: -.25px; }
+.attn .meta { font-size: 12.5px; color: var(--st-end-fg); font-weight: 600; margin-top: 2px; }
+/* Secondary weight on purpose: the screen's one strong action is Capture. A
+   full-bleed saturated button inside an already-coloured card is two primaries. */
+.attn .cta {
+  margin-top: 13px; height: 40px; border-radius: 999px;
+  background: var(--bg-surface); color: var(--st-end-fg);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-size: 14.5px; font-weight: 600; letter-spacing: -.2px;
+  box-shadow: var(--e1);
+}
+[data-theme="dark"] .attn .cta { background: rgba(255,255,255,.09); }
+
+/* -------- action rows -------- */
+.act { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+.act + .act { border-top: .5px solid var(--mat-sep); }
+.act:first-child { padding-top: 2px; }
+.act:last-child { padding-bottom: 2px; }
+.act .ic { width: 32px; height: 32px; border-radius: 999px; flex: none; display: grid; place-items: center; background: var(--st-active-bg); }
+.act .ic.ai { background: var(--ai-bg); }
+.act .tx { flex: 1; min-width: 0; }
+.act .tx .t { font-size: 14.5px; font-weight: 550; letter-spacing: -.2px; }
+.act .tx .s { font-size: 12.5px; color: var(--t-secondary); margin-top: 1px; }
+.act .pts { font-size: 12.5px; font-weight: 700; color: var(--st-active-fg); font-variant-numeric: tabular-nums; }
+
+/* -------- product rows -------- */
+.prod { display: flex; align-items: center; gap: 13px; padding: 11px 0; }
+.prod + .prod { border-top: .5px solid var(--mat-sep); }
+.prod .art { width: 52px; height: 52px; border-radius: 13px; flex: none; overflow: hidden; box-shadow: var(--e1); }
+.prod .tx { flex: 1; min-width: 0; }
+.prod .tx .t { font-size: 15px; font-weight: 550; letter-spacing: -.25px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prod .tx .s { font-size: 12.5px; color: var(--t-secondary); margin-top: 2px; }
+.pill {
+  font-size: 11px; font-weight: 650; padding: 4px 9px; border-radius: 999px;
+  background: var(--st-active-bg); color: var(--st-active-fg); white-space: nowrap;
+}
+.pill.warn { background: var(--st-end-bg); color: var(--st-end-fg); }
+
+/* ------------------------------------------------- navigation layer: tabs --- */
+.tabwrap {
+  position: absolute; left: 14px; right: 14px; bottom: 16px; z-index: 40;
+  display: flex; align-items: flex-end; gap: 10px;
+}
+.tabbar {
+  flex: 1; height: 62px; border-radius: 31px;
+  display: flex; align-items: center; justify-content: space-around;
+  box-shadow: var(--e3); overflow: hidden; position: relative;
+}
+.tab { display: flex; flex-direction: column; align-items: center; gap: 3.5px; flex: 1; }
+.tab span { font-size: 10.5px; font-weight: 550; color: var(--t-tertiary); letter-spacing: -.05px; }
+.tab.on span { color: var(--t-primary); font-weight: 650; }
+.tab .selected {
+  position: absolute; bottom: 0; width: 22px; height: 3px; border-radius: 3px 3px 0 0;
+  background: var(--accent-solid);
+}
+/* The one tinted element in the app — §4.2, tint carries meaning. */
+.capture {
+  width: 62px; height: 62px; border-radius: 999px; flex: none;
+  display: grid; place-items: center; position: relative;
+  box-shadow: var(--e3), 0 0 0 .5px var(--mat-nav-border);
+  -webkit-backdrop-filter: blur(34px) saturate(200%);
+  backdrop-filter: blur(34px) saturate(200%);
+  background: color-mix(in srgb, var(--accent-solid) 82%, transparent);
+}
+.capture::after {
+  content: ""; position: absolute; inset: 1px; border-radius: 999px;
+  background: linear-gradient(160deg, rgba(255,255,255,.34), rgba(255,255,255,0) 52%);
+}
+
+/* ---------------------------------------------------- product detail frame -- */
+.pd-media { position: absolute; top: 0; left: 0; right: 0; height: 418px; z-index: 0; overflow: hidden; }
+.pd-media .wash {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(120% 90% at 22% 18%, #4C6B8A 0%, rgba(76,107,138,0) 62%),
+    radial-gradient(100% 80% at 82% 30%, #2E4D66 0%, rgba(46,77,102,0) 66%),
+    linear-gradient(170deg, #1B2E3F 0%, #101C26 100%);
+}
+.pd-media .fade {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 190px;
+  background: linear-gradient(to bottom, rgba(0,0,0,0), var(--bg-canvas) 92%);
+}
+.pd-media .tv {
+  position: absolute; left: 50%; top: 152px; transform: translateX(-50%);
+  width: 250px;
+}
+.pd-body { position: absolute; inset: 0; z-index: 1; padding: 0 18px; }
+.pd-pad { height: 336px; }
+.pd-title { font-size: 26px; font-weight: 700; letter-spacing: -.8px; line-height: 1.12; margin: 0; }
+.pd-sub { font-size: 14px; color: var(--t-secondary); margin: 7px 0 0; }
+.kv { display: flex; justify-content: space-between; align-items: baseline; padding: 10px 0; }
+.kv + .kv { border-top: .5px solid var(--mat-sep); }
+.kv .k { font-size: 13.5px; color: var(--t-secondary); }
+.kv .v { font-size: 13.5px; font-weight: 600; letter-spacing: -.15px; }
+.prov { display: flex; gap: 8px; align-items: center; margin-top: 13px; padding-top: 12px; border-top: .5px solid var(--mat-sep); }
+.prov .tx { font-size: 11.5px; color: var(--t-secondary); line-height: 1.4; }
+/* Tinted glass — the primary action on this screen, and the only tinted thing on
+   it. §4.2: tint carries meaning. */
+.pd-cta {
+  position: absolute; left: 14px; right: 14px; bottom: 16px; z-index: 40;
+  height: 54px; border-radius: 27px;
+  box-shadow: var(--e3), 0 0 0 .5px var(--mat-nav-border);
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  -webkit-backdrop-filter: blur(34px) saturate(200%);
+  backdrop-filter: blur(34px) saturate(200%);
+  background: color-mix(in srgb, var(--accent-solid) 84%, transparent);
+  color: #fff; overflow: hidden;
+}
+[data-theme="dark"] .pd-cta { color: #0C1A15; }
+.pd-cta::after {
+  content: ""; position: absolute; inset: 1px; border-radius: 27px; pointer-events: none;
+  background: linear-gradient(170deg, rgba(255,255,255,.26), rgba(255,255,255,0) 58%);
+}
+.pd-cta > * { position: relative; z-index: 1; }
+.pd-cta .lab { font-size: 15.5px; font-weight: 650; letter-spacing: -.3px; }
+/* clear variant — permitted here because it sits over media, §4.2 */
+.pd-topbar {
+  position: absolute; top: 0; left: 0; right: 0; height: 92px; z-index: 30;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding: 0 14px 10px; border-width: 0;
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  background: rgba(16,24,32,.28);
+}
+.pd-topbar .rnd {
+  width: 36px; height: 36px; border-radius: 999px; display: grid; place-items: center;
+  background: rgba(255,255,255,.18);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+}
+.pd-statusline { color: #fff !important; }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <p class="eyebrow">MY Warranty · V3 design language</p>
+  <h1>Glass on the navigation layer, and a content layer worth refracting</h1>
+  <p>A static preview of <code>docs/V3_MAKEOVER_BRIEF.md</code> §4. Cards stay opaque; the
+     material is reserved for the tab bar, the header and the capture button. On Home the
+     ambient field is drawn from the protection state, so the chrome carries the colour of
+     your coverage.</p>
+</div>
+
+<div class="frames">
+
+  <!-- ============================================================ HOME ==== -->
+  <figure class="framed" style="margin:0">
+    <div class="device"><div class="app">
+
+      <div class="ambient"></div>
+
+      <div class="body">
+        <div class="pad-top"></div>
+        <div class="stack">
+
+          <div>
+            <h1 class="h-title" data-i="greet">Good evening, Yossi</h1>
+            <p class="h-sub" data-i="sub">Six things protected. One needs you this month.</p>
+          </div>
+
+          <!-- protection hero -->
+          <div class="card">
+            <div class="hero">
+              <div class="ring">
+                <svg width="104" height="104" viewBox="0 0 104 104">
+                  <circle cx="52" cy="52" r="44" fill="none" stroke="var(--ring-track)" stroke-width="9"/>
+                  <circle cx="52" cy="52" r="44" fill="none" stroke="var(--ring-fill)" stroke-width="9"
+                          stroke-linecap="round" stroke-dasharray="276.5"
+                          stroke-dashoffset="22.1" transform="rotate(-90 52 52)"/>
+                </svg>
+                <div class="val">
+                  <b class="num">92</b>
+                  <span data-i="score">score</span>
+                </div>
+              </div>
+              <div class="hero-right">
+                <div class="lab" data-i="protTitle">Protection</div>
+                <div class="trend">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                    <path d="M6 10V2M6 2 2.5 5.5M6 2l3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span><span class="ltr">+21</span> <span data-i="trend">since March</span></span>
+                </div>
+                <!-- 90-day history, brief F6 -->
+                <svg class="spark" width="168" height="42" viewBox="0 0 168 42" fill="none">
+                  <defs>
+                    <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0" stop-color="var(--ring-fill)" stop-opacity=".22"/>
+                      <stop offset="1" stop-color="var(--ring-fill)" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M2 34 L20 33 L38 29 L56 30 L74 22 L92 23 L110 15 L128 13 L146 9 L166 7 L166 41 L2 41 Z" fill="url(#sg)"/>
+                  <path d="M2 34 L20 33 L38 29 L56 30 L74 22 L92 23 L110 15 L128 13 L146 9 L166 7"
+                        stroke="var(--ring-fill)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  <circle cx="166" cy="7" r="3.2" fill="var(--ring-fill)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- the one urgent thing -->
+          <div class="attn">
+            <div class="row">
+              <div class="thumb">
+                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+                  <rect x="2.5" y="4" width="21" height="13.5" rx="2" stroke="var(--st-end-fg)" stroke-width="1.7"/>
+                  <path d="M9 21.5h8" stroke="var(--st-end-fg)" stroke-width="1.7" stroke-linecap="round"/>
+                  <path d="M13 17.5v4" stroke="var(--st-end-fg)" stroke-width="1.7"/>
+                </svg>
+              </div>
+              <div style="flex:1;min-width:0">
+                <div class="name">Samsung OLED S95D</div>
+                <div class="meta"><span data-i="endsIn">Cover ends in 18 days</span></div>
+              </div>
+            </div>
+            <div class="cta" data-i="attnCta">See what's covered</div>
+          </div>
+
+          <!-- suggested actions -->
+          <div>
+            <div class="sec-head">
+              <h2 data-i="raise">Raise your score</h2>
+            </div>
+            <div class="card flat" style="padding:14px 16px">
+              <div class="act">
+                <div class="ic">
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                    <path d="M3 8.5 6.2 11.7 13 4.9" stroke="var(--st-active-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <div class="tx">
+                  <div class="t" data-i="a1t">Add the receipt for your Dyson</div>
+                  <div class="s" data-i="a1s">Proof of purchase, 30 seconds</div>
+                </div>
+                <div class="pts">+8</div>
+              </div>
+              <div class="act">
+                <div class="ic ai">
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                    <path d="M8 1.6 9.5 6 14 7.5 9.5 9 8 13.5 6.5 9 2 7.5 6.5 6 8 1.6Z" fill="var(--ai-fg)"/>
+                  </svg>
+                </div>
+                <div class="tx">
+                  <div class="t" data-i="a2t">Confirm the importer we found</div>
+                  <div class="s" data-i="a2s">Samline — from your receipt</div>
+                </div>
+                <div class="pts">+6</div>
+              </div>
+              <div class="act">
+                <div class="ic">
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                    <rect x="2.6" y="2.6" width="10.8" height="10.8" rx="2" stroke="var(--st-active-fg)" stroke-width="1.8"/>
+                  </svg>
+                </div>
+                <div class="tx">
+                  <div class="t" data-i="a3t">Photograph the serial label</div>
+                  <div class="s" data-i="a3s">MacBook Air M4</div>
+                </div>
+                <div class="pts">+5</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- portfolio -->
+          <div>
+            <div class="sec-head">
+              <h2 data-i="things">Your things</h2>
+              <a href="#" data-i="seeAll">All 6</a>
+            </div>
+            <!-- Deep bottom padding so the card's surface, rather than a clipped
+                 row, is what continues under the floating tab bar. -->
+            <div class="card flat" style="padding:12px 16px 72px">
+              <div class="prod">
+                <div class="art" style="background:linear-gradient(150deg,#3E5D78,#1B2E3F)"></div>
+                <div class="tx">
+                  <div class="t">Samsung OLED S95D</div>
+                  <div class="s"><span data-i="tv">Television</span> · 65"</div>
+                </div>
+                <div class="pill warn"><span class="num">18</span><span data-i="d"> d</span></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="pad-bottom"></div>
+      </div>
+
+      <!-- navigation layer -->
+      <div class="statusline">
+        <span class="num">9:41</span>
+        <span class="glyphs">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.5" width="2.6" height="3.5" rx=".7"/><rect x="4.2" y="5.3" width="2.6" height="5.7" rx=".7"/><rect x="8.4" y="2.9" width="2.6" height="8.1" rx=".7"/><rect x="12.6" y="0" width="2.6" height="11" rx=".7"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".6" y=".6" width="20.5" height="10.8" rx="3" stroke="currentColor" stroke-opacity=".45"/><rect x="2.4" y="2.4" width="14.5" height="7.2" rx="1.8" fill="currentColor"/><path d="M22.6 4.2v3.6c1-.3 1.6-1 1.6-1.8s-.6-1.5-1.6-1.8Z" fill="currentColor" fill-opacity=".45"/></svg>
+        </span>
+      </div>
+
+      <div class="topbar glass">
+        <div class="tb-title" data-i="navHome">Home</div>
+        <div class="bell">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <path d="M10 2.6a5.1 5.1 0 0 0-5.1 5.1v3.1L3.4 13.6h13.2L15.1 10.8V7.7A5.1 5.1 0 0 0 10 2.6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            <path d="M7.9 16.2a2.2 2.2 0 0 0 4.2 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          <div class="dot num">2</div>
+        </div>
+      </div>
+
+      <div class="tabwrap">
+        <div class="tabbar glass">
+          <div class="tab on">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.4 12 3.6l8.5 6.8V20a.9.9 0 0 1-.9.9h-4.7v-6.2H10V20.9H5.4a.9.9 0 0 1-.9-.9v-9.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span data-i="tHome">Home</span>
+            <div class="selected"></div>
+          </div>
+          <div class="tab">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3.4" y="3.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="3.4" y="13.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>
+            <span data-i="tThings">Things</span>
+          </div>
+          <div class="tab">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 21s7.5-4.3 7.5-10.1V5.4L12 2.8 4.5 5.4v5.5C4.5 16.7 12 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span data-i="tCover">Coverage</span>
+          </div>
+          <div class="tab">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4.1" stroke="currentColor" stroke-width="1.8"/><path d="M4.6 20.4a7.4 7.4 0 0 1 14.8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span data-i="tMe">Me</span>
+          </div>
+        </div>
+        <div class="capture">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" style="position:relative;z-index:1">
+            <path d="M13 5.4v15.2M5.4 13h15.2" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+    </div></div>
+    <figcaption><b>Home</b> — the tab bar floats as a glass capsule and content scrolls
+      behind it. The ambient field is the protection state, which is what gives the
+      material something to bend.</figcaption>
+  </figure>
+
+  <!-- ================================================== PRODUCT DETAIL ==== -->
+  <figure class="framed" style="margin:0">
+    <div class="device"><div class="app">
+
+      <div class="pd-media">
+        <div class="wash"></div>
+        <svg class="tv" viewBox="0 0 250 160" fill="none">
+          <rect x="6" y="6" width="238" height="134" rx="5" fill="#0A0F14" stroke="rgba(255,255,255,.16)"/>
+          <rect x="12" y="12" width="226" height="122" rx="2.5" fill="url(#pg)"/>
+          <defs>
+            <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#2C4A63"/><stop offset=".5" stop-color="#13212C"/><stop offset="1" stop-color="#24405A"/>
+            </linearGradient>
+          </defs>
+          <path d="M104 140h42v12h-42z" fill="#0A0F14"/>
+          <rect x="82" y="150" width="86" height="6" rx="3" fill="#0A0F14"/>
+        </svg>
+        <div class="fade"></div>
+      </div>
+
+      <div class="pd-body">
+        <div class="pd-pad"></div>
+        <div class="stack" style="gap:16px">
+          <div>
+            <p class="micro" style="margin:0 0 7px">Samsung · 65" OLED</p>
+            <h1 class="pd-title">Samsung OLED S95D</h1>
+            <p class="pd-sub"><span data-i="boughtAt">Bought at</span> <span class="ltr">KSP</span> · <span class="num">20.8.2024</span></p>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
+              <div style="width:8px;height:8px;border-radius:999px;background:var(--st-end-fg)"></div>
+              <div style="font-size:14.5px;font-weight:650;letter-spacing:-.25px;color:var(--st-end-fg)" data-i="endsSoon">Ends in 18 days</div>
+            </div>
+            <div class="kv"><span class="k" data-i="kCover">Coverage</span><span class="v" data-i="vCover">36 months, parts &amp; labour</span></div>
+            <div class="kv"><span class="k" data-i="kImp">Importer</span><span class="v">Samline</span></div>
+            <div class="kv"><span class="k" data-i="kSerial">Serial</span><span class="v num">RZ8N40FKT9L</span></div>
+            <div class="kv"><span class="k" data-i="kPanel">Panel warranty</span><span class="v" style="color:var(--t-tertiary)" data-i="vUnknown">Unknown</span></div>
+            <div class="prov">
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none;margin-top:1px">
+                <path d="M8 1.6 9.5 6 14 7.5 9.5 9 8 13.5 6.5 9 2 7.5 6.5 6 8 1.6Z" fill="var(--ai-fg)"/>
+              </svg>
+              <div class="tx" data-i="provTx">Matched to the importer's published policy
+                SAMLINE-TV-2024.03 by model, country and importer. Panel terms were not
+                stated in the document, so they are not claimed here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="statusline pd-statusline">
+        <span class="num">9:41</span>
+        <span class="glyphs">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.5" width="2.6" height="3.5" rx=".7"/><rect x="4.2" y="5.3" width="2.6" height="5.7" rx=".7"/><rect x="8.4" y="2.9" width="2.6" height="8.1" rx=".7"/><rect x="12.6" y="0" width="2.6" height="11" rx=".7"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".6" y=".6" width="20.5" height="10.8" rx="3" stroke="currentColor" stroke-opacity=".45"/><rect x="2.4" y="2.4" width="14.5" height="7.2" rx="1.8" fill="currentColor"/><path d="M22.6 4.2v3.6c1-.3 1.6-1 1.6-1.8s-.6-1.5-1.6-1.8Z" fill="currentColor" fill-opacity=".45"/></svg>
+        </span>
+      </div>
+
+      <div class="pd-topbar">
+        <div class="rnd">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" class="chev">
+            <path d="M12.2 4.4 6.6 10l5.6 5.6" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="rnd">
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <path d="M10 13.4V3.2M10 3.2 6.4 6.8M10 3.2l3.6 3.6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3.6 12.6v3.2a1 1 0 0 0 1 1h10.8a1 1 0 0 0 1-1v-3.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="pd-cta glass">
+        <svg width="19" height="19" viewBox="0 0 20 20" fill="none">
+          <path d="M4.2 2.8h8.2l4 4v10.4a1 1 0 0 1-1 1H4.2a1 1 0 0 1-1-1V3.8a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M6.6 10.4h6.8M6.6 13.6h4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+        <div class="lab" data-i="claimPack">Create claim pack</div>
+      </div>
+
+    </div></div>
+    <figcaption><b>Product</b> — the image becomes the content layer, so the header is the
+      one place the <code>clear</code> variant is correct. The claim pack sits in glass at
+      the bottom; the card above it stays opaque.</figcaption>
+  </figure>
+
+</div>
+
+<script>
+/* Translations for the Hebrew screenshot. Hebrew is a first-class language in this
+   product, so the design is reviewed in it at the same bar as English. */
+const HE = {
+  greet: 'ערב טוב, יוסי', sub: 'שישה מוצרים מוגנים. אחד דורש טיפול החודש.',
+  score: 'ציון', protTitle: 'הגנה', trend: 'מאז מרץ',
+  endsIn: 'האחריות מסתיימת בעוד 18 יום', attnCta: 'מה מכוסה',
+  boughtAt: 'נקנה ב־',
+  raise: 'שיפור הציון',
+  a1t: 'הוסף קבלה ל‑Dyson', a1s: 'הוכחת קנייה, 30 שניות',
+  a2t: 'אשר את היבואן שמצאנו', a2s: 'סמליין — מתוך הקבלה',
+  a3t: 'צלם את תווית המספר הסידורי', a3s: 'MacBook Air M4',
+  things: 'המוצרים שלך', seeAll: 'כל 6',
+  tv: 'טלוויזיה', laptop: 'מחשב נייד',
+  d: ' י׳', mo: ' ח׳',
+  navHome: 'בית',
+  tHome: 'בית', tThings: 'מוצרים', tCover: 'כיסוי', tMe: 'אני',
+  endsSoon: 'מסתיים בעוד 18 יום',
+  kCover: 'כיסוי', vCover: '36 חודשים, חלקים ועבודה',
+  kImp: 'יבואן', kSerial: 'מספר סידורי', kPanel: 'אחריות מסך', vUnknown: 'לא ידוע',
+  provTx: 'הותאם למדיניות שפרסם היבואן SAMLINE-TV-2024.03 לפי דגם, מדינה ויבואן. תנאי המסך לא צוינו במסמך, ולכן אינם נטענים כאן.',
+  claimPack: 'צור תיק תביעה'
+};
+
+function applyLang(lang) {
+  document.documentElement.dataset.lang = lang;
+  document.querySelectorAll('[data-i]').forEach((el) => {
+    const k = el.dataset.i;
+    if (lang === 'he') {
+      if (HE[k] !== undefined) { if (!el.dataset.en) el.dataset.en = el.textContent; el.textContent = HE[k]; }
+    } else if (el.dataset.en) {
+      el.textContent = el.dataset.en;
+    }
+  });
+  // The back chevron points the other way in RTL.
+  document.querySelectorAll('.chev').forEach((s) => {
+    s.style.transform = lang === 'he' ? 'scaleX(-1)' : '';
+  });
+}
+function applyTheme(t) { document.documentElement.dataset.theme = t; }
+
+/* Used by the screenshot script. */
+window.__preview = { applyLang, applyTheme };
+</script>
+</body>
+</html>
