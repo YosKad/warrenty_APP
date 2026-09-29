@@ -384,17 +384,114 @@ body {
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
 }
 .pd-statusline { color: #fff !important; }
+
+/* ------------------------------------------------- V3 product model (rev 2) -- */
+/* No score. What a person needs is who services this, what they cover, and how
+   long is left — and a list of what is still missing that they can actually
+   close. See docs/V3_MAKEOVER_BRIEF.md §0.3 and §3.4. */
+
+/* the three facts */
+.facts { display: flex; flex-direction: column; }
+.fact { display: flex; align-items: baseline; gap: 12px; padding: 9px 0; }
+.fact + .fact { border-top: .5px solid var(--mat-sep); }
+.fact .k {
+  font-size: 10px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--t-tertiary); width: 58px; flex: none;
+}
+.fact .v { font-size: 15px; font-weight: 550; letter-spacing: -.25px; flex: 1; }
+.fact .v small { display: block; font-size: 12.5px; font-weight: 400; color: var(--t-secondary); letter-spacing: 0; margin-top: 1px; }
+
+/* the days-left banner that heads a card */
+.left-head { display: flex; align-items: center; gap: 9px; margin-bottom: 4px; }
+.left-head .dot2 { width: 8px; height: 8px; border-radius: 999px; flex: none; }
+.left-head .tx { font-size: 15px; font-weight: 650; letter-spacing: -.25px; }
+.left-head.warn .dot2 { background: var(--st-end-fg); } .left-head.warn .tx { color: var(--st-end-fg); }
+.left-head.ok   .dot2 { background: var(--st-active-fg); } .left-head.ok .tx { color: var(--st-active-fg); }
+
+/* an open item, with both ways to close it */
+.item { padding: 13px 0; }
+.item + .item { border-top: .5px solid var(--mat-sep); }
+.item .top { display: flex; gap: 11px; align-items: flex-start; }
+.item .ic2 {
+  width: 28px; height: 28px; border-radius: 999px; flex: none; margin-top: 1px;
+  display: grid; place-items: center; background: var(--st-end-bg);
+}
+.item .tx { flex: 1; min-width: 0; }
+.item .tx .t { font-size: 14.5px; font-weight: 600; letter-spacing: -.22px; }
+.item .tx .s { font-size: 12.5px; color: var(--t-secondary); margin-top: 2px; }
+.item .acts { display: flex; gap: 8px; margin-top: 10px; margin-inline-start: 39px; }
+.chip {
+  height: 32px; padding: 0 14px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600; letter-spacing: -.15px;
+}
+.chip.solid { background: var(--ctl-bg, var(--t-primary)); color: var(--bg-surface); }
+.chip.quiet { background: var(--bg-subtle); color: var(--t-secondary); }
+
+/* zones */
+.zone-head {
+  display: flex; align-items: baseline; gap: 8px; margin: 0 4px 8px;
+}
+.zone-head .nm {
+  font-size: 10.5px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+  color: var(--t-tertiary);
+}
+.zone-head .ct { font-size: 10.5px; font-weight: 600; color: var(--t-tertiary); }
+.zone-head .ln { flex: 1; height: .5px; background: var(--mat-sep); }
+
+.search {
+  height: 42px; border-radius: 999px; background: var(--bg-subtle);
+  display: flex; align-items: center; gap: 9px; padding: 0 15px;
+  font-size: 15px; color: var(--t-tertiary);
+}
+
+/* glass toolbar with a primary and a secondary */
+.toolbar {
+  position: absolute; left: 14px; right: 14px; bottom: 16px; z-index: 40;
+  display: flex; gap: 10px; align-items: stretch;
+}
+.toolbar .primary {
+  flex: 1; height: 56px; border-radius: 28px;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  box-shadow: var(--e3), 0 0 0 .5px var(--mat-nav-border);
+  -webkit-backdrop-filter: blur(34px) saturate(200%);
+  backdrop-filter: blur(34px) saturate(200%);
+  background: color-mix(in srgb, var(--accent-solid) 84%, transparent);
+  color: #fff; position: relative; overflow: hidden;
+}
+[data-theme="dark"] .toolbar .primary { color: #0C1A15; }
+.toolbar .primary::after {
+  content: ""; position: absolute; inset: 1px; border-radius: 28px; pointer-events: none;
+  background: linear-gradient(170deg, rgba(255,255,255,.26), rgba(255,255,255,0) 58%);
+}
+.toolbar .primary > * { position: relative; z-index: 1; }
+.toolbar .primary .lab { font-size: 15.5px; font-weight: 650; letter-spacing: -.3px; }
+.toolbar .primary .num { font-variant-numeric: tabular-nums; }
+.toolbar .secondary {
+  width: 56px; height: 56px; border-radius: 28px; flex: none;
+  display: grid; place-items: center; box-shadow: var(--e3);
+  color: var(--t-primary);
+}
+
+/* "nothing needs you" is a good state and is drawn as one */
+.allclear { display: flex; align-items: center; gap: 11px; }
+.allclear .tick {
+  width: 34px; height: 34px; border-radius: 999px; flex: none;
+  display: grid; place-items: center; background: var(--st-active-bg);
+}
+.allclear .tx { font-size: 14.5px; font-weight: 550; letter-spacing: -.2px; }
+.allclear .tx small { display: block; font-size: 12.5px; font-weight: 400; color: var(--t-secondary); margin-top: 1px; }
 </style>
 </head>
 <body>
 
 <div class="masthead">
-  <p class="eyebrow">MY Warranty · V3 design language</p>
-  <h1>Glass on the navigation layer, and a content layer worth refracting</h1>
-  <p>A static preview of <code>docs/V3_MAKEOVER_BRIEF.md</code> §4. Cards stay opaque; the
-     material is reserved for the tab bar, the header and the capture button. On Home the
-     ambient field is drawn from the protection state, so the chrome carries the colour of
-     your coverage.</p>
+  <p class="eyebrow">MY Warranty · V3 · revision 2</p>
+  <h1>Who services it, what they cover, how long is left</h1>
+  <p>A static preview of <code>docs/V3_MAKEOVER_BRIEF.md</code> after the direction change
+     in §0.3: no score, no claim timeline. Anything still missing on a thing is an open
+     item you can resolve <em>or</em> honestly refuse. Glass stays on the navigation
+     layer; cards stay opaque.</p>
 </div>
 
 <div class="frames">
@@ -402,7 +499,6 @@ body {
   <!-- ============================================================ HOME ==== -->
   <figure class="framed" style="margin:0">
     <div class="device"><div class="app">
-
       <div class="ambient"></div>
 
       <div class="body">
@@ -411,128 +507,94 @@ body {
 
           <div>
             <h1 class="h-title" data-i="greet">Good evening, Yossi</h1>
-            <p class="h-sub" data-i="sub">Six things protected. One needs you this month.</p>
+            <p class="h-sub"><span class="ltr">6</span> <span data-i="sub">things · 2 need you</span></p>
           </div>
 
-          <!-- protection hero -->
+          <!-- the one that is running out, with the service facts on it -->
           <div class="card">
-            <div class="hero">
-              <div class="ring">
-                <svg width="104" height="104" viewBox="0 0 104 104">
-                  <circle cx="52" cy="52" r="44" fill="none" stroke="var(--ring-track)" stroke-width="9"/>
-                  <circle cx="52" cy="52" r="44" fill="none" stroke="var(--ring-fill)" stroke-width="9"
-                          stroke-linecap="round" stroke-dasharray="276.5"
-                          stroke-dashoffset="22.1" transform="rotate(-90 52 52)"/>
-                </svg>
-                <div class="val">
-                  <b class="num">92</b>
-                  <span data-i="score">score</span>
-                </div>
+            <div class="left-head warn">
+              <div class="dot2"></div>
+              <div class="tx"><span class="num">18</span> <span data-i="daysLeft">days left</span></div>
+            </div>
+            <div style="font-size:19px;font-weight:650;letter-spacing:-.4px;margin-bottom:9px">Samsung OLED S95D</div>
+            <div class="facts">
+              <div class="fact">
+                <div class="k" data-i="fWho">Who</div>
+                <div class="v">Samline<small data-i="fWhoSub">Official importer, Israel</small></div>
               </div>
-              <div class="hero-right">
-                <div class="lab" data-i="protTitle">Protection</div>
-                <div class="trend">
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                    <path d="M6 10V2M6 2 2.5 5.5M6 2l3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <span><span class="ltr">+21</span> <span data-i="trend">since March</span></span>
-                </div>
-                <!-- 90-day history, brief F6 -->
-                <svg class="spark" width="168" height="42" viewBox="0 0 168 42" fill="none">
-                  <defs>
-                    <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0" stop-color="var(--ring-fill)" stop-opacity=".22"/>
-                      <stop offset="1" stop-color="var(--ring-fill)" stop-opacity="0"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M2 34 L20 33 L38 29 L56 30 L74 22 L92 23 L110 15 L128 13 L146 9 L166 7 L166 41 L2 41 Z" fill="url(#sg)"/>
-                  <path d="M2 34 L20 33 L38 29 L56 30 L74 22 L92 23 L110 15 L128 13 L146 9 L166 7"
-                        stroke="var(--ring-fill)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  <circle cx="166" cy="7" r="3.2" fill="var(--ring-fill)"/>
-                </svg>
+              <div class="fact">
+                <div class="k" data-i="fWhat">What</div>
+                <div class="v" data-i="fWhatV">Parts &amp; labour, on-site</div>
               </div>
+            </div>
+            <div style="display:flex;gap:9px;margin-top:13px">
+              <div class="chip solid" style="flex:1;height:44px;gap:7px">
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none">
+                  <path d="M6.2 2.6 7.8 6 6.1 7.8a9 9 0 0 0 4.1 4.1L12 10.2l3.4 1.6v3a1.2 1.2 0 0 1-1.3 1.2C7.6 15.6 2.4 10.4 2 3.9A1.2 1.2 0 0 1 3.2 2.6Z" fill="currentColor"/>
+                </svg>
+                <span class="num">03-555-0199</span>
+              </div>
+              <div class="chip quiet" style="height:44px" data-i="covered">What's covered</div>
             </div>
           </div>
 
-          <!-- the one urgent thing -->
-          <div class="attn">
-            <div class="row">
-              <div class="thumb">
-                <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-                  <rect x="2.5" y="4" width="21" height="13.5" rx="2" stroke="var(--st-end-fg)" stroke-width="1.7"/>
-                  <path d="M9 21.5h8" stroke="var(--st-end-fg)" stroke-width="1.7" stroke-linecap="round"/>
-                  <path d="M13 17.5v4" stroke="var(--st-end-fg)" stroke-width="1.7"/>
-                </svg>
-              </div>
-              <div style="flex:1;min-width:0">
-                <div class="name">Samsung OLED S95D</div>
-                <div class="meta"><span data-i="endsIn">Cover ends in 18 days</span></div>
-              </div>
-            </div>
-            <div class="cta" data-i="attnCta">See what's covered</div>
-          </div>
-
-          <!-- suggested actions -->
+          <!-- open items: resolvable or refusable -->
           <div>
             <div class="sec-head">
-              <h2 data-i="raise">Raise your score</h2>
+              <h2 data-i="needsYou">Needs you</h2>
+              <span class="micro num">2</span>
             </div>
-            <div class="card flat" style="padding:14px 16px">
-              <div class="act">
-                <div class="ic">
-                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                    <path d="M3 8.5 6.2 11.7 13 4.9" stroke="var(--st-active-fg)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
+            <div class="card flat" style="padding:4px 16px 14px">
+              <div class="item">
+                <div class="top">
+                  <div class="ic2">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M4 2.4h5l3 3v8.2H4Z" stroke="var(--st-end-fg)" stroke-width="1.6" stroke-linejoin="round"/>
+                      <path d="M6 9h4M6 11.4h2.6" stroke="var(--st-end-fg)" stroke-width="1.6" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <div class="tx">
+                    <div class="t" data-i="i1t">No receipt for the Dyson</div>
+                    <div class="s" data-i="i1s">Proof of purchase is what a service centre asks for first</div>
+                  </div>
                 </div>
-                <div class="tx">
-                  <div class="t" data-i="a1t">Add the receipt for your Dyson</div>
-                  <div class="s" data-i="a1s">Proof of purchase, 30 seconds</div>
+                <div class="acts">
+                  <div class="chip solid" data-i="i1a">Add it</div>
+                  <div class="chip quiet" data-i="i1b">I don't have it</div>
                 </div>
-                <div class="pts">+8</div>
               </div>
-              <div class="act">
-                <div class="ic ai">
-                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 1.6 9.5 6 14 7.5 9.5 9 8 13.5 6.5 9 2 7.5 6.5 6 8 1.6Z" fill="var(--ai-fg)"/>
-                  </svg>
+              <div class="item">
+                <div class="top">
+                  <div class="ic2" style="background:var(--ai-bg)">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path d="M8 1.6 9.5 6 14 7.5 9.5 9 8 13.5 6.5 9 2 7.5 6.5 6 8 1.6Z" fill="var(--ai-fg)"/>
+                    </svg>
+                  </div>
+                  <div class="tx">
+                    <div class="t" data-i="i2t">Is Samline the importer?</div>
+                    <div class="s" data-i="i2s">We read it from your KSP receipt</div>
+                  </div>
                 </div>
-                <div class="tx">
-                  <div class="t" data-i="a2t">Confirm the importer we found</div>
-                  <div class="s" data-i="a2s">Samline — from your receipt</div>
+                <div class="acts">
+                  <div class="chip solid" data-i="i2a">Yes</div>
+                  <div class="chip quiet" data-i="i2b">Not sure</div>
                 </div>
-                <div class="pts">+6</div>
               </div>
-              <div class="act">
-                <div class="ic">
-                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                    <rect x="2.6" y="2.6" width="10.8" height="10.8" rx="2" stroke="var(--st-active-fg)" stroke-width="1.8"/>
-                  </svg>
-                </div>
-                <div class="tx">
-                  <div class="t" data-i="a3t">Photograph the serial label</div>
-                  <div class="s" data-i="a3s">MacBook Air M4</div>
-                </div>
-                <div class="pts">+5</div>
-              </div>
-            </div>
-          </div>
 
-          <!-- portfolio -->
-          <div>
-            <div class="sec-head">
-              <h2 data-i="things">Your things</h2>
-              <a href="#" data-i="seeAll">All 6</a>
-            </div>
-            <!-- Deep bottom padding so the card's surface, rather than a clipped
-                 row, is what continues under the floating tab bar. -->
-            <div class="card flat" style="padding:12px 16px 72px">
-              <div class="prod">
-                <div class="art" style="background:linear-gradient(150deg,#3E5D78,#1B2E3F)"></div>
-                <div class="tx">
-                  <div class="t">Samsung OLED S95D</div>
-                  <div class="s"><span data-i="tv">Television</span> · 65"</div>
+              <!-- Everything quiet closes the same card rather than opening a section of
+                   its own. "Nothing needs you" is the good state and should read as the
+                   end of a short list, not as an empty screen. Deep bottom padding so the
+                   card's surface, not a clipped sentence, continues under the tab bar. -->
+              <div class="allclear" style="padding:15px 0 78px;border-top:.5px solid var(--mat-sep);margin-top:2px">
+                <div class="tick">
+                  <svg width="17" height="17" viewBox="0 0 18 18" fill="none">
+                    <path d="M3.6 9.4 7.2 13 14.4 5.4" stroke="var(--st-active-fg)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
-                <div class="pill warn"><span class="num">18</span><span data-i="d"> d</span></div>
+                <div class="tx">
+                  <span data-i="acT">The other 4 are complete</span>
+                  <small data-i="acS">We'll tell you a month before anything ends.</small>
+                </div>
               </div>
             </div>
           </div>
@@ -541,7 +603,6 @@ body {
         <div class="pad-bottom"></div>
       </div>
 
-      <!-- navigation layer -->
       <div class="statusline">
         <span class="num">9:41</span>
         <span class="glyphs">
@@ -565,8 +626,7 @@ body {
         <div class="tabbar glass">
           <div class="tab on">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.4 12 3.6l8.5 6.8V20a.9.9 0 0 1-.9.9h-4.7v-6.2H10V20.9H5.4a.9.9 0 0 1-.9-.9v-9.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-            <span data-i="tHome">Home</span>
-            <div class="selected"></div>
+            <span data-i="tHome">Home</span><div class="selected"></div>
           </div>
           <div class="tab">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3.4" y="3.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="3.4" y="13.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>
@@ -587,14 +647,12 @@ body {
           </svg>
         </div>
       </div>
-
     </div></div>
-    <figcaption><b>Home</b> — the tab bar floats as a glass capsule and content scrolls
-      behind it. The ambient field is the protection state, which is what gives the
-      material something to bend.</figcaption>
+    <figcaption><b>Home</b> — what is running out, and what is still open. Every item closes
+      two ways, and <i>"I don't have it"</i> is a real answer that stops the asking.</figcaption>
   </figure>
 
-  <!-- ================================================== PRODUCT DETAIL ==== -->
+  <!-- ================================================== PRODUCT ========== -->
   <figure class="framed" style="margin:0">
     <div class="device"><div class="app">
 
@@ -603,11 +661,9 @@ body {
         <svg class="tv" viewBox="0 0 250 160" fill="none">
           <rect x="6" y="6" width="238" height="134" rx="5" fill="#0A0F14" stroke="rgba(255,255,255,.16)"/>
           <rect x="12" y="12" width="226" height="122" rx="2.5" fill="url(#pg)"/>
-          <defs>
-            <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#2C4A63"/><stop offset=".5" stop-color="#13212C"/><stop offset="1" stop-color="#24405A"/>
-            </linearGradient>
-          </defs>
+          <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#2C4A63"/><stop offset=".5" stop-color="#13212C"/><stop offset="1" stop-color="#24405A"/>
+          </linearGradient></defs>
           <path d="M104 140h42v12h-42z" fill="#0A0F14"/>
           <rect x="82" y="150" width="86" height="6" rx="3" fill="#0A0F14"/>
         </svg>
@@ -618,27 +674,44 @@ body {
         <div class="pd-pad"></div>
         <div class="stack" style="gap:16px">
           <div>
-            <p class="micro" style="margin:0 0 7px">Samsung · 65" OLED</p>
+            <p class="micro" style="margin:0 0 7px">SAMSUNG · 65" OLED</p>
             <h1 class="pd-title">Samsung OLED S95D</h1>
-            <p class="pd-sub"><span data-i="boughtAt">Bought at</span> <span class="ltr">KSP</span> · <span class="num">20.8.2024</span></p>
+            <p class="pd-sub"><span data-i="zoneIs">Living room</span> · <span data-i="boughtAt">Bought at</span> <span class="ltr">KSP</span></p>
           </div>
 
+          <!-- the three facts, first thing on the screen -->
           <div class="card">
-            <div style="display:flex;align-items:center;gap:9px;margin-bottom:11px">
-              <div style="width:8px;height:8px;border-radius:999px;background:var(--st-end-fg)"></div>
-              <div style="font-size:14.5px;font-weight:650;letter-spacing:-.25px;color:var(--st-end-fg)" data-i="endsSoon">Ends in 18 days</div>
+            <div class="left-head warn">
+              <div class="dot2"></div>
+              <div class="tx"><span class="num">18</span> <span data-i="daysLeft2">days left</span></div>
             </div>
-            <div class="kv"><span class="k" data-i="kCover">Coverage</span><span class="v" data-i="vCover">36 months, parts &amp; labour</span></div>
-            <div class="kv"><span class="k" data-i="kImp">Importer</span><span class="v">Samline</span></div>
-            <div class="kv"><span class="k" data-i="kSerial">Serial</span><span class="v num">RZ8N40FKT9L</span></div>
-            <div class="kv"><span class="k" data-i="kPanel">Panel warranty</span><span class="v" style="color:var(--t-tertiary)" data-i="vUnknown">Unknown</span></div>
+            <div class="facts">
+              <div class="fact">
+                <div class="k" data-i="fWho2">Who</div>
+                <div class="v">Samline<small data-i="fWhoSub2">Official importer, Israel</small></div>
+              </div>
+              <div class="fact">
+                <div class="k" data-i="fWhat2">What</div>
+                <div class="v" data-i="fWhatV2">Parts &amp; labour, on-site<small data-i="fWhatS2">Panel terms not stated — unknown</small></div>
+              </div>
+              <div class="fact">
+                <div class="k" data-i="fUntil">Until</div>
+                <div class="v num">17.8.2027</div>
+              </div>
+            </div>
             <div class="prov">
               <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style="flex:none;margin-top:1px">
                 <path d="M8 1.6 9.5 6 14 7.5 9.5 9 8 13.5 6.5 9 2 7.5 6.5 6 8 1.6Z" fill="var(--ai-fg)"/>
               </svg>
               <div class="tx" data-i="provTx">Matched to the importer's published policy
-                SAMLINE-TV-2024.03 by model, country and importer. Panel terms were not
-                stated in the document, so they are not claimed here.</div>
+                SAMLINE-TV-2024.03 by model, country and importer.</div>
+            </div>
+          </div>
+
+          <div class="card flat">
+            <div class="facts">
+              <div class="fact"><div class="k" data-i="kSerial">Serial</div><div class="v num">RZ8N40FKT9L</div></div>
+              <div class="fact"><div class="k" data-i="kDocs">Docs</div><div class="v" data-i="vDocs">Receipt, warranty card</div></div>
             </div>
           </div>
         </div>
@@ -660,50 +733,184 @@ body {
         </div>
         <div class="rnd">
           <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-            <path d="M10 13.4V3.2M10 3.2 6.4 6.8M10 3.2l3.6 3.6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M3.6 12.6v3.2a1 1 0 0 0 1 1h10.8a1 1 0 0 0 1-1v-3.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+            <circle cx="10" cy="4.6" r="1.5" fill="#fff"/><circle cx="10" cy="10" r="1.5" fill="#fff"/><circle cx="10" cy="15.4" r="1.5" fill="#fff"/>
           </svg>
         </div>
       </div>
 
-      <div class="pd-cta glass">
-        <svg width="19" height="19" viewBox="0 0 20 20" fill="none">
-          <path d="M4.2 2.8h8.2l4 4v10.4a1 1 0 0 1-1 1H4.2a1 1 0 0 1-1-1V3.8a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-          <path d="M6.6 10.4h6.8M6.6 13.6h4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
-        </svg>
-        <div class="lab" data-i="claimPack">Create claim pack</div>
+      <!-- the call is the primary action; the claim pack sits beside it -->
+      <div class="toolbar">
+        <div class="primary">
+          <svg width="19" height="19" viewBox="0 0 18 18" fill="none">
+            <path d="M6.2 2.6 7.8 6 6.1 7.8a9 9 0 0 0 4.1 4.1L12 10.2l3.4 1.6v3a1.2 1.2 0 0 1-1.3 1.2C7.6 15.6 2.4 10.4 2 3.9A1.2 1.2 0 0 1 3.2 2.6Z" fill="currentColor"/>
+          </svg>
+          <span class="lab"><span data-i="callS">Call Samline</span> <span class="num">03-555-0199</span></span>
+        </div>
+        <div class="secondary glass">
+          <svg width="21" height="21" viewBox="0 0 20 20" fill="none">
+            <path d="M4.2 2.8h8.2l4 4v10.4a1 1 0 0 1-1 1H4.2a1 1 0 0 1-1-1V3.8a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+            <path d="M6.6 10.4h6.8M6.6 13.6h4.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+    </div></div>
+    <figcaption><b>Product</b> — who, what and how long, above everything, with the number
+      you press to call them. The claim pack is the button beside it.</figcaption>
+  </figure>
+
+  <!-- ==================================================== THINGS ========= -->
+  <figure class="framed" style="margin:0">
+    <div class="device"><div class="app">
+      <div class="body">
+        <div class="pad-top"></div>
+        <div class="stack" style="gap:18px">
+
+          <div class="search">
+            <svg width="17" height="17" viewBox="0 0 18 18" fill="none">
+              <circle cx="8" cy="8" r="5.4" stroke="currentColor" stroke-width="1.7"/>
+              <path d="m12.2 12.2 3.2 3.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            </svg>
+            <span data-i="searchPh">Search things, serials, shops</span>
+          </div>
+
+          <div>
+            <div class="zone-head">
+              <span class="nm" data-i="zLiving">Living room</span>
+              <span class="ct num">2</span><span class="ln"></span>
+            </div>
+            <div class="card flat" style="padding:10px 16px">
+              <div class="prod">
+                <div class="art" style="background:linear-gradient(150deg,#3E5D78,#1B2E3F)"></div>
+                <div class="tx"><div class="t">Samsung OLED S95D</div>
+                  <div class="s">Samline · <span data-i="tvC">Television</span></div></div>
+                <div class="pill warn"><span class="num">18</span><span data-i="d"> d</span></div>
+              </div>
+              <div class="prod">
+                <div class="art" style="background:linear-gradient(150deg,#4A4540,#23201D)"></div>
+                <div class="tx"><div class="t">Sonos Arc</div>
+                  <div class="s"><span data-i="unknownP">Service provider unknown</span></div></div>
+                <div class="pill"><span class="num">2</span><span data-i="y"> y</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="zone-head">
+              <span class="nm" data-i="zKitchen">Kitchen</span>
+              <span class="ct num">2</span><span class="ln"></span>
+            </div>
+            <div class="card flat" style="padding:10px 16px">
+              <div class="prod">
+                <div class="art" style="background:linear-gradient(150deg,#C9C3BA,#807A72)"></div>
+                <div class="tx"><div class="t">Bosch Serie 6</div>
+                  <div class="s">BSH · <span data-i="dishC">Dishwasher</span></div></div>
+                <div class="pill"><span class="num">14</span><span data-i="mo"> mo</span></div>
+              </div>
+              <div class="prod">
+                <div class="art" style="background:linear-gradient(150deg,#A98BC6,#5E4379)"></div>
+                <div class="tx"><div class="t">Dyson V15 Detect</div>
+                  <div class="s"><span data-i="noRec">No receipt</span></div></div>
+                <div class="pill"><span class="num">7</span><span data-i="mo2"> mo</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="zone-head">
+              <span class="nm" data-i="zGarden">Garden</span>
+              <span class="ct num">1</span><span class="ln"></span>
+            </div>
+            <div class="card flat" style="padding:10px 16px">
+              <div class="prod">
+                <div class="art" style="background:linear-gradient(150deg,#7E9B6A,#3D4F33)"></div>
+                <div class="tx"><div class="t">Gardena SILENO</div>
+                  <div class="s"><span data-i="mowC">Robot mower</span></div></div>
+                <div class="pill"><span class="num">19</span><span data-i="mo3"> mo</span></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
 
+      <div class="statusline">
+        <span class="num">9:41</span>
+        <span class="glyphs">
+          <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7.5" width="2.6" height="3.5" rx=".7"/><rect x="4.2" y="5.3" width="2.6" height="5.7" rx=".7"/><rect x="8.4" y="2.9" width="2.6" height="8.1" rx=".7"/><rect x="12.6" y="0" width="2.6" height="11" rx=".7"/></svg>
+          <svg width="25" height="12" viewBox="0 0 25 12" fill="none"><rect x=".6" y=".6" width="20.5" height="10.8" rx="3" stroke="currentColor" stroke-opacity=".45"/><rect x="2.4" y="2.4" width="14.5" height="7.2" rx="1.8" fill="currentColor"/><path d="M22.6 4.2v3.6c1-.3 1.6-1 1.6-1.8s-.6-1.5-1.6-1.8Z" fill="currentColor" fill-opacity=".45"/></svg>
+        </span>
+      </div>
+
+      <div class="topbar glass">
+        <div class="tb-title" data-i="navThings">Things</div>
+        <div class="bell" style="background:transparent">
+          <svg width="19" height="19" viewBox="0 0 20 20" fill="none">
+            <path d="M3.4 5.4h13.2M3.4 10h13.2M3.4 14.6h13.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="tabwrap">
+        <div class="tabbar glass">
+          <div class="tab">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3.5 10.4 12 3.6l8.5 6.8V20a.9.9 0 0 1-.9.9h-4.7v-6.2H10V20.9H5.4a.9.9 0 0 1-.9-.9v-9.6Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span data-i="tHome2">Home</span>
+          </div>
+          <div class="tab on">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3.4" y="3.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13.4" y="3.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="3.4" y="13.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/><rect x="13.4" y="13.4" width="7.2" height="7.2" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>
+            <span data-i="tThings2">Things</span><div class="selected"></div>
+          </div>
+          <div class="tab">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 21s7.5-4.3 7.5-10.1V5.4L12 2.8 4.5 5.4v5.5C4.5 16.7 12 21 12 21Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span data-i="tCover2">Coverage</span>
+          </div>
+          <div class="tab">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4.1" stroke="currentColor" stroke-width="1.8"/><path d="M4.6 20.4a7.4 7.4 0 0 1 14.8 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span data-i="tMe2">Me</span>
+          </div>
+        </div>
+        <div class="capture">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none" style="position:relative;z-index:1">
+            <path d="M13 5.4v15.2M5.4 13h15.2" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+      </div>
     </div></div>
-    <figcaption><b>Product</b> — the image becomes the content layer, so the header is the
-      one place the <code>clear</code> variant is correct. The claim pack sits in glass at
-      the bottom; the card above it stays opaque.</figcaption>
+    <figcaption><b>Things</b> — grouped by the room they are in, because that is how people
+      know what they own. The subtitle carries the service provider, or says plainly that
+      nobody knows it yet.</figcaption>
   </figure>
 
 </div>
 
 <script>
-/* Translations for the Hebrew screenshot. Hebrew is a first-class language in this
-   product, so the design is reviewed in it at the same bar as English. */
+/* Hebrew. Reviewed at the same bar as English — every bidi run is isolated rather
+   than reordered by hand, which is what `.ltr` / `.num` do in the stylesheet. */
 const HE = {
-  greet: 'ערב טוב, יוסי', sub: 'שישה מוצרים מוגנים. אחד דורש טיפול החודש.',
-  score: 'ציון', protTitle: 'הגנה', trend: 'מאז מרץ',
-  endsIn: 'האחריות מסתיימת בעוד 18 יום', attnCta: 'מה מכוסה',
-  boughtAt: 'נקנה ב־',
-  raise: 'שיפור הציון',
-  a1t: 'הוסף קבלה ל‑Dyson', a1s: 'הוכחת קנייה, 30 שניות',
-  a2t: 'אשר את היבואן שמצאנו', a2s: 'סמליין — מתוך הקבלה',
-  a3t: 'צלם את תווית המספר הסידורי', a3s: 'MacBook Air M4',
-  things: 'המוצרים שלך', seeAll: 'כל 6',
-  tv: 'טלוויזיה', laptop: 'מחשב נייד',
-  d: ' י׳', mo: ' ח׳',
-  navHome: 'בית',
+  greet: 'ערב טוב, יוסי', sub: 'מוצרים · 2 דורשים טיפול',
+  daysLeft: 'ימים נותרו', daysLeft2: 'ימים נותרו',
+  fWho: 'מי', fWho2: 'מי', fWhoSub: 'יבואן רשמי, ישראל', fWhoSub2: 'יבואן רשמי, ישראל',
+  fWhat: 'מה', fWhat2: 'מה',
+  fWhatV: 'חלקים ועבודה, בבית הלקוח', fWhatV2: 'חלקים ועבודה, בבית הלקוח',
+  fWhatS2: 'תנאי המסך לא צוינו — לא ידוע',
+  fUntil: 'עד', covered: 'מה מכוסה',
+  needsYou: 'דורש טיפול',
+  i1t: 'אין קבלה ל‑Dyson', i1s: 'הוכחת קנייה היא הדבר הראשון שמעבדה מבקשת',
+  i1a: 'הוסף', i1b: 'אין לי',
+  i2t: 'סמליין הוא היבואן?', i2s: 'קראנו את זה מהקבלה של KSP',
+  i2a: 'כן', i2b: 'לא בטוח',
+  acT: 'שאר ה‑4 מלאים', acS: 'נודיע לך חודש לפני שמשהו נגמר.',
+  navHome: 'בית', navThings: 'מוצרים',
   tHome: 'בית', tThings: 'מוצרים', tCover: 'כיסוי', tMe: 'אני',
-  endsSoon: 'מסתיים בעוד 18 יום',
-  kCover: 'כיסוי', vCover: '36 חודשים, חלקים ועבודה',
-  kImp: 'יבואן', kSerial: 'מספר סידורי', kPanel: 'אחריות מסך', vUnknown: 'לא ידוע',
-  provTx: 'הותאם למדיניות שפרסם היבואן SAMLINE-TV-2024.03 לפי דגם, מדינה ויבואן. תנאי המסך לא צוינו במסמך, ולכן אינם נטענים כאן.',
-  claimPack: 'צור תיק תביעה'
+  tHome2: 'בית', tThings2: 'מוצרים', tCover2: 'כיסוי', tMe2: 'אני',
+  zoneIs: 'סלון', boughtAt: 'נקנה ב־', callS: 'התקשר לסמליין',
+  provTx: 'הותאם למדיניות שפרסם היבואן SAMLINE-TV-2024.03 לפי דגם, מדינה ויבואן.',
+  kSerial: 'מספר סידורי', kDocs: 'מסמכים', vDocs: 'קבלה, תעודת אחריות',
+  searchPh: 'חיפוש מוצרים, מספרים, חנויות',
+  zLiving: 'סלון', zKitchen: 'מטבח', zGarden: 'גינה',
+  tvC: 'טלוויזיה', dishC: 'מדיח כלים', mowC: 'רובוט כיסוח',
+  unknownP: 'נותן השירות לא ידוע', noRec: 'אין קבלה',
+  d: ' י׳', mo: ' ח׳', mo2: ' ח׳', mo3: ' ח׳', y: ' ש׳'
 };
 
 function applyLang(lang) {
@@ -716,14 +923,12 @@ function applyLang(lang) {
       el.textContent = el.dataset.en;
     }
   });
-  // The back chevron points the other way in RTL.
   document.querySelectorAll('.chev').forEach((s) => {
     s.style.transform = lang === 'he' ? 'scaleX(-1)' : '';
   });
 }
 function applyTheme(t) { document.documentElement.dataset.theme = t; }
 
-/* Used by the screenshot script. */
 window.__preview = { applyLang, applyTheme };
 </script>
 </body>

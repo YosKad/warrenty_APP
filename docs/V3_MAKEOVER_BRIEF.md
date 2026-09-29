@@ -64,6 +64,29 @@ this brief was produced with their help. The third one is community-published an
 `privileged` reach (it carries agents and hooks); that is worth a deliberate decision
 rather than a reflex yes.
 
+### 0.3 Revision 2 — the product model changed after the first draft
+
+The first draft of this brief proposed keeping the Protection Score and building a
+Warranty Case timeline. Both were rejected, and the rejection is right, so the
+sections below are rewritten rather than annotated. Recorded here because the
+reasoning matters more than the decision:
+
+1. **No claim timeline.** The claim is conducted with the importer, by phone, not in
+   our app. Modelling it would be modelling someone else's process — and we would
+   always have a worse copy of it than the user's own call log. §6.Q1 is closed: no.
+2. **No Protection Score.** A 0–100 grade is a report card. What the user actually
+   needs is a binary they can clear: *is anything missing on this thing, or not?*
+   Open item, or closed. The eight-factor scoring in `packages/domain` is not deleted —
+   it becomes the engine that *detects* what is missing, and stops being a number shown
+   to anybody.
+3. **The product's job, stated plainly:** *who services this, what they cover, and how
+   long is left* — so it does not quietly lapse.
+4. **Zones.** Products belong to places: kitchen, living room, garden, office. Grouping
+   by zone is how people actually think about what they own.
+
+Everything below reflects this. F6 in the audit is superseded by it, and Phase O is
+withdrawn.
+
 ---
 
 ## 1. Technical audit
@@ -119,13 +142,17 @@ argument".
 
 ---
 
-**F3 — The app abandons the user at the moment of value.** It tells you that you are
-covered and what is covered, and then stops. There is no case, no timeline, no record
-that you called, no note of what the importer promised. Warranty Case / Claim Timeline
-has now been explicitly deferred in V2, Phase G, Phase H, Phase I and Phase I.5.
+**F3 — The three facts that matter are not the three facts on screen.** When something
+breaks, a person needs exactly: **who services this, what they cover, and how long is
+left.** Today those are spread across the product screen, the coverage screen and the
+service screen, and none of them leads with a phone number you can press.
 
-It is, on the evidence of the product's own shape, the largest missing feature. **§6
-asks for that deferral to be lifted or confirmed**; the brief does not assume either.
+*(The first draft read this as a missing claim timeline. It is not — the claim happens
+on the phone with the importer. What is missing is that the app does not put the
+importer's number, the cover, and the days remaining in front of you in one place.)*
+
+Fix: the service block becomes the top of the product screen — provider name, what they
+cover, days left, and a tappable number. Nothing above it.
 
 ---
 
@@ -159,13 +186,23 @@ rules in §6:
 
 ---
 
-**F6 — The Protection Score has no memory.** It is computed well (8 factors) and shown
-once. There is no history, no "71 → 92 since March", no sense of having improved
-anything. A score that cannot go up in a way you can see is a grade, not a game.
+**F6 — The Protection Score is the wrong shape for the problem.** *(Superseded, §0.3.)*
+It is computed well — eight factors in `packages/domain/src/protection.ts` — and it
+answers a question nobody asked. A person does not want to know they are at 71. They
+want to know whether anything is missing on the vacuum cleaner, and to make the
+reminder stop.
 
-Fix: persist a daily snapshot, show a sparkline over 90 days, and attribute movement to
-the specific action that caused it. This is the cheapest retention feature available and
-it uses data the app already computes.
+Fix: **the score becomes an open-item detector and stops being a number.** The same
+eight factors now each resolve to either *satisfied* or *an open item on this product*.
+A product with no open items is **closed** — a quiet tick, nothing to do. A product with
+one or more is **open**, and each item is individually closable, in one of two ways:
+
+- **resolve it** — add the receipt, confirm the importer, photograph the serial; or
+- **dismiss it** — *"I do not have the receipt"*. Dismissal is a real, recorded answer,
+  not a snooze. It closes the item permanently and the app stops asking.
+
+Dismissal is the part that makes this humane rather than nagging. A checklist that
+cannot be told "no" is a checklist that gets ignored entirely.
 
 ---
 
@@ -208,10 +245,29 @@ free.
 
 ---
 
-**F10 — Notifications only know about dates.** `warranty ends in N days` is one signal.
-The valuable ones are unbuilt: the manufacturer registration window closing (often 14–30
-days after purchase and worth real money), a recall affecting a product you own,
-extended-warranty decision points, and "you have an open case with no reply for 9 days".
+**F10 — Expiry reminders exist and are solid. Everything else about them does not.**
+
+What is already built, and should not be rebuilt:
+
+- Reminders at **90, 30, 7 and 1 days** before cover ends
+  (`expiry_offsets_days int[] not null default array[90, 30, 7, 1]`), each individually
+  switchable by the user in Settings → Notifications.
+- Scheduled **server-side** — `pg_cron` → the `send-reminders` Edge Function → APNs/FCM
+  — deliberately, so a reinstall or a new phone does not silently lose every reminder.
+- Delivered at **09:00 in the user's own timezone**, which the device keeps current, so
+  moving country fixes itself.
+- Push and email, with an in-app inbox, and idempotency keyed on
+  `<product>:<kind>:<offset>:<warranty_end>` so nothing double-fires.
+
+So: **yes, a month before expiry the customer is told.** That was the question, and the
+answer is that it works today.
+
+What is missing is every *other* reason to speak up. The enum is
+`warranty_expiring | warranty_expired | claim_update | document_ready | subscription`,
+and the valuable additions are: the manufacturer **registration window** closing (often
+14–30 days after purchase, and worth real money), a **recall** affecting something you
+own, and — under the new model — *"the vacuum still has no receipt"*, sent once, and
+never again if you dismiss it.
 
 ---
 
@@ -278,41 +334,47 @@ makes them tell someone.
 
 ### Tier 1 — completes the core promise
 
-1. **Claim Pack** (F2) — one share action, one PDF, everything a service centre asks
-   for. Small, self-contained, immediately explicable in a store listing.
-2. **Warranty Case timeline** (F3) — open a case, log every call and reply, attach
-   photos, see how long they have had it. Gated on §6.Q1.
-3. **One-capture add** (F4) — the funnel.
-4. **Offline-first** (F1) — works where it is needed.
-5. **Registration-window alerts** (F10) — the one notification with direct cash value.
+1. **The service block** (F3) — provider, what they cover, days left, and a number you
+   press to call them. At the top of the product screen, above everything. This is the
+   product in one card.
+2. **Open items, closable and dismissable** (F6) — the score becomes a list you can
+   clear. Every item closes by resolution or by an honest "I don't have that".
+3. **Zones** — kitchen, living room, garden, office, and whatever the user names. Both
+   an organiser for a long list and a real retrieval path: *what is in the kitchen and
+   what is still under cover?*
+4. **One-capture add** (F4) — the funnel.
+5. **Claim Pack** (F2) — one share action, one PDF, everything a service centre asks
+   for. The natural partner to a phone call you are about to make.
+6. **Offline-first** (F1) — works where it is needed, which is a service centre
+   basement.
 
 ### Tier 2 — worth money
 
-6. **Protection Score history** (F6) — a reason to come back with nothing to do.
-7. **Universal search** (F9).
-8. **Household / shared workspace** — one home's appliances, both partners. The
+7. **Registration-window alerts** (F10) — the one notification with direct cash value.
+8. **Universal search** (F9) — across name, model, serial, retailer, zone and document
+   text.
+9. **Household / shared workspace** — one home's appliances, both partners. The
    workspace model already supports ownership; this is surfacing, not schema.
-9. **Recall monitoring** — high trust value, and strictly within the reviewed-corpus
-   model: a recall is published global data, so it goes through
-   candidate → reviewer → verified exactly like a policy. No crawler.
-10. **Repair-or-replace guidance** — given age, price paid, coverage state and typical
+10. **Recall monitoring** — high trust value, and strictly within the reviewed-corpus
+    model: a recall is published global data, so it goes through
+    candidate → reviewer → verified exactly like a policy. No crawler.
+11. **Repair-or-replace guidance** — given age, price paid, coverage state and typical
     repair cost, help decide. Must say *unknown* when it does not know; an invented
     repair cost is the same class of error as an invented warranty.
 
 ### Tier 3 — differentiators
 
-11. **Resale handoff** — transfer a product with its documents to another user. Turns a
-    warranty into a transferable asset and makes the app viral at the moment of a sale.
-12. **Insurance-grade home inventory export** — the whole portfolio with values, serials
-    and photos, as one document, for a claim after a fire or a burglary.
-13. **Importer response-time scoreboard** — aggregate, anonymised, measured from real
-    case timelines. Only possible after Tier 1 #2, and genuinely nobody else has it.
+12. **Resale handoff** — transfer a product with its documents to another user. Turns a
+    warranty into a transferable asset and makes the app spread at the moment of a sale.
+13. **Insurance-grade home inventory export** — the whole portfolio with values, serials
+    and photos, as one document, for a claim after a fire or a burglary. Zones make this
+    considerably more useful, since that is how a loss adjuster reads a house.
 14. **Apple Wallet pass per warranty** — the coverage end date on the lock screen.
-15. **Live Activity during an open case** — "at service centre, day 4".
 
-Explicitly **not** proposed: social feed, gamified streaks, AI chat as a primary
-surface, price-tracking affiliate links. Each would fight the product's one credible
-claim, which is that it does not make things up.
+Explicitly **not** proposed: a claim timeline (§0.3), any score or grade, social feed,
+gamified streaks, AI chat as a primary surface, price-tracking affiliate links. Each
+would either duplicate what happens on the phone with the importer, or fight the
+product's one credible claim, which is that it does not make things up.
 
 ---
 
@@ -340,46 +402,81 @@ Four tabs, and capture promoted out of the tab bar entirely:
                                               ⊕  ← floating capture
 ```
 
-- **Home** — Protection Score with its 90-day trend, the one thing that is urgent, and
-  suggested actions with their point values. Alerts fold in here as a bell in the header
-  with a count; an inbox, not a tab.
-- **Things** — the portfolio. Search-first, because F9. Grouped by room or category.
-- **Coverage** — new, and the reason this is a four-tab app rather than a three-tab one.
-  Everything cross-product: what is ending this quarter, what is unverified, open cases,
-  documents. Today this information is scattered across six screens.
+- **Home** — what is ending soon, and what is still open. Nothing else. If nothing is
+  ending and nothing is open, Home says so in one line and is otherwise empty, which is
+  the correct state for this product and should look deliberate rather than broken.
+  Alerts fold in here as a bell in the header with a count; an inbox, not a tab.
+- **Things** — the portfolio, grouped by **zone**, with search across everything (F9).
+- **Coverage** — everything cross-product: what ends this quarter, what is unverified,
+  every document in one list. Today this is scattered across six screens.
 - **Me** — profile, plan, settings.
 - **⊕ Capture** — a floating glass action pinned above the tab bar, present on Home and
   Things. Long-press for the three sources (camera / file / photo library). One tap =
   camera open, already scanning.
 
-### 3.3 The one flow that matters, end to end
+### 3.3 The two flows that matter
 
 ```
-capture ──▶ resolve ──▶ confirm ──▶ covered
-   │           │           │            │
-   camera      six-stage   one screen   protection score moves,
-   opens       matcher,    of already-  and you can see by how much
-   scanning    on-device   filled       ▼
-   already     where it    fields    ┌──────────────────────────┐
-               can be                │ something breaks          │
-                                     ├──────────────────────────┤
-                                     │ open case ──▶ claim pack │
-                                     │     │            │        │
-                                     │     ▼            ▼        │
-                                     │  timeline    one PDF,     │
-                                     │  of every    share sheet  │
-                                     │  contact                  │
-                                     └──────────────────────────┘
+  ADDING                                   NEEDING IT
+  ──────                                   ──────────
+  capture                                  open the thing
+     │  camera opens already scanning         │
+     ▼                                        ▼
+  resolve                                  ┌────────────────────────┐
+     │  six-stage matcher fills brand,     │  WHO   Samline         │
+     │  model, date, shop, importer        │  WHAT  parts & labour  │
+     ▼                                     │  LEFT  18 days         │
+  confirm                                  └────────────────────────┘
+     │  one screen, already filled              │            │
+     ▼                                          ▼            ▼
+  closed  ── or ──▶  open items              ☎ call     ⇪ claim pack
+     │                  │                                    │
+     ▼                  ▼                                    ▼
+  nothing to do   "no receipt" ──▶ resolve it, or say        one PDF,
+                                    you don't have it        share sheet
 ```
 
-Four taps from "I bought a thing" to "I am covered". Two from "it broke" to "here is
-everything you need". Everything else in the app is in service of those two numbers.
+Left: four taps from "I bought a thing" to either *closed* or *a short list of what is
+missing*. Right: **zero taps** from opening a product to knowing who to call, what they
+owe you, and how long you have — because those three facts are the top of the screen,
+not something you navigate to.
 
-**Ambiguity has a designed place in this flow.** When the matcher returns AMBIGUOUS it
-must not pick the top candidate — it asks one question, with the distinguishers the
-matcher already computes (`distinguishersFor` in `packages/domain/src/modelMatch.ts`):
-"55-inch or 65-inch?" That is a better experience than a confident wrong answer *and*
-it is the architecture's existing safety rule, surfaced rather than hidden.
+**Ambiguity has a designed place in the left-hand flow.** When the matcher returns
+AMBIGUOUS it must not pick the top candidate — it asks one question, using the
+distinguishers the matcher already computes (`distinguishersFor` in
+`packages/domain/src/modelMatch.ts`): "55-inch or 65-inch?" That is a better experience
+than a confident wrong answer *and* it is the architecture's existing safety rule,
+surfaced rather than hidden.
+
+### 3.4 Open items, in detail
+
+An open item is `(product, factor, state)` where state is `open | resolved | dismissed`.
+The eight factors already computed for the old score become the eight things that can be
+open — receipt missing, importer unconfirmed, serial absent, purchase date uncertain,
+policy unresolved, and so on.
+
+Three rules keep it from becoming a nag:
+
+1. **Dismissal is permanent and honest.** "I don't have the receipt" closes the item for
+   good. No snooze, no re-ask next month. The app records that the user answered.
+2. **Never more than three shown at once**, newest product first. A list of fourteen
+   open items is a wall, and a wall gets ignored.
+3. **An item only opens if closing it would change an answer.** If a product's cover,
+   provider and end date are all known and verified, a missing serial number is not worth
+   anyone's attention and no item is created.
+
+Rule 3 is the one that decides whether this feels intelligent or bureaucratic.
+
+### 3.5 Zones
+
+A zone is a free-text label with a small set of suggested defaults — kitchen, living
+room, bedroom, office, garden, garage, utility. Suggested, not enforced: people have
+*מרפסת* and *ממ״ד* and a workshop, and a fixed enum would be wrong within a day.
+
+One product, one zone, optional. Unzoned products live in "Everything else" rather than
+in a nag to categorise them. Things groups by zone; search matches zone names; the
+inventory export (Tier 3 #13) is organised by zone, which is how anyone assessing a
+house actually walks through it.
 
 ---
 
@@ -468,11 +565,12 @@ So the content layer has to earn the material. Three changes, in priority order:
    opacity, never a gradient card, never a colour that competes with protection state.
    Now the glass has something to bend. A Samsung TV's page is quietly blue-grey; a Dyson
    is quietly purple. The app stops looking like one template.
-3. **The Protection ring becomes the ambient source on Home.** Home has no single
-   product to draw from, so the score's own colour — pine when healthy, amber when
-   something is ending — becomes a faint ambient field behind the hero. The glass tab bar
-   then refracts the state of your coverage, which is the one piece of poetry this app
-   is entitled to.
+3. **On Home, the ambient source is the soonest expiry.** Home has no single product to
+   draw from, so it takes its colour from the state of the thing that needs attention
+   first — pine when everything is comfortably in cover, amber when something is ending,
+   coral when something has lapsed. The glass tab bar then refracts the state of your
+   coverage, which is the one piece of poetry this app is entitled to. It is decoration
+   and never the only signal: the words say it too.
 
 ### 4.4 Token changes
 
@@ -502,7 +600,7 @@ dependency.
 | `spring.snappy` | `damping 28, stiffness 420, mass 0.9` | presses, toggles, segmented control |
 | `spring.smooth` | `damping 26, stiffness 240, mass 1` | sheets, screen transitions |
 | `spring.bouncy` | `damping 15, stiffness 200, mass 1` | glass morph, capture button |
-| `spring.gentle` | `damping 30, stiffness 120, mass 1` | the score ring settling |
+| `spring.gentle` | `damping 30, stiffness 120, mass 1` | an item closing, a days-left bar settling |
 
 All four collapse to a 120ms fade under Reduce Motion. Not "animate less" — animate not
 at all, because a half-honoured Reduce Motion is worse than none.
@@ -561,11 +659,12 @@ Notes that matter:
 | Header | none (`headerShown: false`) | glass, appears on scroll, large title collapsing to inline |
 | Capture | raised 52×40 rounded rect in the tab bar | floating glass circle, `isInteractive`, tinted — the one tinted thing |
 | Card | flat white, radius 20, no border | white, radius 22, two-layer shadow, concentric inner radii — **stays opaque** |
-| Product detail | header + scroll | full-bleed image, glass header over it, ambient wash |
+| Product detail | header + scroll, service buried | full-bleed image, glass header over it, **service block first**: who / what / left, with a call button |
 | Bottom sheet | `bg.elevated` | glass at the grabber, solid content below it |
-| Protection ring | static SVG arc | springs to its value on appear, ambient field behind |
-| Score | number | number + 90-day sparkline (F6) |
-| Empty states | icon + text + button | same, with real weight in the illustration |
+| Protection hero | score ring + number | **gone.** Home leads with what is ending and what is open |
+| Suggested actions | "+8", "+6", "+5" | open items, each with *resolve* and *dismiss* |
+| Products list | flat list | grouped by zone, search above it |
+| Empty states | icon + text + button | same, with real weight — and "nothing needs you" is a *good* state, drawn as one |
 
 The row that matters most is `Card`. **Cards stay opaque.** That is the rule from §4.2
 that will be hardest to hold when the glass looks good, and it is the one that keeps the
@@ -597,14 +696,15 @@ separately.
 | Phase | Scope | Verified by |
 | --- | --- | --- |
 | **J — Foundation** | `material.*` tokens, `Surface` primitive with all three tiers, springs, layered elevation, `concentric()`, locale-aware type (F7), performance baseline (F12) | tier selection unit-tested per platform/setting; baseline numbers recorded |
-| **K — Navigation** | glass tab bar, collapsing glass headers, floating capture, four-tab IA (§3.2), Coverage tab | every screen rendered in all 3 tiers × light/dark × en/he; screenshots |
-| **L — Content layer** | full-bleed product imagery, ambient colour extraction, ring motion, score sparkline (F6), empty-state weight | contrast asserted ≥ 4.5:1 for every text-on-ambient combination |
-| **M — Flow** | one-capture add (F4), ambiguity question UI, universal search (F9), Claim Pack (F2) | Maestro E2E (F11); taps-to-add measured before and after |
-| **N — Depth** | offline-first (F1), share target + forwarding (F5), registration alerts (F10), Dynamic Type reflow + raised cap (F8) | airplane-mode E2E; AX-size screenshots at 1.6× and 2.4× |
-| **O — Case** | Warranty Case timeline (F3) — **only if §6.Q1 is answered yes** | full suite; FRR observations from reviewed runs (F15) |
+| **K — Model** | the service block (F3), open items with resolve/dismiss (F6), zones (§3.5), score removed from every surface | open-item rules unit-tested, above all rule 3; dismissal proven permanent across a reinstall |
+| **L — Navigation** | glass tab bar, collapsing glass headers, floating capture, four-tab IA (§3.2), Coverage tab | every screen rendered in all 3 tiers × light/dark × en/he; screenshots |
+| **M — Content layer** | full-bleed product imagery, ambient colour, motion, empty states that read as *good news* | contrast asserted ≥ 4.5:1 for every text-on-ambient combination |
+| **N — Flow** | one-capture add (F4), ambiguity question UI, universal search (F9), Claim Pack (F2) | Maestro E2E (F11); taps-to-add measured before and after |
+| **O — Depth** | offline-first (F1), share target + forwarding (F5), registration alerts (F10), Dynamic Type reflow + raised cap (F8) | airplane-mode E2E; AX-size screenshots at 1.6× and 2.4× |
 
-Phase J is the only one that must come first. K through N can be resequenced by
-whatever matters commercially.
+J then K are the two that must come first, and in that order: K is the product change,
+and there is no point making a score beautiful on the way to deleting it. L through O
+can be resequenced by whatever matters commercially.
 
 ---
 
@@ -662,17 +762,27 @@ Where this brief touches them:
 - **§4.3 (ambient colour)** — decorative only. It never encodes coverage state, because
   a colour a user cannot name is not a status.
 
-### Two questions this brief cannot answer for itself
+Two more, specific to this revision:
 
-**Q1 — Is the Claims / Warranty Case deferral lifted?** The instruction *"DO NOT START
-CLAIMS. No Warranty Case Timeline"* has stood through five phases. F3 argues it is now
-the biggest gap in the product, and Phase O is written for it — but the phase does not
-start without an explicit yes. A makeover request is not, on its own, that yes.
+- **Open items must not become a second, hidden score.** No count-of-closed anywhere, no
+  percentage, no "4 of 6 complete" bar. The design answer is a list and a tick, and the
+  moment a ratio appears on screen the thing we deleted has grown back.
+- **Dismissal must never be silently reversed.** If a later data change would reopen a
+  dismissed item — say a policy is published that makes the serial number matter — the
+  app may create a *new* item explaining why, but it may not resurrect the answered one
+  as if the user had never spoken.
 
-**Q2 — Is the front-end skill set to be installed?** §0.2: the card is rendered, nothing
-is enabled. The two Anthropic plugins are low-risk. The React Native bundle is
-community-published with `privileged` reach — agents and hooks — and deserves a
-deliberate decision.
+### The open question
+
+**Q1 — Claims / Warranty Case: closed, no.** Answered: the claim is conducted with the
+importer by phone, and the app's job is to hand over who, what and how long, not to
+mirror someone else's process. Phase O is withdrawn.
+
+**Q2 — Front-end skills.** Still the only open item: the card is rendered and nothing is
+enabled yet, which is an action outside this session. My pick is the two Anthropic
+plugins (`frontend-design`, `Design`). I left the community React Native bundle out of
+the second card: it carries agents and hooks at `privileged` reach, which is a bigger
+decision than a design skill should be.
 
 ---
 
@@ -683,15 +793,18 @@ deliberate decision.
 | Glass makes it *less* legible | The documented criticism of iOS 26, and Apple's own 26.1 climb-down | §4.2's hard rules; contrast asserted in CI, not reviewed by eye |
 | Battery and heat | Third-party measurement of 13% vs 1%, unverified here | ≤ 3 glass surfaces, never in a list; §4.7 budget |
 | Android looks like a consolation prize | Tier 3 is most of the install base | Tier 3 is designed first, not last, and reviewed on its own terms |
-| Hebrew + glass + RTL | Three hard things at once, and Hebrew is a first-class language here | every Phase-K screenshot is taken in Hebrew as well as English, same review bar |
+| Hebrew + glass + RTL | Three hard things at once, and Hebrew is a first-class language here | every screenshot from Phase L on is taken in Hebrew as well as English, same review bar |
 | The makeover buries F14 | 58% resolution does not improve because the app got beautiful | corpus acquisition tracked separately, with its own owner |
-| Scope | Six phases is a lot of surface | Phase J first; everything after it is independently shippable |
+| Removing the score removes the reason to return | The score was the only recurring hook, thin as it was | the reminders are the hook, and they already work (F10) — the app should be *quiet*, not sticky |
+| Open items become nagging | A checklist that cannot be refused gets the whole app muted | dismissal is permanent, max three shown, and rule 3 in §3.4 |
+| Scope | Five phases is a lot of surface | J then K; everything after is independently shippable |
 
 ---
 
 ## 8. The one-line version
 
-The engine is good, the data is thin, the app is flat, and it lets go of the user at the
-exact moment they need it — so: put the material on the navigation layer and give it
-something worth refracting, cut adding a product to one capture, and stay with the user
-through the claim.
+The engine is good, the data is thin, the app is flat, and it answers a question nobody
+asked — so: delete the score, put *who services this, what they cover and how long is
+left* at the top of the screen with a number you can press, let the things you own live
+in rooms, cut adding a product to one capture, and put the material on the navigation
+layer with something underneath worth refracting.
